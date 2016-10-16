@@ -1,5 +1,6 @@
 
-function XMLscene() {
+function XMLscene() 
+{
     CGFscene.call(this);
 }
 
@@ -21,15 +22,27 @@ XMLscene.prototype.init = function (application)
 	this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
 
+
 	this.axis=new CGFaxis(this);
+
+	//test triangel
+	//this.ttriangel = new MyTriangle(this,0,0,0,1,-0,0,0,1,0,1,1);
+
+	//test rectangel
+	//this.rectangel = new MyRectangle(this, 0,0,1,1,1,1);
+
+	//this.semi = new MySphere(this, 5, 52, 52);
 };
 
 
 //DEFAULT PARTS
-XMLscene.prototype.initLights = function () {
+XMLscene.prototype.initLights = function () 
+{
 	
 	this.lights[0].setPosition(2, 3, 3, 1);
     this.lights[0].setDiffuse(1.0,1.0,1.0,1.0);
+    this.lights[0].enable();
+    this.lights[0].setVisible(true);
     this.lights[0].update();
     
 };
@@ -39,8 +52,8 @@ XMLscene.prototype.initCameras = function ()
     this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
 };
 
-XMLscene.prototype.setDefaultAppearance = function () {
-	
+XMLscene.prototype.setDefaultAppearance = function () 
+{
    	this.setAmbient(0.2, 0.4, 0.8, 1.0);
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
     this.setSpecular(0.2, 0.4, 0.8, 1.0);
@@ -279,6 +292,88 @@ XMLscene.prototype.setTransformationsGraph = function()
 	}
 };
 
+XMLscene.prototype.setPrimitivesGraph = function()
+{
+	this.primitives = [];
+
+	var n_prim = this.graph.primitiveslist.length;
+
+	for(var i = 0; i < n_prim; i++)
+	{
+		var type = this.graph.primitiveslist[i]['type'];
+
+		var id = this.graph.primitiveslist[i]['id'];
+
+		var object;
+
+		if(type == 'rectangle')
+		{
+			var x1 = this.graph.primitiveslist[i]['x1']; var x1 = parseFloat(x1);
+			var y1 = this.graph.primitiveslist[i]['y1']; var y1 = parseFloat(y1);
+			var x2 = this.graph.primitiveslist[i]['x2']; var x2 = parseFloat(x2);
+			var y2 = this.graph.primitiveslist[i]['y2']; var y2 = parseFloat(y2);
+
+			object = new MyRectangle(this, x1,y1,x2,y2, 1,1);
+		} 
+		else if(type == 'cylinder')
+		{
+			var base = this.graph.primitiveslist[i]['base']; 		var base = parseFloat(base);
+			var top = this.graph.primitiveslist[i]['top'];       	var top = parseFloat(top);	
+			var height = this.graph.primitiveslist[i]['height'];	var height = parseFloat(height);
+			var slices = this.graph.primitiveslist[i]['slices'];	var slices = parseFloat(slices);
+			var stacks = this.graph.primitiveslist[i]['stacks'];	var stacks = parseFloat(stacks);
+
+			object = new MyCylinder(this, base, top, height, slices, stacks);
+
+		}
+		else if(type == 'sphere')
+		{
+			var radius = this.graph.primitiveslist[i]['radius']; 	var radius = parseFloat(radius);
+			var slices = this.graph.primitiveslist[i]['slices'];	var slices = parseFloat(slices);
+			var stacks = this.graph.primitiveslist[i]['stacks'];  	var stacks = parseFloat(stacks);
+
+			object = new MySphere(this, radius, slices, stacks);
+		}
+		else if(type == 'triangle')
+		{
+			var x1 = this.graph.primitiveslist[i]['x1']; 	var x1 = parseFloat(x1);
+			var y1 = this.graph.primitiveslist[i]['y1'];	var y1 = parseFloat(y1);
+			var z1 = this.graph.primitiveslist[i]['z1'];	var z1 = parseFloat(z1);
+
+			var x2 = this.graph.primitiveslist[i]['x2'];	var x2 = parseFloat(x2);
+			var y2 = this.graph.primitiveslist[i]['y2'];	var y2 = parseFloat(y2);
+			var z2 = this.graph.primitiveslist[i]['z2'];	var z2 = parseFloat(z2);
+
+			var x3 = this.graph.primitiveslist[i]['x3'];	var x3 = parseFloat(x3);
+			var y3 = this.graph.primitiveslist[i]['y3'];	var y3 = parseFloat(y3);
+			var z3 = this.graph.primitiveslist[i]['z3'];	var z3 = parseFloat(z3);
+
+			object = new MyTriangle(this, x1,y1,z1,x2,y2,z2,x3,y3,z3,1,1);
+		}
+		else if(type == 'torus')
+		{
+			var inner = this.graph.primitiveslist[i]['inner'];		var inner = parseFloat(inner);
+			var outer = this.graph.primitiveslist[i]['outer'];		var outer = parseFloat(outer);
+			var slices = this.graph.primitiveslist[i]['slices']; 	var slices = parseFloat(slices);
+			var loops = this.graph.primitiveslist[i]['loops'];		var loops = parseFloat(loops);
+
+			object = new MyTorus(this, inner, outer, slices, loops);
+		}
+
+		this.primitives[id] = object;
+	}
+
+		
+};
+
+XMLscene.prototype.displayPrimitives = function()
+{
+	this.pushMatrix()
+		this.primitives['flour'].display();
+	this.popMatrix();
+			
+};
+
 // Handler called when the graph is finally loaded. 
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function () 
@@ -287,7 +382,7 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.setAxisGraph();
 
 	//views
-	this.setViewsGraph();
+	//this.setViewsGraph();
 		
 	//new Aperence
 	this.setIlluminationGraph();
@@ -303,6 +398,9 @@ XMLscene.prototype.onGraphLoaded = function ()
 
 	//new transformations
 	this.setTransformationsGraph();	
+
+	//new primitives
+	this.setPrimitivesGraph();
 
 
 };
@@ -325,19 +423,23 @@ XMLscene.prototype.display = function ()
 	// Draw axis
 	this.axis.display();
 
-	//this.setDefaultAppearance();
+	this.setDefaultAppearance();
 	
 	// ---- END Background, camera and axis setup
 
 	// it is important that things depending on the proper loading of the graph
 	// only get executed after the graph has loaded correctly.
 	// This is one possible way to do it
-	
+
+
 	if (this.graph.loadedOk)
 	{
 		for(var i = 0; i < this.lights.length; i++){
 			this.lights[i].update();
 		}
 	};
+
+	this.displayPrimitives();
+
 };
 

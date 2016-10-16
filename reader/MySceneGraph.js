@@ -509,7 +509,8 @@ MySceneGraph.prototype.parseTransformations = function(rootElement){
     }
 }
 
-MySceneGraph.prototype.parsePrimitives = function(rootElement){
+MySceneGraph.prototype.parsePrimitives = function(rootElement)
+{
     var elems = rootElement.getElementsByTagName('primitives');
 	
 	if(elems == null){
@@ -524,8 +525,104 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement){
 
     var primitive = elems[0].children;
 	this.primitiveslist = [];
+	
 
-    for (var i = 0; i < nprimitives; i++){
+	for (var i = 0; i < nprimitives; i++)
+	{
+		var primtype = primitive[i].children[0].tagName;
+
+		var primitiveitem = [];
+
+		var id = primitive[i].getAttribute('id');
+
+		primitiveitem['type'] = primtype;
+		primitiveitem['id'] = id;
+
+		if(primtype == 'rectangle')
+		{
+			var x1 = primitive[i].children[0].getAttribute('x1');
+			var y1 = primitive[i].children[0].getAttribute('y1');
+			var x2 = primitive[i].children[0].getAttribute('x2');
+			var y2 = primitive[i].children[0].getAttribute('y2');
+
+			primitiveitem['x1'] = x1;
+			primitiveitem['y1'] = y1;
+			primitiveitem['x2'] = x2;
+			primitiveitem['y2'] = y2;
+
+		}
+		else if(primtype == 'triangle')
+		{
+			var x1 = primitive[i].children[0].getAttribute('x1');
+			var y1 = primitive[i].children[0].getAttribute('y1');
+			var z1 = primitive[i].children[0].getAttribute('z1');
+			var x2 = primitive[i].children[0].getAttribute('x2');
+			var y2 = primitive[i].children[0].getAttribute('y2');
+			var z2 = primitive[i].children[0].getAttribute('z2');
+			var x3 = primitive[i].children[0].getAttribute('x3');
+			var y3 = primitive[i].children[0].getAttribute('y3');
+			var z3 = primitive[i].children[0].getAttribute('z3');
+			
+
+			primitiveitem['x1'] = x1;
+			primitiveitem['y1'] = y1;
+			primitiveitem['z1'] = z1;
+			primitiveitem['x2'] = x2;
+			primitiveitem['y2'] = y2;
+			primitiveitem['z2'] = z2;
+			primitiveitem['x3'] = x3;
+			primitiveitem['y3'] = y3;
+			primitiveitem['z3'] = z3;
+		}
+		else if(primtype == 'cylinder')
+		{
+			var base = primitive[i].children[0].getAttribute('base');
+			var top = primitive[i].children[0].getAttribute('top');
+			var height = primitive[i].children[0].getAttribute('height');
+			var slices = primitive[i].children[0].getAttribute('slices');
+			var stacks = primitive[i].children[0].getAttribute('stacks');
+
+			primitiveitem['base'] = base;
+			primitiveitem['top'] = top;
+			primitiveitem['height'] = height;
+			primitiveitem['slices'] = slices;
+			primitiveitem['stacks'] = stacks;
+
+
+		}
+		else if(primtype == 'sphere')
+		{
+			var radius = primitive[i].children[0].getAttribute('radius');
+			var slices = primitive[i].children[0].getAttribute('slices');
+			var stacks = primitive[i].children[0].getAttribute('stacks');
+
+			primitiveitem['radius'] = radius;
+			primitiveitem['slices'] = slices;
+			primitiveitem['stacks'] = stacks;
+
+
+		}
+		else if(primtype == 'torus')
+		{
+			var inner = primitive[i].children[0].getAttribute('inner');
+			var outer = primitive[i].children[0].getAttribute('outer');
+			var slices = primitive[i].children[0].getAttribute('slices');
+			var loops = primitive[i].children[0].getAttribute('loops');
+
+			primitiveitem['inner'] = inner;
+			primitiveitem['outer'] = outer;
+			primitiveitem['slices'] = slices;
+			primitiveitem['loops'] = loops;
+		}
+		console.log(primitiveitem);
+		this.primitiveslist.push(primitiveitem);
+	};
+
+
+
+/*
+    for (var i = 0; i < nprimitives; i++)
+	{
         this.id = primitive[i].getAttribute('id');
         console.log("Primitive id: " + this.id);
 		
@@ -613,6 +710,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement){
      	this.primitiveslist.push(primitives);
      	console.log(this.primitiveslist);
     }
+	*/
 }
 
 MySceneGraph.prototype.parseComponents = function(rootElement){
