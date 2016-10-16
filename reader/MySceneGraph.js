@@ -4,7 +4,7 @@ function MySceneGraph(filename, scene) {
 	
 	// Establish bidirectional references between scene and graph
 	this.scene = scene;
-	scene.graph=this;
+	scene.graph=this;//creates inside scene a variable graph equals
 		
 	// File reading 
 	this.reader = new CGFXMLreader();
@@ -115,7 +115,8 @@ MySceneGraph.prototype.parseSceneRoot = function(rootElement) {
    
 };
 
-MySceneGraph.prototype.parseViews = function(rootElement){
+MySceneGraph.prototype.parseViews = function(rootElement)
+{
 	var elems = rootElement.getElementsByTagName('views');
 	if(elems == null){
 		return "Views element missing";
@@ -180,31 +181,30 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 	this.local = elems[0].getAttribute('local');
 	console.log("Doublesided value is " + this.doublesided + " and Local value is " + this.local);
 
-	this.ambientContent = [];
-	var ambient = elems[0].getElementsByTagName('ambient');
-	if(ambient == null || ambient == 0){
+	this.ambientIllumination = [];
+	var ambientContent = elems[0].getElementsByTagName('ambient');
+	if(ambientContent == null || ambientContent == 0){
 		return "ambient element missing";
 	}
 
-	this.ambientContent['r'] = ambient[0].getAttribute('r');
-	this.ambientContent['g'] = ambient[0].getAttribute('g');
-	this.ambientContent['b'] = ambient[0].getAttribute('b');
-	this.ambientContent['a'] = ambient[0].getAttribute('a');
+	this.ambientIllumination['r'] = ambientContent[0].getAttribute('r');
+	this.ambientIllumination['g'] = ambientContent[0].getAttribute('g');
+	this.ambientIllumination['b'] = ambientContent[0].getAttribute('b');
+	this.ambientIllumination['a'] = ambientContent[0].getAttribute('a');
 
-	console.log("Ambient RED: " + this.ambientContent['r'] + "; GREEN: " + this.ambientContent['g'] + "; BLUE: " + this.ambientContent['b'] + "; A: " + this.ambientContent['a']);
+	console.log("Ambient RED: " + this.ambientIllumination['r'] + "; GREEN: " + this.ambientIllumination['g'] + "; BLUE: " + this.ambientIllumination['b'] + "; A: " + this.ambientIllumination['a']);
 
 	this.background = [];
 	var backgroundContent = elems[0].getElementsByTagName('background');
 	if(backgroundContent == null || backgroundContent == 0){
 		return "background element missing";
 	}
-	this.background[0] = backgroundContent[0].getAttribute('r');
-	this.background[1] = backgroundContent[0].getAttribute('g');
-	this.background[2] = backgroundContent[0].getAttribute('b');
-	this.background[3] = backgroundContent[0].getAttribute('a');
+	this.background['r'] = backgroundContent[0].getAttribute('r');
+	this.background['g'] = backgroundContent[0].getAttribute('g');
+	this.background['b'] = backgroundContent[0].getAttribute('b');
+	this.background['a'] = backgroundContent[0].getAttribute('a');
 
-
-	//console.log("Background RED: " + this.background['r'] + "; GREEN: " + this.background['g'] + "; BLUE: " + this.background['b'] + "; A: " + this.background['a']);
+	console.log("Background RED: " + this.background['r'] + "; GREEN: " + this.background['g'] + "; BLUE: " + this.background['b'] + "; A: " + this.background['a']);
 	
 }
 
@@ -215,7 +215,8 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 		return "Lights element missing";
 	}
 
-	if(elems.length != 1){
+	if(elems.length != 1)
+	{
 		return "Either zero or more than one 'Illumination' element found.";
 	}
 
@@ -228,111 +229,111 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 
 	for(var i = 0; i < nlights; i++){
 		var typelight = light[i].tagName;
-		this.lights = [];
+		var lights = [];
 
 		//console.log("Type of lights in the scene: " + typelights);
-		if(typelight === 'omni'){
-			this.lights.id = this.reader.getFloat(light[i], 'id');
-			this.lights.enabled = this.reader.getBoolean(light[i], 'enabled');
-			this.lights.omni = true;
-			this.lights.spot = false;
-			console.log("Lights 'omni' attributes: 'id'=" + this.lights.id + "; 'enabled'=" + this.lights.enabled);
+		if(typelight == 'omni'){
+			lights['id'] = this.reader.getFloat(light[i], 'id');
+			lights.enabled = this.reader.getBoolean(light[i], 'enabled');
+			lights.omni = true;
+			lights.spot = false;
+			console.log("Lights 'omni' attributes: 'id'=" + lights.id + "; 'enabled'=" + lights.enabled);
 			//light location
-			this.location = [];
+			var location = [];
 			var elemLocation = light[i].getElementsByTagName('location');
-			this.location.x = elemLocation[0].getAttribute('x');
-			this.location.y = elemLocation[0].getAttribute('y');
-			this.location.z = elemLocation[0].getAttribute('z');
-			this.location.w = elemLocation[0].getAttribute('w');
-			this.lights['location'] = this.location;
-			console.log("Omni lights location X: " + this.location.x + "; Y: " + this.location.y + "; Z: " + this.location.z + "; W: " + this.location.w);
+			location.x = elemLocation[0].getAttribute('x');
+			location.y = elemLocation[0].getAttribute('y');
+			location.z = elemLocation[0].getAttribute('z');
+			location.w = elemLocation[0].getAttribute('w');
+			lights['location'] = location;
+			console.log("Omni lights location X: " + location.x + "; Y: " + location.y + "; Z: " + location.z + "; W: " + location.w);
 
-			this.ambient = [];
+			var ambient = [];
 			var elemAmbient = light[i].getElementsByTagName('ambient');
-			this.ambient.r = elemAmbient[0].getAttribute('r');
-			this.ambient.g = elemAmbient[0].getAttribute('g');
-			this.ambient.b = elemAmbient[0].getAttribute('b');
-			this.ambient.a = elemAmbient[0].getAttribute('a');
-			this.lights['ambient'] = this.ambient;
-			console.log("Omni lights ambient RED: " + this.ambient.r + "; GREEN: " + this.ambient.g + "; BLUE: " + this.ambient.b + "; Alpha: " + this.ambient.a);
+			ambient.r = elemAmbient[0].getAttribute('r');
+			ambient.g = elemAmbient[0].getAttribute('g');
+			ambient.b = elemAmbient[0].getAttribute('b');
+			ambient.a = elemAmbient[0].getAttribute('a');
+			lights['ambient'] = ambient;
+			console.log("Omni lights ambient RED: " + ambient.r + "; GREEN: " + ambient.g + "; BLUE: " + ambient.b + "; Alpha: " + ambient.a);
 
-			this.diffuse = [];
+			diffuse = [];
 			var elemDiffuse = light[i].getElementsByTagName('diffuse');
-			this.diffuse.r = elemDiffuse[0].getAttribute('r');
-			this.diffuse.g = elemDiffuse[0].getAttribute('g');
-			this.diffuse.b = elemDiffuse[0].getAttribute('b');
-			this.diffuse.a = elemDiffuse[0].getAttribute('a');
-			this.lights['diffuse'] = this.diffuse;
-			console.log("Omni lights diffuse RED: " + this.diffuse.r + "; GREEN: " + this.diffuse.g + "; BLUE: " + this.diffuse.b + "; Alpha: " + this.diffuse.a);
+			diffuse.r = elemDiffuse[0].getAttribute('r');
+			diffuse.g = elemDiffuse[0].getAttribute('g');
+			diffuse.b = elemDiffuse[0].getAttribute('b');
+			diffuse.a = elemDiffuse[0].getAttribute('a');
+			lights['diffuse'] = diffuse;
+			console.log("Omni lights diffuse RED: " + diffuse.r + "; GREEN: " + diffuse.g + "; BLUE: " + diffuse.b + "; Alpha: " + diffuse.a);
 
-			this.specular = [];
+			specular = [];
 			var elemSpecular = light[i].getElementsByTagName('specular');
-			this.specular.r = elemSpecular[0].getAttribute('r');
-			this.specular.g = elemSpecular[0].getAttribute('g');
-			this.specular.b = elemSpecular[0].getAttribute('b');
-			this.specular.a = elemSpecular[0].getAttribute('a');
-			this.lights['specular'] = this.specular;
-			console.log("Omni lights specular RED: " + this.specular.r + "; GREEN: " + this.specular.g + "; BLUE: " + this.specular.b + "; Alpha: " + this.specular.a);
+			specular.r = elemSpecular[0].getAttribute('r');
+			specular.g = elemSpecular[0].getAttribute('g');
+			specular.b = elemSpecular[0].getAttribute('b');
+			specular.a = elemSpecular[0].getAttribute('a');
+			lights['specular'] = specular;
+			console.log("Omni lights specular RED: " + specular.r + "; GREEN: " + specular.g + "; BLUE: " + specular.b + "; Alpha: " + specular.a);
 			//omni lights elements saves in lightslist
-			this.lightslist.push(this.lights); 
-			//console.log(this.lightslist);
+			this.lightslist.push(lights); 
+			console.log(this.lightslist);
 
 
-		}else if(typelight === 'spot'){
-			this.lights.id = this.reader.getFloat(light[i], 'id');
-			this.lights.enabled = this.reader.getBoolean(light[i], 'enabled');
-			this.lights.angle = this.reader.getFloat(light[i], 'angle');
-			this.lights.exponent = this.reader.getFloat(light[i], 'exponent');
-			this.lights.omni = false;
-			this.lights.spot = true;
-			console.log("Lights 'spot' attributes: 'id'=" + this.lights.id + "; 'enabled'=" + this.lights.enabled + "; 'angle'=" + this.lights.angle + "; 'exponent'=" + this.lights.exponent);
+		}else if(typelight == 'spot'){
+			lights.id = this.reader.getFloat(light[i], 'id');
+			lights.enabled = this.reader.getBoolean(light[i], 'enabled');
+			lights.angle = this.reader.getFloat(light[i], 'angle');
+			lights.exponent = this.reader.getFloat(light[i], 'exponent');
+			lights.omni = false;
+			lights.spot = true;
+			console.log("Lights 'spot' attributes: 'id'=" + lights.id + "; 'enabled'=" + lights.enabled + "; 'angle'=" + lights.angle + "; 'exponent'=" + lights.exponent);
 
 			//light target
-			this.target = [];
+			target = [];
 			var elemTarget = light[i].getElementsByTagName('target');
-			this.target.x = elemTarget[0].getAttribute('x');
-			this.target.y = elemTarget[0].getAttribute('y');
-			this.target.z = elemTarget[0].getAttribute('z');
-			this.lights['target'] = this.target;
-			console.log("Spot lights target X: " + this.target.x + "; Y: " + this.target.y + "; Z: " + this.target.z);
+			target.x = elemTarget[0].getAttribute('x');
+			target.y = elemTarget[0].getAttribute('y');
+			target.z = elemTarget[0].getAttribute('z');
+			lights['target'] = target;
+			console.log("Spot lights target X: " + target.x + "; Y: " + target.y + "; Z: " + target.z);
 
 			//light location
-			this.location = [];
+			location = [];
 			var elemLocation = light[i].getElementsByTagName('location');
-			this.location.x = elemLocation[0].getAttribute('x');
-			this.location.y = elemLocation[0].getAttribute('y');
-			this.location.z = elemLocation[0].getAttribute('z');
-			this.lights['location'] = this.location;
-			console.log("Spot lights location X: " + this.location.x + "; Y: " + this.location.y + "; Z: " + this.location.z);
+			location.x = elemLocation[0].getAttribute('x');
+			location.y = elemLocation[0].getAttribute('y');
+			location.z = elemLocation[0].getAttribute('z');
+			lights['location'] = location;
+			console.log("Spot lights location X: " + location.x + "; Y: " + location.y + "; Z: " + location.z);
 
 			this.ambient = [];
 			var elemAmbient = light[i].getElementsByTagName('ambient');
-			this.ambient.r = elemAmbient[0].getAttribute('r');
-			this.ambient.g = elemAmbient[0].getAttribute('g');
-			this.ambient.b = elemAmbient[0].getAttribute('b');
-			this.ambient.a = elemAmbient[0].getAttribute('a');
-			this.lights['ambient'] = this.ambient;
-			console.log("Spot lights ambient RED: " + this.ambient.r + "; GREEN: " + this.ambient.g + "; BLUE: " + this.ambient.b + "; Alpha: " + this.ambient.a);
+			ambient.r = elemAmbient[0].getAttribute('r');
+			ambient.g = elemAmbient[0].getAttribute('g');
+			ambient.b = elemAmbient[0].getAttribute('b');
+			ambient.a = elemAmbient[0].getAttribute('a');
+			lights['ambient'] = ambient;
+			console.log("Spot lights ambient RED: " + ambient.r + "; GREEN: " + ambient.g + "; BLUE: " + ambient.b + "; Alpha: " + ambient.a);
 
-			this.diffuse = [];
+			diffuse = [];
 			var elemDiffuse = light[i].getElementsByTagName('diffuse');
-			this.diffuse.r = elemDiffuse[0].getAttribute('r');
-			this.diffuse.g = elemDiffuse[0].getAttribute('g');
-			this.diffuse.b = elemDiffuse[0].getAttribute('b');
-			this.diffuse.a = elemDiffuse[0].getAttribute('a');
-			this.lights['diffuse'] = this.diffuse;
-			console.log("Spot lights diffuse RED: " + this.diffuse.r + "; GREEN: " + this.diffuse.g + "; BLUE: " + this.diffuse.b + "; Alpha: " + this.diffuse.a);
+			diffuse.r = elemDiffuse[0].getAttribute('r');
+			diffuse.g = elemDiffuse[0].getAttribute('g');
+			diffuse.b = elemDiffuse[0].getAttribute('b');
+			diffuse.a = elemDiffuse[0].getAttribute('a');
+			lights['diffuse'] = diffuse;
+			console.log("Spot lights diffuse RED: " + diffuse.r + "; GREEN: " + diffuse.g + "; BLUE: " + diffuse.b + "; Alpha: " + diffuse.a);
 
-			this.specular = [];
+			specular = [];
 			var elemSpecular = light[i].getElementsByTagName('specular');
-			this.specular.r = elemSpecular[0].getAttribute('r');
-			this.specular.g = elemSpecular[0].getAttribute('g');
-			this.specular.b = elemSpecular[0].getAttribute('b');
-			this.specular.a = elemSpecular[0].getAttribute('a');
-			this.lights['specular'] = this.specular;
-			console.log("Spot lights specular RED: " + this.specular.r + "; GREEN: " + this.specular.g + "; BLUE: " + this.specular.b + "; Alpha: " + this.specular.a);
+			specular.r = elemSpecular[0].getAttribute('r');
+			specular.g = elemSpecular[0].getAttribute('g');
+			specular.b = elemSpecular[0].getAttribute('b');
+			specular.a = elemSpecular[0].getAttribute('a');
+			lights['specular'] = specular;
+			console.log("Spot lights specular RED: " + specular.r + "; GREEN: " + specular.g + "; BLUE: " + specular.b + "; Alpha: " + specular.a);
 			//spot lights elements saves in lightslist
-			this.lightslist.push(this.lights); 
+			this.lightslist.push(lights); 
 			console.log(this.lightslist);
 		}else{
 			tagMissing = true;
@@ -342,6 +343,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 	if(tagMissing){
 		console.log("Missing 'omni' and 'spot' type of lights. Change tag name please.");
 	}
+	
 }
 
 MySceneGraph.prototype.parseTextures = function(rootElement){
@@ -355,14 +357,23 @@ MySceneGraph.prototype.parseTextures = function(rootElement){
 	}
 
 	var ntextures = elems[0].children.length;
-	console.log("ntextures: " + ntextures);
+	this.texturelist = [];
 
-	for(var i = 0; i < ntextures; i++){
-		this.id = elems[0].children[i].getAttribute('id');
-		this.file = elems[0].children[i].getAttribute('file');
-		this.length_s = elems[0].children[i].getAttribute('length_s');
-		this.length_t = elems[0].children[i].getAttribute('length_t');
-		console.log("Textures attributes:" + " id= " + this.id  + "; file= " + this.file + "; length_s= " + this.length_s  + "; length_t= " + this.length_t);
+	for(var i = 0; i < ntextures; i++)
+	{
+		var texture = [];
+
+		var id = elems[0].children[i].getAttribute('id');
+		var file = elems[0].children[i].getAttribute('file');
+		var length_s = elems[0].children[i].getAttribute('length_s');
+		var length_t = elems[0].children[i].getAttribute('length_t');
+
+		texture['id'] = id;
+		texture['file'] = file;
+		texture['length_s'] = length_s;
+		texture['length_t'] = length_t;
+
+		this.texturelist.push(texture);		
 	}
 
 }
@@ -379,55 +390,58 @@ MySceneGraph.prototype.parseMaterials = function(rootElement){
 	var material = elems[0].children;
 	this.materialslist = [];
 
-	for(var i = 0; i < nmaterials; i++){
-		this.id = material[i].getAttribute('id');
+	for(var i = 0; i < nmaterials; i++)
+	{
+		var id = material[i].getAttribute('id');
 		console.log("Material id: " + this.id);
-		this.materials = [];
-
-		this.emissionAtt = [];
-		var emission = material[i].getElementsByTagName('emission');
-		this.emissionAtt.r = emission[0].getAttribute('r');
-		this.emissionAtt.g = emission[0].getAttribute('g');
-		this.emissionAtt.b = emission[0].getAttribute('b');
-		this.emissionAtt.a = emission[0].getAttribute('a');
-		console.log("Emission: r = " + this.emissionAtt.r+ " g = " + this.emissionAtt.g  +  " b = " + this.emissionAtt.b + " a = " +  this.emissionAtt.a);
-		this.materials['emission'] = this.emissionAtt;
-
-		this.ambientAtt = [];
-		var ambient = material[i].getElementsByTagName('ambient');
-		this.ambientAtt.r = ambient[0].getAttribute('r');
-		this.ambientAtt.g = ambient[0].getAttribute('g');
-		this.ambientAtt.b = ambient[0].getAttribute('b');
-		this.ambientAtt.a = ambient[0].getAttribute('a');
-		console.log("Ambient: r = " + this.ambientAtt.r+ " g = " + this.ambientAtt.g  +  " b = " + this.ambientAtt.b + " a = " +  this.ambientAtt.a);
-		this.materials['ambient'] = this.ambientAtt;
-
-		this.diffuseAtt = [];
-		var diffuse = material[i].getElementsByTagName('diffuse');
-		this.diffuseAtt.r = diffuse[0].getAttribute('r');
-		this.diffuseAtt.g = diffuse[0].getAttribute('g');
-		this.diffuseAtt.b = diffuse[0].getAttribute('b');
-		this.diffuseAtt.a = diffuse[0].getAttribute('a');
-		console.log("Diffuse: r = " + this.diffuseAtt.r+ " g = " + this.diffuseAtt.g  +  " b = " + this.diffuseAtt.b + " a = " +  this.diffuseAtt.a);
-		this.materials['diffuse'] = this.diffuseAtt;
-
-		this.specularAtt = [];
-		var specular = material[i].getElementsByTagName('specular');
-		this.specularAtt.r = specular[0].getAttribute('r');
-		this.specularAtt.g = specular[0].getAttribute('g');
-		this.specularAtt.b = specular[0].getAttribute('b');
-		this.specularAtt.a = specular[0].getAttribute('a');
-		console.log("Specular: r = " + this.specularAtt.r+ " g = " + this.specularAtt.g  +  " b = " + this.specularAtt.b + " a = " +  this.specularAtt.a);
-		this.materials['specular'] = this.specularAtt;
-
-		this.shininessAtt = [];
-		var shininess = material[i].getElementsByTagName('shininess');
-		this.shininessAtt.value = shininess[0].getAttribute('r');
+		materials = [];
 		
-		console.log("Shininess: r = " + this.shininessAtt.value);
-		this.materials['shininess'] = this.shininessAtt;
+		materials['id'] = id;
+
+		emissionAtt = [];
+		var emission = material[i].getElementsByTagName('emission');
+		emissionAtt.r = emission[0].getAttribute('r');
+		emissionAtt.g = emission[0].getAttribute('g');
+		emissionAtt.b = emission[0].getAttribute('b');
+		emissionAtt.a = emission[0].getAttribute('a');
+		console.log("Emission: r = " + emissionAtt.r+ " g = " + emissionAtt.g  +  " b = " + emissionAtt.b + " a = " +  emissionAtt.a);
+		materials['emission'] = emissionAtt;
+
+		ambientAtt = [];
+		var ambient = material[i].getElementsByTagName('ambient');
+		ambientAtt.r = ambient[0].getAttribute('r');
+		ambientAtt.g = ambient[0].getAttribute('g');
+		ambientAtt.b = ambient[0].getAttribute('b');
+		ambientAtt.a = ambient[0].getAttribute('a');
+		console.log("Ambient: r = " + ambientAtt.r+ " g = " + ambientAtt.g  +  " b = " + ambientAtt.b + " a = " +  ambientAtt.a);
+		materials['ambient'] = ambientAtt;
+
+		diffuseAtt = [];
+		var diffuse = material[i].getElementsByTagName('diffuse');
+		diffuseAtt.r = diffuse[0].getAttribute('r');
+		diffuseAtt.g = diffuse[0].getAttribute('g');
+		diffuseAtt.b = diffuse[0].getAttribute('b');
+		diffuseAtt.a = diffuse[0].getAttribute('a');
+		console.log("Diffuse: r = " + diffuseAtt.r+ " g = " + diffuseAtt.g  +  " b = " + diffuseAtt.b + " a = " +  diffuseAtt.a);
+		materials['diffuse'] = diffuseAtt;
+
+		specularAtt = [];
+		var specular = material[i].getElementsByTagName('specular');
+		specularAtt.r = specular[0].getAttribute('r');
+		specularAtt.g = specular[0].getAttribute('g');
+		specularAtt.b = specular[0].getAttribute('b');
+		specularAtt.a = specular[0].getAttribute('a');
+		console.log("Specular: r = " + specularAtt.r+ " g = " + specularAtt.g  +  " b = " + specularAtt.b + " a = " +  specularAtt.a);
+		materials['specular'] = specularAtt;
+
+		shininessAtt = [];
+		var shininess = material[i].getElementsByTagName('shininess');
+		shininessAtt.value = shininess[0].getAttribute('r');
+		
+		console.log("Shininess: r = " + shininessAtt.value);
+		materials['shininess'] = shininessAtt;
 		//material attributes saved in a list of materials
-		this.materialslist.push(this.materials);
+		this.materialslist.push(materials);
 		console.log(this.materialslist);
 	}
 
@@ -451,45 +465,46 @@ MySceneGraph.prototype.parseTransformations = function(rootElement){
 	this.transformationlist = [];
 
     for (var i = 0; i < ntransformations; i++){
-        this.id = transformation[i].getAttribute('id');
-        console.log("Transformation id: " + this.id);
+        var id = transformation[i].getAttribute('id');
+        console.log("Transformation id: " + id);
 		
-		this.transformations = [];
-
-		this.translateAtt = [];
+		transformations = [];
+		transformations['id'] = id;
+		
+		translateAtt = [];
 		var translate = transformation[i].getElementsByTagName('translate');
 		if (translate == null  || translate.length==0) {
 			return "translate element is missing.";
 		}
-		this.translateAtt['x'] = translate[0].getAttribute('x');
-		this.translateAtt['y'] = translate[0].getAttribute('y');
-		this.translateAtt['z'] = translate[0].getAttribute('z');
-		console.log("Translate: X = " + this.translateAtt['x'] + ";  Y = " + this.translateAtt['y'] + ";  Z = " + this.translateAtt['z']);
-		this.transformations['translate'] = this.translateAtt;
+		translateAtt['x'] = translate[0].getAttribute('x');
+		translateAtt['y'] = translate[0].getAttribute('y');
+		translateAtt['z'] = translate[0].getAttribute('z');
+		console.log("Translate: X = " + translateAtt['x'] + ";  Y = " + translateAtt['y'] + ";  Z = " + translateAtt['z']);
+		transformations['translate'] = translateAtt;
 		
-		this.rotateAtt = [];
+		rotateAtt = [];
 		var rotate = transformation[i].getElementsByTagName('rotate');
 		if (rotate == null  || rotate.length==0) {
 			return "rotate element is missing.";
 		}
-		this.rotateAtt['axis'] = rotate[0].getAttribute('axis');
-		this.rotateAtt['angle'] = rotate[0].getAttribute('angle');
+		rotateAtt['axis'] = rotate[0].getAttribute('axis');
+		rotateAtt['angle'] = rotate[0].getAttribute('angle');
 		
-		console.log("Rotate: AXIS = " + this.rotateAtt['axis'] + ";  ANGLE = " + this.rotateAtt['angle']);
-		this.transformations['rotate'] = this.rotateAtt;
+		console.log("Rotate: AXIS = " + rotateAtt['axis'] + ";  ANGLE = " + rotateAtt['angle']);
+		transformations['rotate'] = rotateAtt;
 		
-		this.scaleAtt = [];
+		scaleAtt = [];
 		var scale = transformation[i].getElementsByTagName('scale');
 		if (scale == null  || scale.length==0) {
 			return "scale element is missing.";
 		}
-		this.scaleAtt['x'] = scale[0].getAttribute('x');
-		this.scaleAtt['y'] = scale[0].getAttribute('y');
-		this.scaleAtt['z'] = scale[0].getAttribute('z');
-		console.log("Scale: X = " + this.scaleAtt['x'] + ";  Y = " + this.scaleAtt['y'] + ";  Z = " + this.scaleAtt['z']);
-		this.transformations['scale'] = this.scaleAtt;
+		scaleAtt['x'] = scale[0].getAttribute('x');
+		scaleAtt['y'] = scale[0].getAttribute('y');
+		scaleAtt['z'] = scale[0].getAttribute('z');
+		console.log("Scale: X = " + scaleAtt['x'] + ";  Y = " + scaleAtt['y'] + ";  Z = " + scaleAtt['z']);
+		transformations['scale'] = scaleAtt;
        
-     	this.transformationlist.push(this.transformations);
+     	this.transformationlist.push(transformations);
      	console.log(this.transformationlist);
     }
 }
@@ -514,88 +529,88 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement){
         this.id = primitive[i].getAttribute('id');
         console.log("Primitive id: " + this.id);
 		
-		this.primitives = [];
+		primitives = [];
 
-		this.rectangleAtt = [];
+		rectangleAtt = [];
 		var rectangle = primitive[i].getElementsByTagName('rectangle');
 		if (rectangle == null  || rectangle.length==0) {
 			return "rectangle element is missing.";
 		}
-		this.rectangleAtt['x1'] = rectangle[0].getAttribute('x1');
-		this.rectangleAtt['y1'] = rectangle[0].getAttribute('y1');
-		this.rectangleAtt['x2'] = rectangle[0].getAttribute('x2');
-		this.rectangleAtt['y2'] = rectangle[0].getAttribute('y2');
+		rectangleAtt['x1'] = rectangle[0].getAttribute('x1');
+		rectangleAtt['y1'] = rectangle[0].getAttribute('y1');
+		rectangleAtt['x2'] = rectangle[0].getAttribute('x2');
+		rectangleAtt['y2'] = rectangle[0].getAttribute('y2');
 
-		console.log("Rectangle attributes: X1 = " + this.rectangleAtt['x1'] + ";  Y1 = " + this.rectangleAtt['y1']
-                + ";  X2 = " + this.rectangleAtt['x2'] + ";  Y2 = " + this.rectangleAtt['y2']);
-		this.primitives['rectangle'] = this.rectangleAtt;
+		console.log("Rectangle attributes: X1 = " + rectangleAtt['x1'] + ";  Y1 = " + rectangleAtt['y1']
+                + ";  X2 = " + rectangleAtt['x2'] + ";  Y2 = " + rectangleAtt['y2']);
+		primitives['rectangle'] = rectangleAtt;
 
 		//Triangle
-		this.triangleAtt = [];
+		triangleAtt = [];
 		var triangle = primitive[i].getElementsByTagName('triangle');
 		if (triangle == null  || triangle.length==0) {
 			return "triangle element is missing.";
 		}
-		this.triangleAtt['x1'] = triangle[0].getAttribute('x1');
-		this.triangleAtt['y1'] = triangle[0].getAttribute('y1');
-		this.triangleAtt['x2'] = triangle[0].getAttribute('x2');
-		this.triangleAtt['y2'] = triangle[0].getAttribute('y2');
-		this.triangleAtt['x3'] = triangle[0].getAttribute('x3');
-		this.triangleAtt['y3'] = triangle[0].getAttribute('y3');
+		triangleAtt['x1'] = triangle[0].getAttribute('x1');
+		triangleAtt['y1'] = triangle[0].getAttribute('y1');
+		triangleAtt['x2'] = triangle[0].getAttribute('x2');
+		triangleAtt['y2'] = triangle[0].getAttribute('y2');
+		triangleAtt['x3'] = triangle[0].getAttribute('x3');
+		triangleAtt['y3'] = triangle[0].getAttribute('y3');
 
-		console.log("Triangle attributes: X1 = " + this.triangleAtt['x1'] + ";  Y1 = " + this.triangleAtt['y1']
-                + ";  X2 = " + this.triangleAtt['x2'] + ";  Y2 = " + this.triangleAtt['y2']
-                + ";  x3 = " + this.triangleAtt['x3'] + ";  Y3 = " + this.triangleAtt['y3']);
-		this.primitives['triangle'] = this.triangleAtt;
+		console.log("Triangle attributes: X1 = " + triangleAtt['x1'] + ";  Y1 = " + triangleAtt['y1']
+                + ";  X2 = " + triangleAtt['x2'] + ";  Y2 = " + triangleAtt['y2']
+                + ";  x3 = " + triangleAtt['x3'] + ";  Y3 = " + triangleAtt['y3']);
+		primitives['triangle'] = triangleAtt;
 		
 		//cylinder
-		this.cylinderAtt = [];
+		cylinderAtt = [];
 		var cylinder = primitive[i].getElementsByTagName('cylinder');
 		if (cylinder == null  || cylinder.length==0) {
 			return "cylinder element is missing.";
 		}
-		this.cylinderAtt['base'] = cylinder[0].getAttribute('base');
-		this.cylinderAtt['top'] = cylinder[0].getAttribute('top');
-		this.cylinderAtt['height'] = cylinder[0].getAttribute('height');
-		this.cylinderAtt['slices'] = cylinder[0].getAttribute('slices');
-		this.cylinderAtt['stacks'] = cylinder[0].getAttribute('stacks');
+		cylinderAtt['base'] = cylinder[0].getAttribute('base');
+		cylinderAtt['top'] = cylinder[0].getAttribute('top');
+		cylinderAtt['height'] = cylinder[0].getAttribute('height');
+		cylinderAtt['slices'] = cylinder[0].getAttribute('slices');
+		cylinderAtt['stacks'] = cylinder[0].getAttribute('stacks');
 
-		console.log("Cylinder atts: BASE = " + this.cylinderAtt['base'] + "; TOP = " +  this.cylinderAtt['top']
-                + ";  HEIGHT = " + this.cylinderAtt['height'] + ";  SLICE = " + this.cylinderAtt['slices']
-                + "  STACK = " + this.cylinderAtt['stacks']);
-		this.primitives['cylinder'] = this.cylinderAtt;
+		console.log("Cylinder atts: BASE = " + cylinderAtt['base'] + "; TOP = " +  cylinderAtt['top']
+                + ";  HEIGHT = " + cylinderAtt['height'] + ";  SLICE = " + cylinderAtt['slices']
+                + "  STACK = " + cylinderAtt['stacks']);
+		primitives['cylinder'] = cylinderAtt;
 
 		//sphere
-		this.sphereAtt = [];
+		sphereAtt = [];
 		var sphere = primitive[i].getElementsByTagName('sphere');
 		if (sphere == null  || sphere.length==0) {
 			return "sphere element is missing.";
 		}
-		this.sphereAtt['radius'] = sphere[0].getAttribute('radius');
-		this.sphereAtt['slices'] = sphere[0].getAttribute('slices');
-		this.sphereAtt['stacks'] = sphere[0].getAttribute('stacks');
+		sphereAtt['radius'] = sphere[0].getAttribute('radius');
+		sphereAtt['slices'] = sphere[0].getAttribute('slices');
+		sphereAtt['stacks'] = sphere[0].getAttribute('stacks');
 
-		console.log("Sphere attributes: RADIUS = " + this.sphereAtt['radius'] + 
-		";  SLICES = " + this.sphereAtt['slices'] + "; STACKS = " + this.sphereAtt['stacks']);
-		this.primitives['sphere'] = this.sphereAtt;
+		console.log("Sphere attributes: RADIUS = " + sphereAtt['radius'] + 
+		";  SLICES = " + sphereAtt['slices'] + "; STACKS = " + sphereAtt['stacks']);
+		primitives['sphere'] = sphereAtt;
 
 		//torus
-		this.torusAtt = [];
+		torusAtt = [];
 		var torus = primitive[i].getElementsByTagName('torus');
 		if (torus == null  || torus.length==0) {
 			return "torus element is missing.";
 		}
 		
-		this.torusAtt['inner'] = torus[0].getAttribute('inner');
-		this.torusAtt['outer'] = torus[0].getAttribute('outer');
-		this.torusAtt['slices'] = torus[0].getAttribute('slices');
-		this.torusAtt['loops'] = torus[0].getAttribute('loops');
+		torusAtt['inner'] = torus[0].getAttribute('inner');
+		torusAtt['outer'] = torus[0].getAttribute('outer');
+		torusAtt['slices'] = torus[0].getAttribute('slices');
+		torusAtt['loops'] = torus[0].getAttribute('loops');
 
-		console.log("Torus attributes: INNER = " + this.torusAtt['inner'] + ";  OUTER = " + this.torusAtt['outer']
-                + ";  SLICES = " + this.torusAtt['slices'] + ";  LOOPS = " + this.torusAtt['loops'] );
-		this.primitives['torus'] = this.torusAtt;
+		console.log("Torus attributes: INNER = " + torusAtt['inner'] + ";  OUTER = " + torusAtt['outer']
+                + ";  SLICES = " + torusAtt['slices'] + ";  LOOPS = " + torusAtt['loops'] );
+		primitives['torus'] = torusAtt;
 
-     	this.primitiveslist.push(this.primitives);
+     	this.primitiveslist.push(primitives);
      	console.log(this.primitiveslist);
     }
 }
