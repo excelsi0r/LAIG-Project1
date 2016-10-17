@@ -42,7 +42,7 @@
 
     <illumination doublesided="0" local="1" >
     
-        <ambient r="0.2" g="0.4" b="0.8" a="1" />
+        <ambient r="0.5" g="0.5" b="0.5" a="1" />
         <background r="0.0" g="0.6" b="1.0" a="1" />
         
     </illumination>
@@ -130,19 +130,19 @@
     
         <!-- Deve existir um ou mais blocos "transformation" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
-        <transformation id="inx">
+        <transformation id="nothing">
            <!-- instrucoes a usar sem limite nem ordem -->
            <!-- deve existir pelo menos uma transformacao -->
-           <translate x="2" y="2" z="2" />
-           <rotate axis="x" angle="1" />
+           <translate x="0" y="0" z="0" />
+           <rotate axis="x" angle="0" />
            <scale x="1" y="1" z="1" />
         </transformation>
-        <transformation id="iny">
+        <transformation id="translate">
            <!-- instrucoes a usar sem limite nem ordem -->
            <!-- deve existir pelo menos uma transformacao -->
-           <translate x="3" y="1" z="0" />
+           <translate x="1" y="0" z="0" />
            <rotate axis="y" angle="0" />
-           <scale x="2" y="2" z="2" />
+           <scale x="1" y="1" z="1" />
         </transformation>
         
     </transformations>
@@ -150,23 +150,23 @@
     
     <primitives>
     
-        <primitive id="wall">        
+        <primitive id="rectangle">        
             <rectangle x1="1" y1="1" x2="0" y2="0" />  
         </primitive>
 		
-        <primitive id="flour"> 
+        <primitive id="triangle"> 
            <triangle x1="0" y1="0" z1="0" x2="1" y2="0" z2="0" x3="0" y3="1" z3="0" />
         </primitive>
 		
-		<primitive id="next1">
+		<primitive id="cylinder">
 			<cylinder base="5" top="5" height="10" slices="10" stacks="10" />
 		</primitive>
 			
-		<primitive id="next3">	
-			<sphere radius="5" slices="10" stacks="10" />
+		<primitive id="sphere">	
+			<sphere radius="1" slices="10" stacks="10" />
 		</primitive>
 		
-		<primitive id="next4">	
+		<primitive id="torus">	
 			<torus inner="20" outer="30" slices="10" loops="20" />
 		</primitive>
         
@@ -175,7 +175,7 @@
     
     <components>
         
-        <component id="ss">
+        <component id="ignore">
         
             <!-- bloco "transformation" obrigatorio -->
             <transformation>
@@ -220,6 +220,64 @@
                 <componentref id="bbb" />
                 <primitiveref id="zz" />
                 
+            </children>
+            
+        </component>
+		
+		<component id="paizinho">
+        
+            <transformation>
+                <transformationref id="nothing" />
+            </transformation>
+       
+            <materials>
+                <material id="wood" />
+            </materials>
+                         
+            <texture id="floor" />
+            
+            <children>
+                <componentref id="filhinho" />
+
+                
+            </children>
+            
+        </component>
+		
+			<component id="filhinho">
+        
+            <transformation>
+                <transformationref id="translate" />
+            </transformation>
+       
+            <materials>
+                <material id="wood" />
+            </materials>
+                         
+            <texture id="inherit" />
+            
+            <children>
+                <componentref id="netinho" />
+            </children>
+            
+        </component>
+		
+		<component id="netinho">
+        
+            <transformation>
+                <translate x="0" y="0" z="0" />
+                <rotate axis="x" angle="0" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+       
+            <materials>
+                <material id="aluminium" />
+            </materials>
+                         
+            <texture id="window" />
+            
+            <children>
+                <primitiveref id="sphere" />
             </children>
             
         </component>

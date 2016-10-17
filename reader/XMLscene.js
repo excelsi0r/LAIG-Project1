@@ -26,12 +26,12 @@ XMLscene.prototype.init = function (application)
 	this.axis=new CGFaxis(this);
 
 	//test triangel
-	//this.ttriangel = new MyTriangle(this,0,0,0,1,-0,0,0,1,0,1,1);
+	this.ttriangel = new MyTriangle(this,0,0,0,1,-0,0,0,1,0,1,1);
 
 	//test rectangel
-	//this.rectangel = new MyRectangle(this, 0,0,1,1,1,1);
+	this.rectangel = new MyRectangle(this, 0,0,1,1,1,1);
 
-	//this.semi = new MySphere(this, 5, 52, 52);
+	this.semi = new MySphere(this, 1, 100, 100);
 };
 
 
@@ -111,6 +111,12 @@ XMLscene.prototype.setIlluminationGraph = function ()
 {
 	this.gl.clearColor(this.graph.background['r'],this.graph.background['g'],this.graph.background['b'],this.graph.background['a']);
    	this.setGlobalAmbientLight(this.graph.ambientIllumination['r'], this.graph.ambientIllumination['g'], this.graph.ambientIllumination['b'], this.graph.ambientIllumination['a']);
+};
+
+
+XMLscene.prototype.setRootGraph = function()
+{
+	this.root = this.graph.root;
 };
 
 XMLscene.prototype.setAxisGraph = function()
@@ -219,6 +225,10 @@ XMLscene.prototype.setTextureGraph = function()
 		var length_t = this.graph.texturelist[i]['length_t'];
 		
 		var text = new CGFappearance(this);
+		text.setAmbient(0.1,0.1,0.1,1);
+		text.setDiffuse(0.9,0.9,0.9,1);
+		text.setSpecular(0.2,0.2,0.2,1);
+		text.setShininess(10);
 		text.loadTexture(file);
 		text.setTextureWrap('REPEAT', 'REPEAT');
 		
@@ -250,7 +260,7 @@ XMLscene.prototype.setTransformationsGraph = function()
 
 		var scalevector = vec3.fromValues(sx,sy,sz);
 
-		mat4.scale(matrix, matrix, scalevector);
+		
 
 		//ROTATION
 		var axis = this.graph.transformationlist[i]['rotate']['axis'];
@@ -272,7 +282,7 @@ XMLscene.prototype.setTransformationsGraph = function()
 
 		var angle = (Math.PI*angle)/180;
 
-		mat4.rotate(matrix,matrix,angle,axisvec);
+		
 
 		
 
@@ -282,6 +292,10 @@ XMLscene.prototype.setTransformationsGraph = function()
 		var tz = this.graph.transformationlist[i]['translate']['z'];
 		var transvec = vec3.fromValues(tx,ty,tz);
 		
+		
+		
+		mat4.scale(matrix, matrix, scalevector);
+		mat4.rotate(matrix,matrix,angle,axisvec);
 		mat4.translate(matrix, matrix, transvec);
 		
 
@@ -366,18 +380,121 @@ XMLscene.prototype.setPrimitivesGraph = function()
 		
 };
 
-XMLscene.prototype.displayPrimitives = function()
+XMLscene.prototype.createGraph = function()
 {
-	this.pushMatrix()
-		this.primitives['flour'].display();
-	this.popMatrix();
+	this.nodes = [];
+
+	var n_node = this.graph.componentslist.length;
+
+	for(var i = 0; i < n_node; i++)
+	{
+		var id = this.graph.componentslist[i]['id'];
+		var node = new Node(this.graph.componentslist[i]['id']);
+
+		var ref = this.graph.componentslist[i]['transformationref'];
+		if(ref == null)
+		{
+			node.setIdentity();
 			
+			//SCALING
+			var sx = this.graph.componentslist[i]['scaleX'];
+			var sy = this.graph.componentslist[i]['scaleY'];
+			var sz = this.graph.componentslist[i]['scaleZ'];
+
+			
+
+			//ROTATION
+			var axis = this.graph.componentslist[i]['rotateAxis'];
+			var axisvec;
+			var angle = this.graph.componentslist[i]['rotateAngle'];
+
+			var rx;
+			var ry;
+			var rz;
+
+			if(axis == 'x')
+			{
+				rx =1; ry=0; rz=0;
+			}
+			else if(axis == 'y')
+			{
+				rx =0; ry=1; rz=0;
+			}
+			else if(axis == 'z')
+			{
+				rx =0; ry=0; rz=1;
+			}
+
+			var angle = (Math.PI*angle)/180;
+
+			
+
+			//TRANSLATION
+			var tx = this.graph.componentslist[i]['translationX'];
+			var ty = this.graph.componentslist[i]['translationY'];
+			var tz = this.graph.componentslist[i]['translationZ'];
+			
+		
+
+			node.scale(sx,sy,sz);
+			node.rotate(rx,ry,rz,angle);
+			node.translate(tx,ty,tz);
+
+		}
+		else
+		{
+			node.setTransformationref(ref);
+		}
+
+		var n_materials = this.graph.componentslist[i]['materials'].length;
+		
+		for(var j = 0; j < n_materials; j++)
+		{
+			var mat = this.graph.componentslist[i]['materials'][j];
+			node.setMaterial(mat);
+		}
+		
+		var textur = this.graph.componentslist[i]['texture'];
+		node.setTexture(textur);
+
+		if(this.graph.componentslist[i]['children'] != null)
+		{			
+			var n_children = this.graph.componentslist[i]['children'].length;
+			for(var t = 0; t < n_children; t++)
+			{
+				var ch = this.graph.componentslist[i]['children'][t];
+				node.setChildren(ch);
+
+			}			
+		}
+
+		if(this.graph.componentslist[i]['primitives'] != null)
+		{			
+			var n_primitives = this.graph.componentslist[i]['primitives'].length;
+			for(var k = 0; k < n_primitives; k++)
+			{
+				var pr = this.graph.componentslist[i]['primitives'][k];
+				node.setPrimitive(pr);
+			}			
+		}
+
+		this.nodes[id] = node;
+
+	}
+
+
 };
+
+
 
 // Handler called when the graph is finally loaded. 
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function () 
 {
+
+	//scene root
+	this.setRootGraph();
+
 	//new axis
 	this.setAxisGraph();
 
@@ -402,8 +519,89 @@ XMLscene.prototype.onGraphLoaded = function ()
 	//new primitives
 	this.setPrimitivesGraph();
 
+	//creating graph
+	this.createGraph();
 
 };
+
+XMLscene.prototype.displayNodes=function(id, transformation, materials, texture, children, primitive)
+{
+		
+			if(primitive.length > 0)
+			{	
+
+				for(var i = 0; i < primitive.length; i++)
+				{
+					this.pushMatrix();	
+						this.multMatrix(transformation);
+						this.primitives[primitive[i]].display();
+					this.popMatrix();
+				}
+			}
+			
+			
+			if(children.length > 0)
+			{
+				for (var j = 0; j < children.length; j++)
+				{
+					
+					var newid = children[j];
+
+					var trans;
+					var transref  = this.nodes[newid].transformationref;
+					if(transref != null)
+					{
+						trans = this.transformations[transref];
+					}
+					else
+					{
+						trans = this.nodes[newid].transformation;
+					}
+
+					var matrixtrans = mat4.create();
+					mat4.multiply(matrixtrans, transformation, trans);
+
+					var ch = this.nodes[newid].children;
+					var pr = this.nodes[newid].primitive;
+
+					var trans;
+
+					this.displayNodes(newid, matrixtrans, materials, texture, ch, pr);		
+					
+				}
+			}
+			
+		
+		
+};
+
+XMLscene.prototype.displayGraphElems=function()
+{
+	var id = this.root;
+
+	
+	var transformation;
+	var transformationref  = this.nodes[id].transformationref;
+
+	if(transformationref != null)
+	{
+		transformation = this.transformations[transformationref];
+	}
+	else
+	{
+		transformation = this.nodes[id].transformation;
+	}
+
+	var materials = this.nodes[id].materials;
+	var texture = this.nodes[id].texture;
+	var children = this.nodes[id].children;
+	var primitive = this.nodes[id].primitive;
+
+		
+	this.displayNodes(id, transformation, materials, texture, children, primitive);
+	
+};
+
 
 XMLscene.prototype.display = function () 
 {
@@ -416,6 +614,7 @@ XMLscene.prototype.display = function ()
 	// Initialize Model-View matrix as identity (no transformation
 	this.updateProjectionMatrix();
     this.loadIdentity();
+    this.enableTextures(true);
 
 	// Apply transformations corresponding to the camera position relative to the origin
 	this.applyViewMatrix();
@@ -432,14 +631,20 @@ XMLscene.prototype.display = function ()
 	// This is one possible way to do it
 
 
+	
 	if (this.graph.loadedOk)
 	{
-		for(var i = 0; i < this.lights.length; i++){
+		
+		this.displayGraphElems();
+		
+		
+		for(var i = 0; i < this.lights.length; i++)
+		{
 			this.lights[i].update();
 		}
+	
 	};
 
-	this.displayPrimitives();
 
 };
 

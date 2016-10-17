@@ -1,122 +1,63 @@
 /**
- * MyTriangle
- * @param gl {WebGLRenderingContext}
+ * MySphere
  * @constructor
  */
-function MySphere(scene, radius, slices, stacks) {
-	CGFobject.call(this,scene);
-	this.radius = radius;
-	this.slices = slices;
-	this.stacks = stacks;
-	this.initBuffers();
+ function MySphere(scene, radius, slices, stacks) {
+ 	CGFobject.call(this,scene);
+	
+	this.slices=slices;
+	this.stacks=stacks;
+	this.raio = radius;
+
+ 	this.initBuffers();
+ };
+
+ MySphere.prototype = Object.create(CGFobject.prototype);
+ MySphere.prototype.constructor = MySphere;
+
+MySphere.prototype.updateTexCoords=function(amplifS, amplifT){
+     
 };
 
-MySphere.prototype = Object.create(CGFobject.prototype);
-MySphere.prototype.constructor=MySphere;
+ MySphere.prototype.initBuffers = function() {
 
-MySphere.prototype.initBuffers = function () {
-    this.vertices = [];
- 	this.indices = [];
- 	this.normals = [];
- 	this.texCoords = [];
-
- 	var deg2Rad = Math.PI/180.0;
-
-	//Build the cylinder's main surface
- 	var deltaAlpha = 360.0/this.slices
- 	var deltaPhi = 180.0/this.stacks;
-
-	var phi = -90;
-	for(var k = 0; k <= this.stacks; k++)
-	{
-		var phiRad = phi*deg2Rad;
-		var alpha = 0;
-		for(var i = 0; i <= this.slices; i++)
-		{
-			var alphaRad = alpha*deg2Rad;
-
-			//Generate the vertices
-			this.vertices.push(this.radius*Math.cos(phiRad)*Math.cos(alphaRad),this.radius*Math.cos(phiRad)*Math.sin(alphaRad),this.radius*Math.sin(phiRad));
-
-			//Generate the indices
-			if(i > 0 && k > 0)
-			{
-				this.indices.push((this.slices+1)*(k)+(i),(this.slices+1)*(k)+(i-1),(this.slices+1)*(k-1)+(i-1));
-				this.indices.push((this.slices+1)*(k)+(i),(this.slices+1)*(k-1)+(i-1),(this.slices+1)*(k-1)+(i));
-			}
-
-			//Generate the normals
-			this.normals.push(Math.cos(phiRad)*Math.cos(alphaRad),Math.cos(phiRad)*Math.sin(alphaRad),Math.sin(phiRad));
-
-			//Generate the texture coords
-			this.texCoords.push(i/(this.slices), 1 -k/this.stacks);
-
-			alpha += deltaAlpha;
-		}
-		
-		phi += deltaPhi;
-	}
-
-	//Build the cylinder's base lid
-	var baseIdx = (this.slices+1)*(this.stacks+1);
-	alpha = 0;
+	this.vertices = [];
+	this.indices = [];
+	this.normals = [];
+	this.texCoords = [];
 	
-	this.vertices.push(0,0,-this.height/2);
-	this.normals.push(0,0,-1);
-	this.texCoords.push(0.5,0.5);
-
-	for(var i = 0; i <= this.slices; i++)
-	{
-		var alphaRad = alpha*deg2Rad;
-
-		//Generate the vertices
-		this.vertices.push(this.base*Math.cos(alphaRad),this.base*Math.sin(alphaRad),-this.height/2);
-
-		//Generate the indices
-		if(i > 0)
-		{
-			this.indices.push(baseIdx, baseIdx+(i+1), baseIdx+i); 
-		}
-
-		//Generate the normals
-		this.normals.push(0,0,-1);
-
-		//Generate the texture coords
-		this.texCoords.push(0.5 + 0.5*Math.cos(alphaRad), 0.5 - 0.5*Math.sin(alphaRad));
-
-		alpha += deltaAlpha;
-	}
-
-	//Build the cylinder's top lid
-	baseIdx += (this.slices + 2); 
-	alpha = 0;
 	
-	this.vertices.push(0,0,this.height/2);
-	this.normals.push(0,0,1);
-	this.texCoords.push(0.5,0.5);
+    for(var lat=0; lat <= this.stacks; lat++)
+    {
+    	var theta = Math.PI+lat * Math.PI / this.stacks;
+    	var sinTheta = Math.sin(theta);
+    	var cosTheta = Math.cos(theta);
 
-	for(var i = 0; i <= this.slices; i++)
-	{
-		var alphaRad = alpha*deg2Rad;
+    	for(var long = 0; long <= this.slices; long++) {
+    		var alfa = long * 2 * Math.PI / this.slices;
+			var sinAlfa = Math.sin(alfa);
+			var cosAlfa = Math.cos(alfa);
 
-		//Generate the vertices
-		this.vertices.push(this.top*Math.cos(alphaRad),this.top*Math.sin(alphaRad),this.height/2);
+            
+            this.texCoords.push(1-(long/this.slices), 1-(lat/this.stacks));
+			this.vertices.push(this.raio * cosAlfa * sinTheta, this.raio * cosTheta, this.raio * sinAlfa * sinTheta);
+			this.normals.push(cosAlfa * sinTheta, cosTheta, sinAlfa * sinTheta);
+    	}
+    }
 
-		//Generate the indices
-		if(i > 0)
-		{
-			this.indices.push(baseIdx, baseIdx+i, baseIdx+(i+1)); 
-		}
+    for(var lat = 0; lat < this.stacks; lat++)
+    {
+    	for(var long = 0; long < this.slices; long++)
+    	{
+    		var firstPoint = lat * (this.slices + 1) + long;
+    		var secondPoint = firstPoint + this.slices + 1;
+            
+    		this.indices.push(firstPoint, secondPoint, firstPoint + 1);
+    		this.indices.push(secondPoint, secondPoint + 1, firstPoint + 1);
+    	}
+    }
 
-		//Generate the normals
-		this.normals.push(0,0,1);
 
-		//Generate the texture coords
-		this.texCoords.push(0.5 + 0.5*Math.cos(alphaRad), 0.5 - 0.5*Math.sin(alphaRad));
-
-		alpha += deltaAlpha;
-	}
-		
-	this.primitiveType=this.scene.gl.TRIANGLES;
-	this.initGLBuffers();
-};
+ 	this.primitiveType = this.scene.gl.TRIANGLES;
+ 	this.initGLBuffers();
+ };

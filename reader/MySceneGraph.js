@@ -713,7 +713,8 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 	*/
 }
 
-MySceneGraph.prototype.parseComponents = function(rootElement){
+MySceneGraph.prototype.parseComponents = function(rootElement)
+{
 	var elems = rootElement.getElementsByTagName('components');
 
     if(elems == null){
@@ -727,105 +728,180 @@ MySceneGraph.prototype.parseComponents = function(rootElement){
     var component = elems[0].children;
     this.componentslist = [];
 
-    for(var i = 0; i < ncomponents; i++){
-    	this.id = component[i].getAttribute('id');
-    	console.log("Component id = " + this.id);
-		
-		//Transformations
-       
-        var transformations = component[i].getElementsByTagName('transformation');
-        var ntranformation = transformations[0].children.length;
-        var transformation = transformations[0].children;
+    for(var i = 0; i < ncomponents; i++)
+    {
+    	var id = component[i].getAttribute('id');
 
-        for(var j = 0; j < ntranformation; j++){
-            var tag_name = transformation[j].tagName;
-            if(tag_name === 'transformationref'){
-                this.id = transformation[j].getAttribute('id');
-                console.log("Reference to Transformation id = " + this.id);
-            }else{
-                if(tag_name === 'translate'){
-                    this.x = transformation[j].getAttribute('x');
-                    this.y = transformation[j].getAttribute('y');
-                    this.z = transformation[j].getAttribute('z');
+    	if(id != 'ignore')
+    	{
+			var componentelem = [];
+			console.log("Component id = " + id);
+			componentelem['id'] = id;
 
-                    console.log("Translate: X = " + this.x + ";  Y = " + this.y + 
-                    ";  Z = " + this.z);
-                }
-                else if(tag_name === 'scale'){
-                    this.x = transformation[j].getAttribute('x');
-                    this.y = transformation[j].getAttribute('y');
-                    this.z = transformation[j].getAttribute('z');
+			//Transformations
 
-                    console.log("Scale: X = " + this.x + ";  Y = " + this.y + 
-                    ";  Z = " + this.z);
-                }
-                else if(tag_name === 'rotate'){
-                    this.axis = transformation[j].getAttribute('axis');
-                    this.angle = transformation[j].getAttribute('angle');
+			var transformations = component[i].getElementsByTagName('transformation');
+			var ntranformation = transformations[0].children.length;
+			var transformation = transformations[0].children;
 
-                    console.log("Rotate: AXIS = " + this.axis + 
-                    "; ANGLE = " + this.angle);
-                }
-                else{
-                    console.log("MISSING one of these elements: TRANSLATE, ROTATE OR SCALE");
-                }
-            }
-        }
+			for(var j = 0; j < ntranformation; j++)
+			{
+				var tag_name = transformation[j].tagName;
 
-    	//Materials
-        var materials = component[i].getElementsByTagName('materials');
-        if (materials == null  || materials.length==0) {
-			return "materials element is missing.";
-		}
-        var nmaterials = materials[0].children.length;
-        console.log("NUM of Materials: " + nmaterials);
-        var material = materials[0].children;
-		
-        for(var j = 0; j < nmaterials; j++){
-            this.id = material[j].getAttribute('id');
-            console.log("Material id = " + this.id);
-        }
+				if(tag_name === 'transformationref')
+				{
+					var id = transformation[j].getAttribute('id');
+					componentelem['transformationref'] = id;
+					console.log("Reference to Transformation id = " + id);
+				}
+				else
+				{
+					componentelem['transformationref'] = null;
 
-        //Textures
-        var textures = component[i].getElementsByTagName('texture');
-        if (textures == null  || textures.length==0) {
-			return "textures element is missing.";
-		}
-        var ntextures = textures.length;
-		console.log("NUM of Textures: " + ntextures);
-        for(var j = 0; j < ntextures; j++){
-            this.id = textures[j].getAttribute('id');
-            console.log("Texture id: " + this.id);
-        }
-		
-		//Children
-        var children = component[i].getElementsByTagName('children');
-        if (children == null  || children.length==0) {
-			return "children element is missing.";
-		}
-        var nchildren = children[0].children.length;
-        var kids = children[0].children;
-        console.log("NUM of Children: " + nchildren);
+					if(tag_name === 'translate')
+					{
+						var x = transformation[j].getAttribute('x');
+						var y = transformation[j].getAttribute('y');
+						var z = transformation[j].getAttribute('z');
 
-        for(var j = 0; j < nchildren; j++){
-            var tag_name = kids[j].tagName;
+						console.log("Translate: X = " + x + ";  Y = " + y + ";  Z = " + z);
 
-            if(tag_name === 'componentref'){
-                this.id = kids[j].getAttribute('id');
-                console.log("Reference to component with the id = " + this.id);
-            }
-            else if(tag_name === 'primitiveref'){
-                this.id = kids[j].getAttribute('id');
-                console.log("Reference to primitive with the id = " + this.id);
-            }
-            else{
-                console.log("The references must be: compoenetref or primitiveref");
-            }
-        }
+						componentelem['translationX'] = x;
+						componentelem['translationY'] = y;
+						componentelem['translationZ'] = z;
 
-    }   
+					}
+					else if(tag_name === 'scale')
+					{
+						var x = transformation[j].getAttribute('x');
+						var y = transformation[j].getAttribute('y');
+						var z = transformation[j].getAttribute('z');
+
+						console.log("Scale: X = " + x + ";  Y = " + y + ";  Z = " + z);
+
+						componentelem['scaleX'] = x;
+						componentelem['scaleY'] = y;
+						componentelem['scaleZ'] = z;
+					}
+					else if(tag_name === 'rotate')
+					{
+						var axis = transformation[j].getAttribute('axis');
+						var angle = transformation[j].getAttribute('angle');
+
+						console.log("Rotate: AXIS = " + axis + "; ANGLE = " + angle);
+
+						componentelem['rotateAxis'] = axis;
+						componentelem['rotateAngle'] = angle;
+					}
+					else
+					{
+						console.log("MISSING one of these elements: TRANSLATE, ROTATE OR SCALE");
+					}
+				}
+			}
+    	
+
+			//Materials
+			var materials = component[i].getElementsByTagName('materials');
+			if (materials == null  || materials.length==0) 
+			{
+				return "materials element is missing.";
+			}
+	
+			var nmaterials = materials[0].children.length;
+
+			console.log("NUM of Materials: " + nmaterials);
+			
+			var material = materials[0].children;
+
+			var materialslst = [];
+			for(var j = 0; j < nmaterials; j++)
+			{
+				var id = material[j].getAttribute('id');
+				console.log("Material id = " + id);
+				materialslst.push(id);
+
+			}
+
+			componentelem['materials'] = materialslst;
+
+			//Textures
+			var textures = component[i].getElementsByTagName('texture');
+			
+			if (textures == null  || textures.length==0) 
+			{
+				return "textures element is missing.";
+			}
+			var ntextures = textures.length;
+
+			console.log("NUM of Textures: " + ntextures);
+		 
+			
+			var id = textures[0].getAttribute('id');
+			console.log("Texture id: " + id);
+			
+			componentelem['texture'] = id;
+
+			//Children
+			var children = component[i].getElementsByTagName('children');
+			if (children == null  || children.length==0) 
+			{
+				return "children element is missing.";
+			}
+
+			var nchildren = children[0].children.length;
+			var kids = children[0].children;
+
+			console.log("NUM of Children: " + nchildren);
+
+
+			var primitiveslst = [];
+			var childrenlst = [];
+
+			componentelem['children'] = null;
+			componentelem['primitives'] = null;
+
+			for(var j = 0; j < nchildren; j++)
+			{
+				var tag_name = kids[j].tagName;
+
+				if(tag_name === 'componentref')
+				{
+					id = kids[j].getAttribute('id');
+					console.log("Reference to component with the id = " + id);
+					childrenlst.push(id);
+				}
+				else if(tag_name === 'primitiveref')
+				{
+					id = kids[j].getAttribute('id');
+					console.log("Reference to primitive with the id = " + id);
+					primitiveslst.push(id);
+				}
+				else
+				{
+					console.log("The references must be: compoenetref or primitiveref");
+				}
+			}
+
+			if(primitiveslst.length != 0)
+			{
+				componentelem['primitives'] = primitiveslst;
+			}
+
+			if(childrenlst.length != 0)
+			{
+			
+				componentelem['children'] = childrenlst;
+			}
+
+			this.componentslist.push(componentelem);
+
+			
+    		}   
+   		 }
     
-}
+	}
+
 	
 /*
  * Callback to be executed on any read error
