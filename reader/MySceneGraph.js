@@ -23,15 +23,14 @@ function MySceneGraph(filename, scene)
 }
 
 /*
- * Callback to be executed after successful reading
+ * 	Callback to be executed after successful reading. Checks if file is dsx type and starts to parse Everything by order
+ *	as specified in the  file.dsx example
  */
 MySceneGraph.prototype.onXMLReady=function() 
 {
 	console.log("XML Loading finished.");
 	var rootElement = this.reader.xmlDoc.documentElement;
 
-	console.log(rootElement.nodeName); 
-	
 	if(rootElement.nodeName != "dsx")
 	{
 		var error = "Not a DSX file";
@@ -39,7 +38,6 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 	
-	// Here should go the calls for different functions to parse the various blocks
 	var error = this.parseSceneRoot(rootElement);
 
 	if (error != null) 
@@ -111,14 +109,14 @@ MySceneGraph.prototype.onXMLReady=function()
 };
 
 /*
- * Example of method that parses elements of one block and stores information in a specific data structure
+ * Method to parse the Root and axis, stores in global variables
  */
 MySceneGraph.prototype.parseSceneRoot = function(rootElement)
  {
 	var elems = rootElement.getElementsByTagName('scene');
 	if(elems == null)
 	{
-		return "Scene Root missing";
+		return "Scene Tag Missing";
 	}
 
 	if(elems.length != 1)
@@ -127,8 +125,21 @@ MySceneGraph.prototype.parseSceneRoot = function(rootElement)
 	}
 
 	this.root = elems[0].getAttribute('root');
+
+	if(this.root == null)
+	{
+		return "Scene Root not defined";
+	}
+
+
 	this.axis_length = elems[0].getAttribute('axis_length');
-	//console.log("Scene root: " + this.root +  "; axis_length: " + this.axis_length);
+
+	if(this.axis_length == null)
+	{
+		console.log("WARING: Axis Length missing, setting axis with 2 unit of length");
+		this.axis_length = 2.0;
+	}
+	
    
 };
 
@@ -144,49 +155,100 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 		return "Either zero or more than one 'views' element found.";
 	}
 
-	this.default = elems[0].getAttribute('default');
-	//console.log("View default value= " + this.default);
-
-	var nperspectives = elems[0].children.length;
-	var perspectives = elems[0].children;
-	if(perspectives == null || perspectives == 0)
-	{
-		return "perspective element missing";
-	}
-
 	this.perspectiveContent = [];
-	for(var i = 0; i < nperspectives; i++)
+	var nperspectives = elems[0].children.length;
+	this.default = elems[0].getAttribute('default');
+
+	if(nperspectives > 0)
 	{
+		var perspectives = elems[0].children;
+
+		for(var i = 0; i < nperspectives; i++)
+		{
+			var perspective = [];
+			perspective['id'] = perspectives[i].getAttribute('id');
+
+			if((i == 0 && this.default == null) || (i == 0 && this.default == ""))
+			{
+				console.log("WARNING: Default tag not found, setting the first perpestive: " + perspective['id']);
+				this.default = perspective['id'];
+			}
+				
+			perspective['near'] = perspectives[i].getAttribute('near');
+			perspective['far'] = perspectives[i].getAttribute('far');
+			perspective['angle'] = perspectives[i].getAttribute('angle');
+
+			var elemFrom = perspectives[i].getElementsByTagName('from');
+			var from = [];
+			from['x'] = elemFrom[0].getAttribute('x');
+			from['y'] = elemFrom[0].getAttribute('y');
+			from['z'] = elemFrom[0].getAttribute('z');
+			perspective['from'] = from;
+
+			var elemTo = perspectives[i].getElementsByTagName('to');
+			var to = [];
+			to['x'] = elemTo[0].getAttribute('x');
+			to['y'] = elemTo[0].getAttribute('y');
+			to['z'] = elemTo[0].getAttribute('z');
+			perspective['to'] = to;
+
+			this.perspectiveContent.push(perspective);
+		}
+	}
+	else
+	{
+		console.log(this.default);
 		var perspective = [];
-		perspective['id'] = perspectives[i].getAttribute('id');
-		perspective['near'] = perspectives[i].getAttribute('near');
-		perspective['far'] = perspectives[i].getAttribute('far');
-		perspective['angle'] = perspectives[i].getAttribute('angle');
-		//console.log("Perspective attributes: id=" + perspective['id'] + "; 'near'=" + perspective['near'] + "; 'far'=" + perspective['far'] + "; 'angle'=" + perspective['angle']);
 
-		var elemFrom = perspectives[i].getElementsByTagName('from');
+		if(this.default == null || this.default == "")
+		{
+			console.log("WARNING: Default not defined and no perspectives, creating perspective with id 'default' and setting as default");
+			perspective['id'] = "default";
+		}
+		else
+		{
+			console.log("WARNING: Default defined but no perspectives defined, creating perspective with id" + this.default + " 'default' and setting as default");
+			perspective['id'] = this.default;
+		}
+
+		perspective['near'] = 0.1;
+		perspective['far'] = 500;
+		perspective['angle'] = 0.4;
+
 		var from = [];
-		from['x'] = elemFrom[0].getAttribute('x');
-		from['y'] = elemFrom[0].getAttribute('y');
-		from['z'] = elemFrom[0].getAttribute('z');
-
+		from['x'] = 15;
+		from['y'] = 15;
+		from['z'] = 15;
 		perspective['from'] = from;
-		//console.log("From: " + " x= " + from['x']+ " y= " + from['y']+ " z= " + from['z']);
 
-		var elemTo = perspectives[i].getElementsByTagName('to');
 		var to = [];
-		to['x'] = elemTo[0].getAttribute('x');
-		to['y'] = elemTo[0].getAttribute('y');
-		to['z'] = elemTo[0].getAttribute('z');
-
+		to['x'] = 0.0;
+		to['y'] = 0.0;
+		to['z'] = 0.0;
 		perspective['to'] = to;
-		//console.log("To: " + " x= " + to['x']+ " y= " + to['y']+ " z= " + to['z']);
-		
+
 		this.perspectiveContent.push(perspective);
 	}
 
-}
+	var n_perspectivesParsed = this.perspectiveContent.length;
+	var defaultExists = false;
 
+	for(var j = 0; j < n_perspectivesParsed; j++)
+	{
+		if(this.perspectiveContent[j]['id'] == this.default)
+		{
+			defaultExists = true;
+			break;
+		}
+	}
+
+	if(defaultExists == false)
+	{
+		this.default = this.perspectiveContent[0]['id'];
+		console.log("WARNING: Not existing default in the Perspective content, setting as: " + this.default);	
+	}
+
+}
 MySceneGraph.prototype.parseIllumination=function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('illumination');
@@ -195,41 +257,65 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 		return "Illumination element missing";
 	}
 
-	if(elems.length != 1){
+	if(elems.length != 1)
+	{
 		return "Either zero or more than one 'Illumination' element found.";
 	}
 
 	this.doublesided = elems[0].getAttribute('doublesided');
 	this.local = elems[0].getAttribute('local');
-	//console.log("Doublesided value is " + this.doublesided + " and Local value is " + this.local);
+
+
+	if(this.doublesided == null)
+	{
+		console.log("WARNING: Doublesided not found. Setting as true");
+		this.doublesided = 1;
+	}
+
+	if(this.local == null)
+	{
+		console.log("WARNING: Local not found. Setting as true");
+		this.local = 1;
+	}
 
 	this.ambientIllumination = [];
+
 	var ambientContent = elems[0].getElementsByTagName('ambient');
 	if(ambientContent == null || ambientContent == 0)
 	{
-		return "ambient element missing";
+		console.log("WARNING: Ambient Illumination not found, setting predefined attributes: R=0.2 G=0.2 B=0.2 A=1");
+		this.ambientIllumination['r'] = 0.2;
+		this.ambientIllumination['g'] = 0.2;
+		this.ambientIllumination['b'] = 0.2;
+		this.ambientIllumination['a'] = 1;
+	}
+	else
+	{
+		this.ambientIllumination['r'] = ambientContent[0].getAttribute('r');
+		this.ambientIllumination['g'] = ambientContent[0].getAttribute('g');
+		this.ambientIllumination['b'] = ambientContent[0].getAttribute('b');
+		this.ambientIllumination['a'] = ambientContent[0].getAttribute('a');
 	}
 
-	this.ambientIllumination['r'] = ambientContent[0].getAttribute('r');
-	this.ambientIllumination['g'] = ambientContent[0].getAttribute('g');
-	this.ambientIllumination['b'] = ambientContent[0].getAttribute('b');
-	this.ambientIllumination['a'] = ambientContent[0].getAttribute('a');
-
-	//console.log("Ambient RED: " + this.ambientIllumination['r'] + "; GREEN: " + this.ambientIllumination['g'] + "; BLUE: " + this.ambientIllumination['b'] + "; A: " + this.ambientIllumination['a']);
 
 	this.background = [];
 	var backgroundContent = elems[0].getElementsByTagName('background');
+
 	if(backgroundContent == null || backgroundContent == 0)
 	{
-		return "background element missing";
+		console.log("WARNING: Background color not found, setting predefined attributes: R=1 G=1 B=1 A=1");
+		this.background['r'] = 0;
+		this.background['g'] = 0;
+		this.background['b'] = 0;
+		this.background['a'] = 1;
 	}
-	this.background['r'] = backgroundContent[0].getAttribute('r');
-	this.background['g'] = backgroundContent[0].getAttribute('g');
-	this.background['b'] = backgroundContent[0].getAttribute('b');
-	this.background['a'] = backgroundContent[0].getAttribute('a');
-
-	//console.log("Background RED: " + this.background['r'] + "; GREEN: " + this.background['g'] + "; BLUE: " + this.background['b'] + "; A: " + this.background['a']);
-	
+	else
+	{
+		this.background['r'] = backgroundContent[0].getAttribute('r');
+		this.background['g'] = backgroundContent[0].getAttribute('g');
+		this.background['b'] = backgroundContent[0].getAttribute('b');
+		this.background['a'] = backgroundContent[0].getAttribute('a');
+	}
 }
 
 MySceneGraph.prototype.parseLights=function(rootElement)
@@ -514,7 +600,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement)
 
 			shininessAtt = [];
 			var shininess = material[i].getElementsByTagName('shininess');
-			shininessAtt.value = shininess[0].getAttribute('r');
+			shininessAtt.value = shininess[0].getAttribute('value');
 
 			//console.log("Shininess: r = " + shininessAtt.value);
 			materials['shininess'] = shininessAtt;
@@ -831,32 +917,29 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 			//Materials
 			var materials = component[i].getElementsByTagName('materials');
-			if (materials == null  || materials.length==0) 
+
+
+			console.log(materials);
+			/*
+			var nmaterials = materials[0].children.length;
+
+			//console.log("NUM of Materials: " + nmaterials);
+
+			var material = materials[0].children;
+
+			var materialslst = [];
+			componentelem['materials'] = materialslst;
+
+			for(var j = 0; j < nmaterials; j++)
 			{
-				console.log("WARNING: materials element of Component: " + id + " not found, creating default");
-				
-				componentelem['materials'] = "default";
-				
+				var id = material[j].getAttribute('id');
+				//console.log("Material id = " + id);
+				materialslst.push(id);
+				componentelem['materials'] = materialslst;
+
 			}
-			else
-			{
-	
-				var nmaterials = materials[0].children.length;
+			*/
 
-				//console.log("NUM of Materials: " + nmaterials);
-
-				var material = materials[0].children;
-
-				var materialslst = [];
-				for(var j = 0; j < nmaterials; j++)
-				{
-					var id = material[j].getAttribute('id');
-					//console.log("Material id = " + id);
-					materialslst.push(id);
-					componentelem['materials'] = materialslst;
-
-				}
-			}
 
 			//Textures
 			var textures = component[i].getElementsByTagName('texture');

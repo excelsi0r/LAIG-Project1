@@ -25,6 +25,8 @@ XMLscene.prototype.init = function (application)
 
 	this.axis=new CGFaxis(this);
 
+	this.clickedMaterials = 0;
+
 	//test triangel
 	this.ttriangel = new MyTriangle(this,0,0,0,1,-0,0,0,1,0,1,1);
 
@@ -199,8 +201,7 @@ XMLscene.prototype.setMaterialsGraph = function()
 		ape.setAmbient(parseFloat(AR), parseFloat(AG), parseFloat(AB), parseFloat(AA));
 		ape.setDiffuse(parseFloat(DR), parseFloat(DG), parseFloat(DB), parseFloat(DA));
 		ape.setSpecular(parseFloat(SR), parseFloat(SG), parseFloat(SB), parseFloat(SA));
-		ape.setShininess(parseFloat(sh));
-		ape.setTextureWrap('REPEAT', 'REPEAT');
+		ape.setShininess(sh);
 
 		this.materials[id] = ape;
 	}
@@ -447,6 +448,8 @@ XMLscene.prototype.createGraph = function()
 		}
 
 		var n_materials = this.graph.componentslist[i]['materials'].length;
+
+		//node.setMaterial("none")
 		
 		for(var j = 0; j < n_materials; j++)
 		{
@@ -481,6 +484,8 @@ XMLscene.prototype.createGraph = function()
 		this.nodes[id] = node;
 
 	}
+
+	console.log(this.nodes);
 
 
 };
@@ -524,6 +529,29 @@ XMLscene.prototype.onGraphLoaded = function ()
 
 };
 
+XMLscene.prototype.processMaterialsIndex=function(materialslist)
+{
+	var idindex = 0;
+	if(materialslist.length > 1)
+	{
+		if(this.clickedMaterials > 0)
+		{
+			idindex = this.clickedMaterials % materialslist.length;
+
+			if(idindex == 0)
+			{
+				idindex = materialslist.length - 1 ;
+			}
+			else
+			{
+				idindex = idindex - 1;
+			}
+		}
+	}
+
+	return idindex;
+}
+
 XMLscene.prototype.displayNodes=function(id, transformation, materials, texture, children, primitive)
 {
 		
@@ -534,6 +562,21 @@ XMLscene.prototype.displayNodes=function(id, transformation, materials, texture,
 				{
 					this.pushMatrix();	
 						this.multMatrix(transformation);
+						
+						if(materials.length != 0 && materials.length != null)
+						{
+							if(this.materials[0] != "none")
+							{
+								var idindex = this.processMaterialsIndex(materials);
+								this.materials[materials[idindex]].apply();
+							}
+						}
+						else
+						{
+							console.log("WARING: Can't Process materials, length 0 or undefined");
+						}
+
+
 						this.primitives[primitive[i]].display();
 					this.popMatrix();
 				}
@@ -564,8 +607,6 @@ XMLscene.prototype.displayNodes=function(id, transformation, materials, texture,
 					var ch = this.nodes[newid].children;
 					var pr = this.nodes[newid].primitive;
 
-					var trans;
-
 					this.displayNodes(newid, matrixtrans, materials, texture, ch, pr);		
 					
 				}
@@ -581,7 +622,7 @@ XMLscene.prototype.displayGraphElems=function()
 
 	
 	var transformation;
-	var transformationref  = this.nodes[id].transformationref;
+	/*var transformationref  = this.nodes[id].transformationref;
 
 	if(transformationref != null)
 	{
@@ -592,13 +633,14 @@ XMLscene.prototype.displayGraphElems=function()
 		transformation = this.nodes[id].transformation;
 	}
 
-	var materials = this.nodes[id].materials;
+	var materialst = this.nodes[id].materials;
 	var texture = this.nodes[id].texture;
 	var children = this.nodes[id].children;
 	var primitive = this.nodes[id].primitive;
+	*/
 
 		
-	this.displayNodes(id, transformation, materials, texture, children, primitive);
+	//this.displayNodes(id, transformation, materialst, texture, children, primitive);
 	
 };
 

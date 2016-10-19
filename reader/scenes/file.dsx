@@ -17,10 +17,10 @@
 
     <!-- deve definir-se um objeto para raiz do grafo , assim -->
     <!-- como o comprimento dos tres eixos (cilindros) -->
-    <scene root="paizinho" axis_length="1.2" />
+    <scene root="paizinho" axis_length="1.2"/>
     
     
-    <views default="first" >
+    <views default="third">
     
         <!-- declaracao obrigatoria de pelo menos uma vista; -->
         <!-- se varias vistas declaradas, o default e' a -->
@@ -40,7 +40,7 @@
     </views>
     
 
-    <illumination doublesided="0" local="1" >
+    <illumination doublesided="0" local="1">
     
         <ambient r="0.5" g="0.5" b="0.5" a="1" />
         <background r="0.0" g="0.6" b="1.0" a="1" />
@@ -53,20 +53,20 @@
         <!-- Deve existir um ou mais blocos "omni" ou "spot" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
         <omni id="1" enabled="1" >
-            <location x="3" y="3" z="3" w="1" />
+            <location x="3" y="0" z="3" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
             <diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
             <specular r="0" g="0" b="0" a="0" />
         </omni>
 
-        <omni id="2" enabled="0" >
+        <omni id="2" enabled="1" >
             <location x="2" y="3" z="2" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
             <diffuse r="1" g="1" b="1" a="1.0" />
             <specular r="0" g="0" b="0" a="0" />
         </omni>
         
-        <spot id="3" enabled="0" angle="2" exponent="1">
+        <spot id="3" enabled="1" angle="2" exponent="1">
             <!-- atencao, "target" e' diferente de "direction" -->
             <target x="0.8" y="0" z="0" />
             <location x="2" y="4" z="4" />
@@ -110,14 +110,14 @@
         <!-- Deve existir um ou mais blocos "material" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
         <material id="wood" >
-            <emission r="0" g="0" b="0" a="0" />
+            <emission r="0" g="0" b="0" a="1" />
             <ambient r="0" g="0" b="0" a="1" />
-            <diffuse r="1" g="1" b="1" a="1" />
-            <specular r="0.8" g="0" b="0.2" a="1" />
+            <diffuse r="1" g="0" b="0" a="1" />
+            <specular r="1" g="0" b="0" a="1" />
             <shininess value="50" />
         </material>
         <material id="aluminium" >
-            <emission r="0" g="0" b="0" a="0" />
+            <emission r="0" g="0" b="0" a="1" />
             <ambient r="0.3" g="0.3" b="0.3" a="1" />
             <diffuse r="0.6" g="0.6" b="0.6" a="1" />
             <specular r="0.8" g="0.8" b="0.8" a="1" />
@@ -229,15 +229,15 @@
             <transformation>
                 <transformationref id="nothing" />
             </transformation>
-       
-            <materials>
-                <material id="wood" />
-            </materials>
+       		
+       		<materials>
+           		<material id ="wood"/>
+           </materials>
                          
             <texture id="floor" />
             
             <children>
-                <componentref id="filhinho" />
+                <primitiveref id="rectangle" />
 
                 
             </children>
