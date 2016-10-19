@@ -1,5 +1,9 @@
+/**
+ * My Scene Graph
+ */
 
-function MySceneGraph(filename, scene) {
+function MySceneGraph(filename, scene) 
+{
 	this.loadedOk = null;
 	
 	// Establish bidirectional references between scene and graph
@@ -18,11 +22,6 @@ function MySceneGraph(filename, scene) {
 	this.reader.open('scenes/'+filename, this);  
 }
 
-function floatErrorChecker(value){
-	var checked = parseFloat(value);
-	return checked;
-}
-
 /*
  * Callback to be executed after successful reading
  */
@@ -30,59 +29,77 @@ MySceneGraph.prototype.onXMLReady=function()
 {
 	console.log("XML Loading finished.");
 	var rootElement = this.reader.xmlDoc.documentElement;
+
+	console.log(rootElement.nodeName); 
+	
+	if(rootElement.nodeName != "dsx")
+	{
+		var error = "Not a DSX file";
+		this.onXMLError(error);
+		return;
+	}
 	
 	// Here should go the calls for different functions to parse the various blocks
 	var error = this.parseSceneRoot(rootElement);
 
-	if (error != null) {
+	if (error != null) 
+	{
 		this.onXMLError(error);
 		return;
 	}
 
 	var error = this.parseViews(rootElement);
-	if(error != null){
+	if(error != null)
+	{
 		this.onXMLError(error);
 		return;
 	}
 	var error =  this.parseIllumination(rootElement);
 
-	if(error != null){
+	if(error != null)
+	{
 		this.onXMLError(error);
 		return;
 	}	
 	
 	var error = this.parseLights(rootElement);
-	if(error != null){
+	if(error != null)
+	{
 		this.onXMLError(error);
 		return;
 	}
 	var error =  this.parseTextures(rootElement);
 
-	if(error != null){
+	if(error != null)
+	{
 		this.onXMLError(error);
 		return;
 	}
 
 	var error = this.parseMaterials(rootElement);
-	if(error != null){
+	if(error != null)
+	{
 		this.onXMLError(error);
 		return;
 	}
 
 	var error = this.parseTransformations(rootElement);
-	if(error != null){
+	if(error != null)
+	{
 		this.onXMLError(error);
 		return;
 	}
 
 	var error = this.parsePrimitives(rootElement);
-	if(error != null){
+	if(error != null)
+	{
 		this.onXMLError(error);
 		return;
 	}
 
 	var error = this.parseComponents(rootElement);
-	if(error != null){
+	if(error != null)
+	{
 		this.onXMLError(error);
 		return;
 	}
@@ -96,8 +113,8 @@ MySceneGraph.prototype.onXMLReady=function()
 /*
  * Example of method that parses elements of one block and stores information in a specific data structure
  */
-MySceneGraph.prototype.parseSceneRoot = function(rootElement) {
-	
+MySceneGraph.prototype.parseSceneRoot = function(rootElement)
+ {
 	var elems = rootElement.getElementsByTagName('scene');
 	if(elems == null)
 	{
@@ -111,37 +128,41 @@ MySceneGraph.prototype.parseSceneRoot = function(rootElement) {
 
 	this.root = elems[0].getAttribute('root');
 	this.axis_length = elems[0].getAttribute('axis_length');
-	console.log("Scene root: " + this.root +  "; axis_length: " + this.axis_length);
+	//console.log("Scene root: " + this.root +  "; axis_length: " + this.axis_length);
    
 };
 
 MySceneGraph.prototype.parseViews = function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('views');
-	if(elems == null){
+	if(elems == null)
+	{
 		return "Views element missing";
 	}
-	if(elems.length != 1){
+	if(elems.length != 1)
+	{
 		return "Either zero or more than one 'views' element found.";
 	}
 
 	this.default = elems[0].getAttribute('default');
-	console.log("View default value= " + this.default);
+	//console.log("View default value= " + this.default);
 
 	var nperspectives = elems[0].children.length;
 	var perspectives = elems[0].children;
-	if(perspectives == null || perspectives == 0){
+	if(perspectives == null || perspectives == 0)
+	{
 		return "perspective element missing";
 	}
 
 	this.perspectiveContent = [];
-	for(var i = 0; i < nperspectives; i++){
+	for(var i = 0; i < nperspectives; i++)
+	{
 		var perspective = [];
 		perspective['id'] = perspectives[i].getAttribute('id');
 		perspective['near'] = perspectives[i].getAttribute('near');
 		perspective['far'] = perspectives[i].getAttribute('far');
 		perspective['angle'] = perspectives[i].getAttribute('angle');
-		console.log("Perspective attributes: id=" + perspective['id'] + "; 'near'=" + perspective['near'] + "; 'far'=" + perspective['far'] + "; 'angle'=" + perspective['angle']);
+		//console.log("Perspective attributes: id=" + perspective['id'] + "; 'near'=" + perspective['near'] + "; 'far'=" + perspective['far'] + "; 'angle'=" + perspective['angle']);
 
 		var elemFrom = perspectives[i].getElementsByTagName('from');
 		var from = [];
@@ -150,7 +171,7 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 		from['z'] = elemFrom[0].getAttribute('z');
 
 		perspective['from'] = from;
-		console.log("From: " + " x= " + from['x']+ " y= " + from['y']+ " z= " + from['z']);
+		//console.log("From: " + " x= " + from['x']+ " y= " + from['y']+ " z= " + from['z']);
 
 		var elemTo = perspectives[i].getElementsByTagName('to');
 		var to = [];
@@ -159,7 +180,7 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 		to['z'] = elemTo[0].getAttribute('z');
 
 		perspective['to'] = to;
-		console.log("To: " + " x= " + to['x']+ " y= " + to['y']+ " z= " + to['z']);
+		//console.log("To: " + " x= " + to['x']+ " y= " + to['y']+ " z= " + to['z']);
 		
 		this.perspectiveContent.push(perspective);
 	}
@@ -169,7 +190,8 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 MySceneGraph.prototype.parseIllumination=function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('illumination');
-	if(elems == null){
+	if(elems == null)
+	{
 		return "Illumination element missing";
 	}
 
@@ -179,11 +201,12 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 
 	this.doublesided = elems[0].getAttribute('doublesided');
 	this.local = elems[0].getAttribute('local');
-	console.log("Doublesided value is " + this.doublesided + " and Local value is " + this.local);
+	//console.log("Doublesided value is " + this.doublesided + " and Local value is " + this.local);
 
 	this.ambientIllumination = [];
 	var ambientContent = elems[0].getElementsByTagName('ambient');
-	if(ambientContent == null || ambientContent == 0){
+	if(ambientContent == null || ambientContent == 0)
+	{
 		return "ambient element missing";
 	}
 
@@ -192,11 +215,12 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 	this.ambientIllumination['b'] = ambientContent[0].getAttribute('b');
 	this.ambientIllumination['a'] = ambientContent[0].getAttribute('a');
 
-	console.log("Ambient RED: " + this.ambientIllumination['r'] + "; GREEN: " + this.ambientIllumination['g'] + "; BLUE: " + this.ambientIllumination['b'] + "; A: " + this.ambientIllumination['a']);
+	//console.log("Ambient RED: " + this.ambientIllumination['r'] + "; GREEN: " + this.ambientIllumination['g'] + "; BLUE: " + this.ambientIllumination['b'] + "; A: " + this.ambientIllumination['a']);
 
 	this.background = [];
 	var backgroundContent = elems[0].getElementsByTagName('background');
-	if(backgroundContent == null || backgroundContent == 0){
+	if(backgroundContent == null || backgroundContent == 0)
+	{
 		return "background element missing";
 	}
 	this.background['r'] = backgroundContent[0].getAttribute('r');
@@ -204,14 +228,15 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 	this.background['b'] = backgroundContent[0].getAttribute('b');
 	this.background['a'] = backgroundContent[0].getAttribute('a');
 
-	console.log("Background RED: " + this.background['r'] + "; GREEN: " + this.background['g'] + "; BLUE: " + this.background['b'] + "; A: " + this.background['a']);
+	//console.log("Background RED: " + this.background['r'] + "; GREEN: " + this.background['g'] + "; BLUE: " + this.background['b'] + "; A: " + this.background['a']);
 	
 }
 
 MySceneGraph.prototype.parseLights=function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('lights');
-	if(elems == null){
+	if(elems == null)
+	{
 		return "Lights element missing";
 	}
 
@@ -221,23 +246,24 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 	}
 
 	var nlights = elems[0].children.length;
-	console.log("Number of lights in the scene: " + nlights);
-	//var typelights = elems[0].children[2].tagName;
+	//console.log("Number of lights in the scene: " + nlights);
 	var light = elems[0].children;
 	this.lightslist = [];
 	var tagMissing = false;
 
-	for(var i = 0; i < nlights; i++){
+	for(var i = 0; i < nlights; i++)
+	{
 		var typelight = light[i].tagName;
 		var lights = [];
 
 		//console.log("Type of lights in the scene: " + typelights);
-		if(typelight == 'omni'){
+		if(typelight == 'omni')
+		{
 			lights['id'] = this.reader.getFloat(light[i], 'id');
 			lights.enabled = this.reader.getBoolean(light[i], 'enabled');
 			lights.omni = true;
 			lights.spot = false;
-			console.log("Lights 'omni' attributes: 'id'=" + lights.id + "; 'enabled'=" + lights.enabled);
+			//console.log("Lights 'omni' attributes: 'id'=" + lights.id + "; 'enabled'=" + lights.enabled);
 			//light location
 			var location = [];
 			var elemLocation = light[i].getElementsByTagName('location');
@@ -246,7 +272,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			location.z = elemLocation[0].getAttribute('z');
 			location.w = elemLocation[0].getAttribute('w');
 			lights['location'] = location;
-			console.log("Omni lights location X: " + location.x + "; Y: " + location.y + "; Z: " + location.z + "; W: " + location.w);
+			//console.log("Omni lights location X: " + location.x + "; Y: " + location.y + "; Z: " + location.z + "; W: " + location.w);
 
 			var ambient = [];
 			var elemAmbient = light[i].getElementsByTagName('ambient');
@@ -255,7 +281,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			ambient.b = elemAmbient[0].getAttribute('b');
 			ambient.a = elemAmbient[0].getAttribute('a');
 			lights['ambient'] = ambient;
-			console.log("Omni lights ambient RED: " + ambient.r + "; GREEN: " + ambient.g + "; BLUE: " + ambient.b + "; Alpha: " + ambient.a);
+			//console.log("Omni lights ambient RED: " + ambient.r + "; GREEN: " + ambient.g + "; BLUE: " + ambient.b + "; Alpha: " + ambient.a);
 
 			diffuse = [];
 			var elemDiffuse = light[i].getElementsByTagName('diffuse');
@@ -264,7 +290,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			diffuse.b = elemDiffuse[0].getAttribute('b');
 			diffuse.a = elemDiffuse[0].getAttribute('a');
 			lights['diffuse'] = diffuse;
-			console.log("Omni lights diffuse RED: " + diffuse.r + "; GREEN: " + diffuse.g + "; BLUE: " + diffuse.b + "; Alpha: " + diffuse.a);
+			//console.log("Omni lights diffuse RED: " + diffuse.r + "; GREEN: " + diffuse.g + "; BLUE: " + diffuse.b + "; Alpha: " + diffuse.a);
 
 			specular = [];
 			var elemSpecular = light[i].getElementsByTagName('specular');
@@ -273,20 +299,23 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			specular.b = elemSpecular[0].getAttribute('b');
 			specular.a = elemSpecular[0].getAttribute('a');
 			lights['specular'] = specular;
-			console.log("Omni lights specular RED: " + specular.r + "; GREEN: " + specular.g + "; BLUE: " + specular.b + "; Alpha: " + specular.a);
+			
+			//console.log("Omni lights specular RED: " + specular.r + "; GREEN: " + specular.g + "; BLUE: " + specular.b + "; Alpha: " + specular.a);
 			//omni lights elements saves in lightslist
 			this.lightslist.push(lights); 
-			console.log(this.lightslist);
+			//console.log(this.lightslist);
 
 
-		}else if(typelight == 'spot'){
+		}
+		else if(typelight == 'spot')
+		{
 			lights.id = this.reader.getFloat(light[i], 'id');
 			lights.enabled = this.reader.getBoolean(light[i], 'enabled');
 			lights.angle = this.reader.getFloat(light[i], 'angle');
 			lights.exponent = this.reader.getFloat(light[i], 'exponent');
 			lights.omni = false;
 			lights.spot = true;
-			console.log("Lights 'spot' attributes: 'id'=" + lights.id + "; 'enabled'=" + lights.enabled + "; 'angle'=" + lights.angle + "; 'exponent'=" + lights.exponent);
+			//console.log("Lights 'spot' attributes: 'id'=" + lights.id + "; 'enabled'=" + lights.enabled + "; 'angle'=" + lights.angle + "; 'exponent'=" + lights.exponent);
 
 			//light target
 			target = [];
@@ -295,7 +324,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			target.y = elemTarget[0].getAttribute('y');
 			target.z = elemTarget[0].getAttribute('z');
 			lights['target'] = target;
-			console.log("Spot lights target X: " + target.x + "; Y: " + target.y + "; Z: " + target.z);
+			//console.log("Spot lights target X: " + target.x + "; Y: " + target.y + "; Z: " + target.z);
 
 			//light location
 			location = [];
@@ -304,7 +333,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			location.y = elemLocation[0].getAttribute('y');
 			location.z = elemLocation[0].getAttribute('z');
 			lights['location'] = location;
-			console.log("Spot lights location X: " + location.x + "; Y: " + location.y + "; Z: " + location.z);
+			//console.log("Spot lights location X: " + location.x + "; Y: " + location.y + "; Z: " + location.z);
 
 			this.ambient = [];
 			var elemAmbient = light[i].getElementsByTagName('ambient');
@@ -313,7 +342,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			ambient.b = elemAmbient[0].getAttribute('b');
 			ambient.a = elemAmbient[0].getAttribute('a');
 			lights['ambient'] = ambient;
-			console.log("Spot lights ambient RED: " + ambient.r + "; GREEN: " + ambient.g + "; BLUE: " + ambient.b + "; Alpha: " + ambient.a);
+			//console.log("Spot lights ambient RED: " + ambient.r + "; GREEN: " + ambient.g + "; BLUE: " + ambient.b + "; Alpha: " + ambient.a);
 
 			diffuse = [];
 			var elemDiffuse = light[i].getElementsByTagName('diffuse');
@@ -322,7 +351,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			diffuse.b = elemDiffuse[0].getAttribute('b');
 			diffuse.a = elemDiffuse[0].getAttribute('a');
 			lights['diffuse'] = diffuse;
-			console.log("Spot lights diffuse RED: " + diffuse.r + "; GREEN: " + diffuse.g + "; BLUE: " + diffuse.b + "; Alpha: " + diffuse.a);
+			//console.log("Spot lights diffuse RED: " + diffuse.r + "; GREEN: " + diffuse.g + "; BLUE: " + diffuse.b + "; Alpha: " + diffuse.a);
 
 			specular = [];
 			var elemSpecular = light[i].getElementsByTagName('specular');
@@ -331,28 +360,34 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			specular.b = elemSpecular[0].getAttribute('b');
 			specular.a = elemSpecular[0].getAttribute('a');
 			lights['specular'] = specular;
-			console.log("Spot lights specular RED: " + specular.r + "; GREEN: " + specular.g + "; BLUE: " + specular.b + "; Alpha: " + specular.a);
+			//console.log("Spot lights specular RED: " + specular.r + "; GREEN: " + specular.g + "; BLUE: " + specular.b + "; Alpha: " + specular.a);
 			//spot lights elements saves in lightslist
 			this.lightslist.push(lights); 
-			console.log(this.lightslist);
-		}else{
+			//console.log(this.lightslist);
+		}
+		else
+		{
 			tagMissing = true;
 			break;
 		}
 	}
-	if(tagMissing){
+	if(tagMissing)
+	{
 		console.log("Missing 'omni' and 'spot' type of lights. Change tag name please.");
 	}
 	
 }
 
-MySceneGraph.prototype.parseTextures = function(rootElement){
+MySceneGraph.prototype.parseTextures = function(rootElement)
+{
 	elems = rootElement.getElementsByTagName('textures');
 
-	if(elems == null){
+	if(elems == null)
+	{
 		return "Textures element missing";
 	}
-	if(elems.length != 1){
+	if(elems.length != 1)
+	{
 		return "Either zero or more than one 'Textures' element found.";
 	}
 
@@ -378,134 +413,206 @@ MySceneGraph.prototype.parseTextures = function(rootElement){
 
 }
 
-MySceneGraph.prototype.parseMaterials = function(rootElement){
+MySceneGraph.prototype.parseMaterials = function(rootElement)
+{
 	elems = rootElement.getElementsByTagName('materials');
 
-	if(elems == null){
-		return "materials element missing";
-	}
-	
-	var nmaterials = elems[0].children.length;
-	console.log("num. of materials: " + nmaterials);
-	var material = elems[0].children;
 	this.materialslist = [];
 
-	for(var i = 0; i < nmaterials; i++)
+	if(elems == null)
 	{
-		var id = material[i].getAttribute('id');
-		console.log("Material id: " + this.id);
-		materials = [];
-		
-		materials['id'] = id;
+		console.log("WARNING: No material found, creating 'default' material");
 
-		emissionAtt = [];
-		var emission = material[i].getElementsByTagName('emission');
-		emissionAtt.r = emission[0].getAttribute('r');
-		emissionAtt.g = emission[0].getAttribute('g');
-		emissionAtt.b = emission[0].getAttribute('b');
-		emissionAtt.a = emission[0].getAttribute('a');
-		console.log("Emission: r = " + emissionAtt.r+ " g = " + emissionAtt.g  +  " b = " + emissionAtt.b + " a = " +  emissionAtt.a);
+		var materials = [];
+
+		materials['id'] = "default";
+
+		var emissionAtt = [];
+		emissionAtt.r  = 0;
+		emissionAtt.g  = 0;
+		emissionAtt.b  = 0;
+		emissionAtt.a  = 1;
 		materials['emission'] = emissionAtt;
 
-		ambientAtt = [];
-		var ambient = material[i].getElementsByTagName('ambient');
-		ambientAtt.r = ambient[0].getAttribute('r');
-		ambientAtt.g = ambient[0].getAttribute('g');
-		ambientAtt.b = ambient[0].getAttribute('b');
-		ambientAtt.a = ambient[0].getAttribute('a');
-		console.log("Ambient: r = " + ambientAtt.r+ " g = " + ambientAtt.g  +  " b = " + ambientAtt.b + " a = " +  ambientAtt.a);
+		var ambientAtt = [];
+		ambientAtt.r  = 0.1;
+		ambientAtt.g  = 0.1;
+		ambientAtt.b  = 0.1;
+		ambientAtt.a  = 1;
 		materials['ambient'] = ambientAtt;
 
-		diffuseAtt = [];
-		var diffuse = material[i].getElementsByTagName('diffuse');
-		diffuseAtt.r = diffuse[0].getAttribute('r');
-		diffuseAtt.g = diffuse[0].getAttribute('g');
-		diffuseAtt.b = diffuse[0].getAttribute('b');
-		diffuseAtt.a = diffuse[0].getAttribute('a');
-		console.log("Diffuse: r = " + diffuseAtt.r+ " g = " + diffuseAtt.g  +  " b = " + diffuseAtt.b + " a = " +  diffuseAtt.a);
+		var diffuseAtt = [];
+		difuseAtt.r  = 0.1;
+		difuseAtt.g  = 0.1;
+		difuseAtt.b  = 0.1;
+		difuseAtt.a  = 1;
 		materials['diffuse'] = diffuseAtt;
 
-		specularAtt = [];
-		var specular = material[i].getElementsByTagName('specular');
-		specularAtt.r = specular[0].getAttribute('r');
-		specularAtt.g = specular[0].getAttribute('g');
-		specularAtt.b = specular[0].getAttribute('b');
-		specularAtt.a = specular[0].getAttribute('a');
-		console.log("Specular: r = " + specularAtt.r+ " g = " + specularAtt.g  +  " b = " + specularAtt.b + " a = " +  specularAtt.a);
+		var specularAtt = [];
+		specularAtt.r = 0.1;
+		specularAtt.g = 0.1;
+		specularAtt.b = 0.1;
+		specularAtt.a = 0.1;
 		materials['specular'] = specularAtt;
 
-		shininessAtt = [];
-		var shininess = material[i].getElementsByTagName('shininess');
-		shininessAtt.value = shininess[0].getAttribute('r');
-		
-		console.log("Shininess: r = " + shininessAtt.value);
+		var shininessAtt = [];
+		shininessAtt.value = 0.1;
 		materials['shininess'] = shininessAtt;
-		//material attributes saved in a list of materials
+		
 		this.materialslist.push(materials);
-		console.log(this.materialslist);
 	}
+	else
+	{
+	
+		var nmaterials = elems[0].children.length;
+		//console.log("num. of materials: " + nmaterials);
+		var material = elems[0].children;
+		
+		for(var i = 0; i < nmaterials; i++)
+		{
+			var id = material[i].getAttribute('id');
+			//console.log("Material id: " + id);
+			var materials = [];
 
+			materials['id'] = id;
+
+			var emissionAtt = [];
+			var emission = material[i].getElementsByTagName('emission');
+			emissionAtt.r = emission[0].getAttribute('r');
+			emissionAtt.g = emission[0].getAttribute('g');
+			emissionAtt.b = emission[0].getAttribute('b');
+			emissionAtt.a = emission[0].getAttribute('a');
+			//console.log("Emission: r = " + emissionAtt.r+ " g = " + emissionAtt.g  +  " b = " + emissionAtt.b + " a = " +  emissionAtt.a);
+			materials['emission'] = emissionAtt;
+
+			ambientAtt = [];
+			var ambient = material[i].getElementsByTagName('ambient');
+			ambientAtt.r = ambient[0].getAttribute('r');
+			ambientAtt.g = ambient[0].getAttribute('g');
+			ambientAtt.b = ambient[0].getAttribute('b');
+			ambientAtt.a = ambient[0].getAttribute('a');
+			//console.log("Ambient: r = " + ambientAtt.r+ " g = " + ambientAtt.g  +  " b = " + ambientAtt.b + " a = " +  ambientAtt.a);
+			materials['ambient'] = ambientAtt;
+
+			diffuseAtt = [];
+			var diffuse = material[i].getElementsByTagName('diffuse');
+			diffuseAtt.r = diffuse[0].getAttribute('r');
+			diffuseAtt.g = diffuse[0].getAttribute('g');
+			diffuseAtt.b = diffuse[0].getAttribute('b');
+			diffuseAtt.a = diffuse[0].getAttribute('a');
+			//console.log("Diffuse: r = " + diffuseAtt.r+ " g = " + diffuseAtt.g  +  " b = " + diffuseAtt.b + " a = " +  diffuseAtt.a);
+			materials['diffuse'] = diffuseAtt;
+
+			specularAtt = [];
+			var specular = material[i].getElementsByTagName('specular');
+			specularAtt.r = specular[0].getAttribute('r');
+			specularAtt.g = specular[0].getAttribute('g');
+			specularAtt.b = specular[0].getAttribute('b');
+			specularAtt.a = specular[0].getAttribute('a');
+			//console.log("Specular: r = " + specularAtt.r+ " g = " + specularAtt.g  +  " b = " + specularAtt.b + " a = " +  specularAtt.a);
+			materials['specular'] = specularAtt;
+
+			shininessAtt = [];
+			var shininess = material[i].getElementsByTagName('shininess');
+			shininessAtt.value = shininess[0].getAttribute('r');
+
+			//console.log("Shininess: r = " + shininessAtt.value);
+			materials['shininess'] = shininessAtt;
+			//material attributes saved in a list of materials
+			this.materialslist.push(materials);
+			//console.log(this.materialslist);
+		}
+	}
 }
 
 
-MySceneGraph.prototype.parseTransformations = function(rootElement){
+MySceneGraph.prototype.parseTransformations = function(rootElement)
+{
     var elems = rootElement.getElementsByTagName('transformations');
 	
-	if(elems == null){
+	if(elems == null)
+	{
 		return "Transformation element missing";
 	}
-	if(elems.length != 1){
+	if(elems.length != 1)
+	{
 		return "Either zero or more than one 'Transformation' element found.";
 	}
 
     var ntransformations = elems[0].children.length;
-    console.log("NUM. of transformations: " + ntransformations);
+    //console.log("NUM. of transformations: " + ntransformations);
 
     var transformation = elems[0].children;
 	this.transformationlist = [];
 
-    for (var i = 0; i < ntransformations; i++){
+    for (var i = 0; i < ntransformations; i++)
+    {
         var id = transformation[i].getAttribute('id');
-        console.log("Transformation id: " + id);
+        //console.log("Transformation id: " + id);
 		
 		transformations = [];
 		transformations['id'] = id;
 		
 		translateAtt = [];
+		
 		var translate = transformation[i].getElementsByTagName('translate');
-		if (translate == null  || translate.length==0) {
-			return "translate element is missing.";
+		if (translate == null  || translate.length==0)
+		{
+			console.log("WARNING: No translation found on Transformation with id: " + id + ", giving translation (0,0,0) ");
+			translateAtt['x'] = 0; 
+			translateAtt['y'] = 0;
+			translateAtt['z'] = 0;
 		}
-		translateAtt['x'] = translate[0].getAttribute('x');
-		translateAtt['y'] = translate[0].getAttribute('y');
-		translateAtt['z'] = translate[0].getAttribute('z');
-		console.log("Translate: X = " + translateAtt['x'] + ";  Y = " + translateAtt['y'] + ";  Z = " + translateAtt['z']);
+		else
+		{
+			translateAtt['x'] = translate[0].getAttribute('x');
+			translateAtt['y'] = translate[0].getAttribute('y');
+			translateAtt['z'] = translate[0].getAttribute('z');
+		}
+		//console.log("Translate: X = " + translateAtt['x'] + ";  Y = " + translateAtt['y'] + ";  Z = " + translateAtt['z']);
 		transformations['translate'] = translateAtt;
 		
 		rotateAtt = [];
-		var rotate = transformation[i].getElementsByTagName('rotate');
-		if (rotate == null  || rotate.length==0) {
-			return "rotate element is missing.";
-		}
-		rotateAtt['axis'] = rotate[0].getAttribute('axis');
-		rotateAtt['angle'] = rotate[0].getAttribute('angle');
 		
-		console.log("Rotate: AXIS = " + rotateAtt['axis'] + ";  ANGLE = " + rotateAtt['angle']);
+		var rotate = transformation[i].getElementsByTagName('rotate');
+		if (rotate == null  || rotate.length==0) 
+		{
+			console.log("WARNING: No rotation found on Transformation with id: " + id + ", giving rotation (x, 0) ");
+			rotateAtt['axis'] = "x";
+			rotateAtt['angle'] = 0;			
+		}
+		else
+		{
+			rotateAtt['axis'] = rotate[0].getAttribute('axis');
+			rotateAtt['angle'] = rotate[0].getAttribute('angle');
+		}
+		
+		
+		//console.log("Rotate: AXIS = " + rotateAtt['axis'] + ";  ANGLE = " + rotateAtt['angle']);
 		transformations['rotate'] = rotateAtt;
 		
 		scaleAtt = [];
 		var scale = transformation[i].getElementsByTagName('scale');
-		if (scale == null  || scale.length==0) {
-			return "scale element is missing.";
+		
+		if (scale == null  || scale.length==0) 
+		{
+			scaleAtt['x'] = 1
+			scaleAtt['y'] = 1
+			scaleAtt['z'] = 1
 		}
-		scaleAtt['x'] = scale[0].getAttribute('x');
-		scaleAtt['y'] = scale[0].getAttribute('y');
-		scaleAtt['z'] = scale[0].getAttribute('z');
-		console.log("Scale: X = " + scaleAtt['x'] + ";  Y = " + scaleAtt['y'] + ";  Z = " + scaleAtt['z']);
+		else
+		{
+			console.log("WARNING: No scale found on Transformation with id: " + id + ", giving scale (1,1,1) ");
+			scaleAtt['x'] = scale[0].getAttribute('x');
+			scaleAtt['y'] = scale[0].getAttribute('y');
+			scaleAtt['z'] = scale[0].getAttribute('z');
+		}
+		
+		//console.log("Scale: X = " + scaleAtt['x'] + ";  Y = " + scaleAtt['y'] + ";  Z = " + scaleAtt['z']);
 		transformations['scale'] = scaleAtt;
        
      	this.transformationlist.push(transformations);
-     	console.log(this.transformationlist);
+     	//console.log(this.transformationlist);
     }
 }
 
@@ -513,15 +620,17 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 {
     var elems = rootElement.getElementsByTagName('primitives');
 	
-	if(elems == null){
+	if(elems == null)
+	{
 		return "Primitives element missing";
 	}
-	if(elems.length != 1){
+	if(elems.length != 1)
+	{
 		return "Either zero or more than one 'primitives' element found.";
 	}
 
     var nprimitives = elems[0].children.length;
-    console.log("NUM. of primitives: " + nprimitives);
+    //console.log("NUM. of primitives: " + nprimitives);
 
     var primitive = elems[0].children;
 	this.primitiveslist = [];
@@ -614,113 +723,21 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 			primitiveitem['slices'] = slices;
 			primitiveitem['loops'] = loops;
 		}
-		console.log(primitiveitem);
+		//console.log(primitiveitem);
 		this.primitiveslist.push(primitiveitem);
 	};
-
-
-
-/*
-    for (var i = 0; i < nprimitives; i++)
-	{
-        this.id = primitive[i].getAttribute('id');
-        console.log("Primitive id: " + this.id);
-		
-		primitives = [];
-
-		rectangleAtt = [];
-		var rectangle = primitive[i].getElementsByTagName('rectangle');
-		if (rectangle == null  || rectangle.length==0) {
-			return "rectangle element is missing.";
-		}
-		rectangleAtt['x1'] = rectangle[0].getAttribute('x1');
-		rectangleAtt['y1'] = rectangle[0].getAttribute('y1');
-		rectangleAtt['x2'] = rectangle[0].getAttribute('x2');
-		rectangleAtt['y2'] = rectangle[0].getAttribute('y2');
-
-		console.log("Rectangle attributes: X1 = " + rectangleAtt['x1'] + ";  Y1 = " + rectangleAtt['y1']
-                + ";  X2 = " + rectangleAtt['x2'] + ";  Y2 = " + rectangleAtt['y2']);
-		primitives['rectangle'] = rectangleAtt;
-
-		//Triangle
-		triangleAtt = [];
-		var triangle = primitive[i].getElementsByTagName('triangle');
-		if (triangle == null  || triangle.length==0) {
-			return "triangle element is missing.";
-		}
-		triangleAtt['x1'] = triangle[0].getAttribute('x1');
-		triangleAtt['y1'] = triangle[0].getAttribute('y1');
-		triangleAtt['x2'] = triangle[0].getAttribute('x2');
-		triangleAtt['y2'] = triangle[0].getAttribute('y2');
-		triangleAtt['x3'] = triangle[0].getAttribute('x3');
-		triangleAtt['y3'] = triangle[0].getAttribute('y3');
-
-		console.log("Triangle attributes: X1 = " + triangleAtt['x1'] + ";  Y1 = " + triangleAtt['y1']
-                + ";  X2 = " + triangleAtt['x2'] + ";  Y2 = " + triangleAtt['y2']
-                + ";  x3 = " + triangleAtt['x3'] + ";  Y3 = " + triangleAtt['y3']);
-		primitives['triangle'] = triangleAtt;
-		
-		//cylinder
-		cylinderAtt = [];
-		var cylinder = primitive[i].getElementsByTagName('cylinder');
-		if (cylinder == null  || cylinder.length==0) {
-			return "cylinder element is missing.";
-		}
-		cylinderAtt['base'] = cylinder[0].getAttribute('base');
-		cylinderAtt['top'] = cylinder[0].getAttribute('top');
-		cylinderAtt['height'] = cylinder[0].getAttribute('height');
-		cylinderAtt['slices'] = cylinder[0].getAttribute('slices');
-		cylinderAtt['stacks'] = cylinder[0].getAttribute('stacks');
-
-		console.log("Cylinder atts: BASE = " + cylinderAtt['base'] + "; TOP = " +  cylinderAtt['top']
-                + ";  HEIGHT = " + cylinderAtt['height'] + ";  SLICE = " + cylinderAtt['slices']
-                + "  STACK = " + cylinderAtt['stacks']);
-		primitives['cylinder'] = cylinderAtt;
-
-		//sphere
-		sphereAtt = [];
-		var sphere = primitive[i].getElementsByTagName('sphere');
-		if (sphere == null  || sphere.length==0) {
-			return "sphere element is missing.";
-		}
-		sphereAtt['radius'] = sphere[0].getAttribute('radius');
-		sphereAtt['slices'] = sphere[0].getAttribute('slices');
-		sphereAtt['stacks'] = sphere[0].getAttribute('stacks');
-
-		console.log("Sphere attributes: RADIUS = " + sphereAtt['radius'] + 
-		";  SLICES = " + sphereAtt['slices'] + "; STACKS = " + sphereAtt['stacks']);
-		primitives['sphere'] = sphereAtt;
-
-		//torus
-		torusAtt = [];
-		var torus = primitive[i].getElementsByTagName('torus');
-		if (torus == null  || torus.length==0) {
-			return "torus element is missing.";
-		}
-		
-		torusAtt['inner'] = torus[0].getAttribute('inner');
-		torusAtt['outer'] = torus[0].getAttribute('outer');
-		torusAtt['slices'] = torus[0].getAttribute('slices');
-		torusAtt['loops'] = torus[0].getAttribute('loops');
-
-		console.log("Torus attributes: INNER = " + torusAtt['inner'] + ";  OUTER = " + torusAtt['outer']
-                + ";  SLICES = " + torusAtt['slices'] + ";  LOOPS = " + torusAtt['loops'] );
-		primitives['torus'] = torusAtt;
-
-     	this.primitiveslist.push(primitives);
-     	console.log(this.primitiveslist);
-    }
-	*/
 }
 
 MySceneGraph.prototype.parseComponents = function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('components');
 
-    if(elems == null){
+    if(elems == null)
+    {
 		return "Components element missing";
 	}
-	if(elems.length != 1){
+	if(elems.length != 1)
+	{
 		return "Either zero or more than one 'components' element found.";
 	}
 
@@ -735,7 +752,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
     	if(id != 'ignore')
     	{
 			var componentelem = [];
-			console.log("Component id = " + id);
+			//console.log("Component id = " + id);
 			componentelem['id'] = id;
 
 			//Transformations
@@ -743,7 +760,18 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			var transformations = component[i].getElementsByTagName('transformation');
 			var ntranformation = transformations[0].children.length;
 			var transformation = transformations[0].children;
-
+			
+			componentelem['translationX'] = 0;
+			componentelem['translationY'] = 0;
+			componentelem['translationZ'] = 0;
+			
+			componentelem['scaleX'] = 1;
+			componentelem['scaleY'] = 1;
+			componentelem['scaleZ'] = 1;
+			
+			componentelem['rotateAxis'] = "x";
+			componentelem['rotateAngle'] = 0;
+			
 			for(var j = 0; j < ntranformation; j++)
 			{
 				var tag_name = transformation[j].tagName;
@@ -752,43 +780,43 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 				{
 					var id = transformation[j].getAttribute('id');
 					componentelem['transformationref'] = id;
-					console.log("Reference to Transformation id = " + id);
+					//console.log("Reference to Transformation id = " + id);
 				}
 				else
 				{
 					componentelem['transformationref'] = null;
 
-					if(tag_name === 'translate')
+					if(tag_name == 'translate')
 					{
 						var x = transformation[j].getAttribute('x');
 						var y = transformation[j].getAttribute('y');
 						var z = transformation[j].getAttribute('z');
 
-						console.log("Translate: X = " + x + ";  Y = " + y + ";  Z = " + z);
+						//console.log("Translate: X = " + x + ";  Y = " + y + ";  Z = " + z);
 
 						componentelem['translationX'] = x;
 						componentelem['translationY'] = y;
 						componentelem['translationZ'] = z;
 
 					}
-					else if(tag_name === 'scale')
+					else if(tag_name == 'scale')
 					{
 						var x = transformation[j].getAttribute('x');
 						var y = transformation[j].getAttribute('y');
 						var z = transformation[j].getAttribute('z');
 
-						console.log("Scale: X = " + x + ";  Y = " + y + ";  Z = " + z);
+						//console.log("Scale: X = " + x + ";  Y = " + y + ";  Z = " + z);
 
 						componentelem['scaleX'] = x;
 						componentelem['scaleY'] = y;
 						componentelem['scaleZ'] = z;
 					}
-					else if(tag_name === 'rotate')
+					else if(tag_name == 'rotate')
 					{
 						var axis = transformation[j].getAttribute('axis');
 						var angle = transformation[j].getAttribute('angle');
 
-						console.log("Rotate: AXIS = " + axis + "; ANGLE = " + angle);
+						//console.log("Rotate: AXIS = " + axis + "; ANGLE = " + angle);
 
 						componentelem['rotateAxis'] = axis;
 						componentelem['rotateAngle'] = angle;
@@ -805,25 +833,30 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			var materials = component[i].getElementsByTagName('materials');
 			if (materials == null  || materials.length==0) 
 			{
-				return "materials element is missing.";
+				console.log("WARNING: materials element of Component: " + id + " not found, creating default");
+				
+				componentelem['materials'] = "default";
+				
 			}
-	
-			var nmaterials = materials[0].children.length;
-
-			console.log("NUM of Materials: " + nmaterials);
-			
-			var material = materials[0].children;
-
-			var materialslst = [];
-			for(var j = 0; j < nmaterials; j++)
+			else
 			{
-				var id = material[j].getAttribute('id');
-				console.log("Material id = " + id);
-				materialslst.push(id);
+	
+				var nmaterials = materials[0].children.length;
 
+				//console.log("NUM of Materials: " + nmaterials);
+
+				var material = materials[0].children;
+
+				var materialslst = [];
+				for(var j = 0; j < nmaterials; j++)
+				{
+					var id = material[j].getAttribute('id');
+					//console.log("Material id = " + id);
+					materialslst.push(id);
+					componentelem['materials'] = materialslst;
+
+				}
 			}
-
-			componentelem['materials'] = materialslst;
 
 			//Textures
 			var textures = component[i].getElementsByTagName('texture');
@@ -834,11 +867,11 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			}
 			var ntextures = textures.length;
 
-			console.log("NUM of Textures: " + ntextures);
+			//console.log("NUM of Textures: " + ntextures);
 		 
 			
 			var id = textures[0].getAttribute('id');
-			console.log("Texture id: " + id);
+			//console.log("Texture id: " + id);
 			
 			componentelem['texture'] = id;
 
@@ -852,7 +885,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			var nchildren = children[0].children.length;
 			var kids = children[0].children;
 
-			console.log("NUM of Children: " + nchildren);
+			//console.log("NUM of Children: " + nchildren);
 
 
 			var primitiveslst = [];
@@ -868,13 +901,13 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 				if(tag_name === 'componentref')
 				{
 					id = kids[j].getAttribute('id');
-					console.log("Reference to component with the id = " + id);
+					//console.log("Reference to component with the id = " + id);
 					childrenlst.push(id);
 				}
 				else if(tag_name === 'primitiveref')
 				{
 					id = kids[j].getAttribute('id');
-					console.log("Reference to primitive with the id = " + id);
+					//console.log("Reference to primitive with the id = " + id);
 					primitiveslst.push(id);
 				}
 				else
@@ -895,8 +928,6 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			}
 
 			this.componentslist.push(componentelem);
-
-			
     		}   
    		 }
     
@@ -907,7 +938,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
  * Callback to be executed on any read error
  */
  
-MySceneGraph.prototype.onXMLError=function (message) {
+MySceneGraph.prototype.onXMLError=function (message) 
+{
 	console.error("XML Loading Error: "+message);	
 	this.loadedOk=false;
 };

@@ -104,7 +104,7 @@
         <!-- objetos respetivos podem a violar esta regra.         -->
         <!-- Nao necessario aplicar fatores de escala em  -->
         <!-- quadricas (esfera, ciclindro...) -->
-        <texture id="table" file="resources\\images\\table.png" length_s="0.4" length_t="1" />
+		<texture id="table" file="resources\\images\\table.png" length_s="0.4" length_t="1" />
         <texture id="legTable" file="resources\\images\\legTable.jpg" length_s="0.8" length_t="1.3" />
         <texture id="window" file="resources\\images\\window.jpg" length_s="0.6" length_t="1" />
 		<texture id="earth" file="resources\\images\\earth.jpg" length_s="0.6" length_t="1" />
