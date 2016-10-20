@@ -52,21 +52,21 @@
     
         <!-- Deve existir um ou mais blocos "omni" ou "spot" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
-        <omni id="1" enabled="1" >
+        <omni id="0" enabled="1" >
             <location x="3" y="0" z="3" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
             <diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
             <specular r="0" g="0" b="0" a="0" />
         </omni>
 
-        <omni id="2" enabled="1" >
+        <omni id="1" enabled="1" >
             <location x="2" y="3" z="2" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
             <diffuse r="1" g="1" b="1" a="1.0" />
             <specular r="0" g="0" b="0" a="0" />
         </omni>
         
-        <spot id="3" enabled="1" angle="2" exponent="1">
+        <spot id="2" enabled="1" angle="2" exponent="1">
             <!-- atencao, "target" e' diferente de "direction" -->
             <target x="0.8" y="0" z="0" />
             <location x="2" y="4" z="4" />
@@ -74,7 +74,7 @@
             <diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
             <specular r="0.0" g="0.0" b="0.0" a="0.0" />
         </spot>
-        <spot id="4" enabled="1" angle="3" exponent="1">
+        <spot id="3" enabled="1" angle="3" exponent="1">
             <!-- atencao, "target" e' diferente de "direction" -->
             <target x="1" y="0" z="0" />
             <location x="2" y="1" z="1" />
@@ -232,6 +232,7 @@
        		
        		<materials>
            		<material id ="wood"/>
+           		<material id ="aluminium"/>
            </materials>
                          
             <texture id="floor" />
