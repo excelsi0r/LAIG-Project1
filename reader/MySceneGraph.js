@@ -104,7 +104,6 @@ MySceneGraph.prototype.onXMLReady=function()
 
 
 	this.loadedOk=true;
-	
 	//As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
 	this.scene.onGraphLoaded();
 };
@@ -896,144 +895,6 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 	}
 };
 
-MySceneGraph.prototype.checkifMaterialValid = function(id, materialslist)
-{
-	if((materialslist[0] == "inherit" ||  materialslist[0]== "none") && id == this.root)
-	{
-		return "Cannot define: " + materialslist[0] + " for root: " + id;
-	}
-
-	if(materialslist[0] == "inherit" ||  materialslist[0] == "none")
-	{
-		return;
-	}
-	
-
-	for(var i = 0; i < materialslist.length; i++)
-	{
-		var m_name = materialslist[i];
-		var n = 0;
-
-		for(var j = 0; j < this.materialslist.length; j++)
-		{
-			if(m_name == this.materialslist[j]['id'])
-			{
-				n++;
-				break;
-			}
-		}
-
-		if(n < 1)
-		{
-			return "Invalid reference to material: '" + m_name + "' in component: '" + id + "'";
-		}
-	}
-};
-
-MySceneGraph.prototype.checkifTextureValid = function(id, texture)
-{
-	if((texture == "inherit" ||  texture== "none") && id == this.root)
-	{
-		return "Cannot define texture: " + texture + " for root: " + id;
-	}
-
-	if(texture == "inherit" ||  texture == "none")
-	{
-		return;
-	}
-	
-	var n = 0;
-	for(var i = 0; i < this.texturelist.length; i++)
-	{
-		if(this.texturelist[i]['id'] == texture)
-		{
-			n++;
-			break;
-		}
-	}
-
-	if(n < 1)
-	{
-		return "Invalid Texture reference: '" + texture + "' for component: '" + id + "'";
-	}
-	
-};
-
-MySceneGraph.prototype.checkifPrimitesValid=function(id, primitiveslst)
-{
-	var n_prims = primitiveslst.length;
-	var n = 0;
-
-	for(var i = 0; i < n_prims; i++)
-	{
-		for(var j = 0; j < this.primitiveslist.length; j++)
-		{
-			if(primitiveslst[i] == this.primitiveslist[j]['id'])
-			{
-				n++;
-				break;
-			}
-		}
-		if(n < 1)
-		{
-			return "Primitive Reference: '" + primitiveslst[i] + "' not Valid in component: '" + id + "'";  
-		}
-		else
-		{
-			n=0;
-		}
-	}
-		
-};
-
-MySceneGraph.prototype.checkIfTransformationValid=function(idComponent, transformations)
-{
-	var countref = 0;
-	var noref = 0;
-	
-	for(var i = 0; i < transformations.length; i++)
-	{
-		if(transformations[i]['type'] == 'transformationref')
-		{
-			countref++;
-		}
-		else
-		{
-			noref++;
-		}
-	}
-
-	
-	if(countref > 1)
-	{
-		return "Component: '" + idComponent + "' has more than one reference to a transformation. Transformation References must be defined only one time per component";
-	}
-
-	if(countref == 1 && noref > 0)
-	{
-		return "Cannot mix Transformation Reference with explicit Transformations. Component: '" + idComponent + "'";
-	}
-	
-	if(countref == 1 && noref == 0)
-	{
-		var n = 0;
-		for(var j = 0; j < this.transformationlist.length; j++)
-		{
-			if(transformations[0]['id'] == this.transformationlist[j]['id'])
-			{
-				n++;
-				break;
-			}
-		}
-
-		if(n < 1)
-		{
-			return "Undifined reference transformation reference in component: '" + idComponent + "' Reference: '" + transformations[0]['id'] + "'";
-		}
-	}
-};
-
-
 MySceneGraph.prototype.parseComponents = function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('components');
@@ -1292,6 +1153,145 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 		return;
 	}
 
+};
+
+//VALIDATION FIELD
+
+MySceneGraph.prototype.checkifMaterialValid = function(id, materialslist)
+{
+	if((materialslist[0] == "inherit" ||  materialslist[0]== "none") && id == this.root)
+	{
+		return "Cannot define: " + materialslist[0] + " for root: " + id;
+	}
+
+	if(materialslist[0] == "inherit" ||  materialslist[0] == "none")
+	{
+		return;
+	}
+	
+
+	for(var i = 0; i < materialslist.length; i++)
+	{
+		var m_name = materialslist[i];
+		var n = 0;
+
+		for(var j = 0; j < this.materialslist.length; j++)
+		{
+			if(m_name == this.materialslist[j]['id'])
+			{
+				n++;
+				break;
+			}
+		}
+
+		if(n < 1)
+		{
+			return "Invalid reference to material: '" + m_name + "' in component: '" + id + "'";
+		}
+	}
+};
+
+MySceneGraph.prototype.checkifTextureValid = function(id, texture)
+{
+	if((texture == "inherit" ||  texture== "none") && id == this.root)
+	{
+		return "Cannot define texture: " + texture + " for root: " + id;
+	}
+
+	if(texture == "inherit" ||  texture == "none")
+	{
+		return;
+	}
+	
+	var n = 0;
+	for(var i = 0; i < this.texturelist.length; i++)
+	{
+		if(this.texturelist[i]['id'] == texture)
+		{
+			n++;
+			break;
+		}
+	}
+
+	if(n < 1)
+	{
+		return "Invalid Texture reference: '" + texture + "' for component: '" + id + "'";
+	}
+	
+};
+
+MySceneGraph.prototype.checkifPrimitesValid=function(id, primitiveslst)
+{
+	var n_prims = primitiveslst.length;
+	var n = 0;
+
+	for(var i = 0; i < n_prims; i++)
+	{
+		for(var j = 0; j < this.primitiveslist.length; j++)
+		{
+			if(primitiveslst[i] == this.primitiveslist[j]['id'])
+			{
+				n++;
+				break;
+			}
+		}
+		if(n < 1)
+		{
+			return "Primitive Reference: '" + primitiveslst[i] + "' not Valid in component: '" + id + "'";  
+		}
+		else
+		{
+			n=0;
+		}
+	}
+		
+};
+
+MySceneGraph.prototype.checkIfTransformationValid=function(idComponent, transformations)
+{
+	var countref = 0;
+	var noref = 0;
+	
+	for(var i = 0; i < transformations.length; i++)
+	{
+		if(transformations[i]['type'] == 'transformationref')
+		{
+			countref++;
+		}
+		else
+		{
+			noref++;
+		}
+	}
+
+	
+	if(countref > 1)
+	{
+		return "Component: '" + idComponent + "' has more than one reference to a transformation. Transformation References must be defined only one time per component";
+	}
+
+	if(countref == 1 && noref > 0)
+	{
+		return "Cannot mix Transformation Reference with explicit Transformations. Component: '" + idComponent + "'";
+	}
+	
+	if(countref == 1 && noref == 0)
+	{
+		var n = 0;
+		for(var j = 0; j < this.transformationlist.length; j++)
+		{
+			if(transformations[0]['id'] == this.transformationlist[j]['id'])
+			{
+				n++;
+				break;
+			}
+		}
+
+		if(n < 1)
+		{
+			return "Undifined reference transformation reference in component: '" + idComponent + "' Reference: '" + transformations[0]['id'] + "'";
+		}
+	}
 };
 
 MySceneGraph.prototype.checkIfValidComponents=function()
