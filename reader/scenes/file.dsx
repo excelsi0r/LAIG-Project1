@@ -213,13 +213,11 @@
             
             <!-- bloco "children" obrigatorio num "component" -->
             <children>
-            
                 <!-- deve existir uma ou mais tags "componentref" e/ou -->
                 <!-- "primitiveref", identificando outros -->
                 <!-- componentes ou primitivas -->
                 <componentref id="bbb" />
-                <primitiveref id="zz" />
-                
+                <primitiveref id="zz" />             
             </children>
             
         </component>
@@ -227,20 +225,17 @@
 		<component id="paizinho">
         
             <transformation>
-                <transformationref id="nothing" />
+                <transformationref id="nothing"/>       
             </transformation>
        		
        		<materials>
            		<material id ="wood"/>
-           		<material id ="aluminium"/>
            </materials>
                          
-            <texture id="floor" />
+            <texture id="floor"/>
             
             <children>
-                <primitiveref id="rectangle" />
-
-                
+                <componentref id="filhinho" />
             </children>
             
         </component>
@@ -248,11 +243,11 @@
 			<component id="filhinho">
         
             <transformation>
-                <transformationref id="translate" />
+                <transformationref id="translate"/>
             </transformation>
        
             <materials>
-                <material id="wood" />
+                <material id="wood"/>
             </materials>
                          
             <texture id="inherit" />
@@ -275,10 +270,10 @@
                 <material id="aluminium" />
             </materials>
                          
-            <texture id="window" />
+            <texture id="window"/>
             
             <children>
-                <primitiveref id="sphere" />
+               <componentref id="paizinho" />
             </children>
             
         </component>

@@ -102,6 +102,7 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
+
 	this.loadedOk=true;
 	
 	//As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
@@ -170,7 +171,7 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 
 			if((i == 0 && this.default == null) || (i == 0 && this.default == ""))
 			{
-				console.warn("WARNING: Default tag not found, setting the first perpestive: " + perspective['id']);
+				console.warn("WARNING: Default tag not found, setting the first perpestive: '" + perspective['id'] + "'");
 				this.default = perspective['id'];
 			}
 				
@@ -206,7 +207,7 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 		}
 		else
 		{
-			console.warn("WARNING: Default defined but no perspectives defined, creating perspective with id" + this.default + " 'default' and setting as default");
+			console.warn("WARNING: Default defined but no perspectives defined, creating perspective with id '" + this.default + "' 'default' and setting as default");
 			perspective['id'] = this.default;
 		}
 
@@ -457,7 +458,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 	
 		if(n > 1)
 		{
-			return "Repeated ID in Lights: " + id + " Number of Ocurrencies: " + n;
+			return "Repeated ID in Lights: '" + id + "' Number of Ocurrencies: '" + n + "'";
 		}
 		else
 		{
@@ -653,103 +654,104 @@ MySceneGraph.prototype.parseTransformations = function(rootElement)
 		return "Either zero or more than one 'Transformation' tag found.";
 	}
 
+    var elems = rootElement.getElementsByTagName('transformations');
     var ntransformations = elems[0].children.length;
-
-    var transformation = elems[0].children;
+    var transformations = elems[0].children;
 	this.transformationlist = [];
 
-	if(ntransformations < 1)
-	{
-		console.warn("WARNING: No transformations defined. Creating transformation 'default' with Identity Transformation");
-		
-		transformations = [];
-		transformations['id'] = "default";
-
-		var translateAtt = [];
-		translateAtt['x'] = 0; 
-		translateAtt['y'] = 0;
-		translateAtt['z'] = 0;
-		transformations['translate'] = translateAtt;
-
-		var rotateAtt = [];
-		rotateAtt['axis'] = "x";
-		rotateAtt['angle'] = 0;	
-		transformations['rotate'] = rotateAtt;
-
-		var scaleAtt = [];
-		scaleAtt['x'] = 1;
-		scaleAtt['y'] = 1;
-		scaleAtt['z'] = 1;
-		transformations['scale'] = scaleAtt;
-
-		this.transformationlist.push(transformations);
-
-	}
-	else
+	if(ntransformations > 1)
 	{
 		for (var i = 0; i < ntransformations; i++)
 		{
-			var id = transformation[i].getAttribute('id');
+			var transformation = [];
+			transformation['id'] = transformations[i].getAttribute('id');
 
-			transformations = [];
-			transformations['id'] = id;
+			var operations = transformations[i].children;
+			var noperations = transformations[i].children.length;
+			var transformationsList = [];
 
-			var translateAtt = [];
-
-			var translate = transformation[i].getElementsByTagName('translate');
-			if (translate == null  || translate.length==0)
+			for(var j = 0; j < noperations; j++)
 			{
-				console.warn("WARNING: No translation found on Transformation with id: " + id + ", giving translation (0,0,0) ");
-				translateAtt['x'] = 0; 
-				translateAtt['y'] = 0;
-				translateAtt['z'] = 0;
+				var operation = operations[j].tagName;
+				var transformationInfo = [];
+				if(operation === 'translate')
+				{
+					transformationInfo['type'] = 'translate';
+					transformationInfo['x'] = operations[j].getAttribute('x');
+					transformationInfo['y'] = operations[j].getAttribute('y');
+					transformationInfo['z'] = operations[j].getAttribute('z');
+				}
+				else if(operation === 'scale')
+				{
+					transformationInfo['type'] = 'scale';
+					transformationInfo['x'] = operations[j].getAttribute('x');
+					transformationInfo['y'] = operations[j].getAttribute('y');
+					transformationInfo['z'] = operations[j].getAttribute('z');
+				}
+				else if(operation === 'rotate')
+				{
+					transformationInfo['type'] = 'rotate';
+					transformationInfo['axis'] = operations[j].getAttribute('axis');
+					transformationInfo['angle'] = operations[j].getAttribute('angle');
+				}
+				transformationsList.push(transformationInfo);
 			}
-			else
-			{
-				translateAtt['x'] = translate[0].getAttribute('x');
-				translateAtt['y'] = translate[0].getAttribute('y');
-				translateAtt['z'] = translate[0].getAttribute('z');
-			}
-			transformations['translate'] = translateAtt;
-
-			var rotateAtt = [];
-
-			var rotate = transformation[i].getElementsByTagName('rotate');
-			if (rotate == null  || rotate.length==0) 
-			{
-				console.warn("WARNING: No rotation found on Transformation with id: " + id + ", giving rotation (x, 0) ");
-				rotateAtt['axis'] = "x";
-				rotateAtt['angle'] = 0;			
-			}
-			else
-			{
-				rotateAtt['axis'] = rotate[0].getAttribute('axis');
-				rotateAtt['angle'] = rotate[0].getAttribute('angle');
-			}
-			transformations['rotate'] = rotateAtt;
-
-			var scaleAtt = [];
-			var scale = transformation[i].getElementsByTagName('scale');
-
-			if (scale == null  || scale.length==0) 
-			{
-				scaleAtt['x'] = 1
-				scaleAtt['y'] = 1
-				scaleAtt['z'] = 1
-			}
-			else
-			{
-				console.warn("WARNING: No scale found on Transformation with id: " + id + ", giving scale (1,1,1) ");
-				scaleAtt['x'] = scale[0].getAttribute('x');
-				scaleAtt['y'] = scale[0].getAttribute('y');
-				scaleAtt['z'] = scale[0].getAttribute('z');
-			}
-
-			transformations['scale'] = scaleAtt;
-
-			this.transformationlist.push(transformations);
+			transformation['list'] = transformationsList;
+			this.transformationlist.push(transformation);
 		}
-    }
+	}
+	else
+	{
+		console.warn("WARNING: No transformations defined. Creating transformation 'default' with Identity Transformation");
+
+		var transformation = [];
+		transformation['id'] = "default";
+
+		var transformationsList = [];
+
+		var transformationInfoT = [];
+		transformationInfoT['type'] = 'translate';
+		transformationInfoT['x'] = 0;
+		transformationInfoT['y'] = 0;
+		transformationInfoT['z'] = 0;
+		transformationsList.push(transformationInfoT);
+
+		var transformationInfoS = [];
+		transformationInfoS['type'] = 'scale';
+		transformationInfoS['x'] = 1;
+		transformationInfoS['y'] = 1;
+		transformationInfoS['z'] = 1;
+		transformationsList.push(transformationInfoS);
+
+		var transformationInfoR = [];
+		transformationInfoR['type'] = 'rotate';
+		transformationInfoR['axis'] = 'x';
+		transformationInfoR['angle'] = 0;
+		transformationsList.push(transformationInfoR);
+
+		transformation['list'] = transformationsList;
+		this.transformationlist.push(transformation);
+	}
+
+	var n_transformations = this.transformationlist.length;
+	
+	for(var i = 0; i < n_transformations; i++)
+	{
+		var t_name = this.transformationlist[i]['id'];
+		var n = 0;
+
+		for(var j = 0; j < n_transformations; j++)
+		{
+			if(t_name == this.transformationlist[j]['id'])
+			{
+				n++;
+			}
+		}
+		if(n > 1)
+		{
+			return "Transformation: '" + t_name + "' Repeated. ID's must not be repeated. Times repeated: " + n;
+		}
+	}
 }
 
 MySceneGraph.prototype.parsePrimitives = function(rootElement)
@@ -885,7 +887,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 	
 		if(n > 1)
 		{
-			return "Repeated ID in Transformation: " + id + " Number of Ocurrencies: " + n;
+			return "Repeated ID in Transformation: '" + id + "' Number of Ocurrencies: '" + n +"'";
 		}
 		else
 		{
@@ -896,6 +898,17 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 
 MySceneGraph.prototype.checkifMaterialValid = function(id, materialslist)
 {
+	if((materialslist[0] == "inherit" ||  materialslist[0]== "none") && id == this.root)
+	{
+		return "Cannot define: " + materialslist[0] + " for root: " + id;
+	}
+
+	if(materialslist[0] == "inherit" ||  materialslist[0] == "none")
+	{
+		return;
+	}
+	
+
 	for(var i = 0; i < materialslist.length; i++)
 	{
 		var m_name = materialslist[i];
@@ -912,10 +925,114 @@ MySceneGraph.prototype.checkifMaterialValid = function(id, materialslist)
 
 		if(n < 1)
 		{
-			return m_name;
+			return "Invalid reference to material: '" + m_name + "' in component: '" + id + "'";
 		}
 	}
 };
+
+MySceneGraph.prototype.checkifTextureValid = function(id, texture)
+{
+	if((texture == "inherit" ||  texture== "none") && id == this.root)
+	{
+		return "Cannot define texture: " + texture + " for root: " + id;
+	}
+
+	if(texture == "inherit" ||  texture == "none")
+	{
+		return;
+	}
+	
+	var n = 0;
+	for(var i = 0; i < this.texturelist.length; i++)
+	{
+		if(this.texturelist[i]['id'] == texture)
+		{
+			n++;
+			break;
+		}
+	}
+
+	if(n < 1)
+	{
+		return "Invalid Texture reference: '" + texture + "' for component: '" + id + "'";
+	}
+	
+};
+
+MySceneGraph.prototype.checkifPrimitesValid=function(id, primitiveslst)
+{
+	var n_prims = primitiveslst.length;
+	var n = 0;
+
+	for(var i = 0; i < n_prims; i++)
+	{
+		for(var j = 0; j < this.primitiveslist.length; j++)
+		{
+			if(primitiveslst[i] == this.primitiveslist[j]['id'])
+			{
+				n++;
+				break;
+			}
+		}
+		if(n < 1)
+		{
+			return "Primitive Reference: '" + primitiveslst[i] + "' not Valid in component: '" + id + "'";  
+		}
+		else
+		{
+			n=0;
+		}
+	}
+		
+};
+
+MySceneGraph.prototype.checkIfTransformationValid=function(idComponent, transformations)
+{
+	var countref = 0;
+	var noref = 0;
+	
+	for(var i = 0; i < transformations.length; i++)
+	{
+		if(transformations[i]['type'] == 'transformationref')
+		{
+			countref++;
+		}
+		else
+		{
+			noref++;
+		}
+	}
+
+	
+	if(countref > 1)
+	{
+		return "Component: '" + idComponent + "' has more than one reference to a transformation. Transformation References must be defined only one time per component";
+	}
+
+	if(countref == 1 && noref > 0)
+	{
+		return "Cannot mix Transformation Reference with explicit Transformations. Component: '" + idComponent + "'";
+	}
+	
+	if(countref == 1 && noref == 0)
+	{
+		var n = 0;
+		for(var j = 0; j < this.transformationlist.length; j++)
+		{
+			if(transformations[0]['id'] == this.transformationlist[j]['id'])
+			{
+				n++;
+				break;
+			}
+		}
+
+		if(n < 1)
+		{
+			return "Undifined reference transformation reference in component: '" + idComponent + "' Reference: '" + transformations[0]['id'] + "'";
+		}
+	}
+};
+
 
 MySceneGraph.prototype.parseComponents = function(rootElement)
 {
@@ -936,99 +1053,127 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
     if(ncomponents < 1)
     {
-		return "Thre must be at least one Node defined";
+		return "There must be at least one Node defined";
     }
     else
     {
 		for(var i = 0; i < ncomponents; i++)
 		{
-			var id = component[i].getAttribute('id');
+			var idComponent = component[i].getAttribute('id');
 
-			if(id != 'ignore')
+			if(idComponent != 'ignore')
 			{
 				var componentelem = [];
-				componentelem['id'] = id;
+				componentelem['id'] = idComponent;
 
 				//Transformations
+				var transformationsTag = component[i].getElementsByTagName('transformation');
 
-				var transformations = component[i].getElementsByTagName('transformation');
-				var ntranformation = transformations[0].children.length;
-				var transformation = transformations[0].children;
+				if(transformationsTag.length < 1)
+				{
+					return "Transformation tag missing in component: '" + idComponent + "'";
+				}
 
-				componentelem['translationX'] = 0;
-				componentelem['translationY'] = 0;
-				componentelem['translationZ'] = 0;
+				var ntranformation = transformationsTag[0].children.length;
+				var transformations = transformationsTag[0].children;
+				var componenttranslist = [];
 
-				componentelem['scaleX'] = 1;
-				componentelem['scaleY'] = 1;
-				componentelem['scaleZ'] = 1;
-
-				componentelem['rotateAxis'] = "x";
-				componentelem['rotateAngle'] = 0;
 
 				for(var j = 0; j < ntranformation; j++)
 				{
-					var tag_name = transformation[j].tagName;
+					var tag_name = transformations[j].tagName;
+					var transformation = [];
 
-					if(tag_name === 'transformationref')
+					if(tag_name == 'transformationref')
 					{
-						var id = transformation[j].getAttribute('id');
-						componentelem['transformationref'] = id;
+						transformation['type'] = 'transformationref';
+
+						var id = transformations[j].getAttribute('id');
+						transformation['id'] = id;
 					}
 					else
 					{
-						componentelem['transformationref'] = null;
-
 						if(tag_name == 'translate')
 						{
-							var x = transformation[j].getAttribute('x');
-							var y = transformation[j].getAttribute('y');
-							var z = transformation[j].getAttribute('z');
+							var x = transformations[j].getAttribute('x');
+							var y = transformations[j].getAttribute('y');
+							var z = transformations[j].getAttribute('z');
 
-
-							componentelem['translationX'] = x;
-							componentelem['translationY'] = y;
-							componentelem['translationZ'] = z;
+							transformation['type'] = 'translate';
+							transformation['x'] = x;
+							transformation['y'] = y;
+							transformation['z'] = z;
 
 						}
 						else if(tag_name == 'scale')
 						{
-							var x = transformation[j].getAttribute('x');
-							var y = transformation[j].getAttribute('y');
-							var z = transformation[j].getAttribute('z');
+							var x = transformations[j].getAttribute('x');
+							var y = transformations[j].getAttribute('y');
+							var z = transformations[j].getAttribute('z');
 
-
-							componentelem['scaleX'] = x;
-							componentelem['scaleY'] = y;
-							componentelem['scaleZ'] = z;
+							transformation['type'] = 'scale';
+							transformation['x'] = x;
+							transformation['y'] = y;
+							transformation['z'] = z;
 						}
 						else if(tag_name == 'rotate')
 						{
-							var axis = transformation[j].getAttribute('axis');
-							var angle = transformation[j].getAttribute('angle');
+							var axis = transformations[j].getAttribute('axis');
+							var angle = transformations[j].getAttribute('angle');
 
-
-							componentelem['rotateAxis'] = axis;
-							componentelem['rotateAngle'] = angle;
-						}
-						else
-						{
-							console.warn("MISSING one of these elements: TRANSLATE, ROTATE OR SCALE");
+							transformation['type'] = 'rotate';
+							transformation['axis'] = axis;
+							transformation['angle'] = angle;
 						}
 					}
+					componenttranslist.push(transformation);
+				}
+
+				componentelem['transformations'] = componenttranslist;
+	
+				if(idComponent == this.root && componentelem['transformations'].length < 1)
+				{
+					console.warn("Root as no Transformation. Setting Identity");
+
+					var transformationInfoT = [];
+					transformationInfoT['type'] = 'translate';
+					transformationInfoT['x'] = 0;
+					transformationInfoT['y'] = 0;
+					transformationInfoT['z'] = 0;
+					componenttranslist.push(transformationInfoT);
+
+					var transformationInfoS = [];
+					transformationInfoS['type'] = 'scale';
+					transformationInfoS['x'] = 1;
+					transformationInfoS['y'] = 1;
+					transformationInfoS['z'] = 1;
+					componenttranslist.push(transformationInfoS);
+
+					var transformationInfoR = [];
+					transformationInfoR['type'] = 'rotate';
+					transformationInfoR['axis'] = 'x';
+					transformationInfoR['angle'] = 0;
+					componenttranslist.push(transformationInfoR);
+				}
+
+				var error = this.checkIfTransformationValid(idComponent, componentelem['transformations']);
+				if(error != null)
+				{
+					return error;
 				}
 
 
-				//Materials - no problem if id repeated, just goes trough it as a list of elems to display
+				//Materials - no problem if id repeated, just goes through it as a list of elems to display
 				var materials = component[i].getElementsByTagName('materials');
 
 				var nmaterials = materials[0].children.length;
 				var material = materials[0].children;
 				var materialslst = [];
 
+
 				if(nmaterials < 1)
 				{
-					return "Component: " + componentelem['id'] + " must have at least one material defined";
+					return "Component: '" + componentelem['id'] + "' must have at least one material reference";
 				}
 
 				for(var j = 0; j < nmaterials; j++)
@@ -1038,50 +1183,62 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 				}
 
 				componentelem['materials'] = materialslst;
-				var materialisValid = this.checkifMaterialValid(id, materialslst);
+				var materialisValid = this.checkifMaterialValid(componentelem['id'], materialslst);				
 
 				if(materialisValid != null)
 				{
-					return "Component: " + componentelem['id'] + " contains reference to undifined material: " + materialisValid;
+					return materialisValid;
 				}
-
-
 
 				//Textures
 				var textures = component[i].getElementsByTagName('texture');
 
 				if (textures == null  || textures.length==0) 
 				{
-					return "textures element is missing.";
+					return "Textures element is missing: '" + componentelem['id'] + "'";
 				}
 				var ntextures = textures.length;
 
-				//console.log("NUM of Textures: " + ntextures);
 
+				if(ntextures < 1)
+				{
+					return "Must have a texture reference. Component ID: '" + componentelem['id'] + "'";
+				}
+
+				if(ntextures > 1)
+				{
+					return "Can only have one Texture references. Component ID: '" + componentelem['id'] + "'";
+				}
 
 				var id = textures[0].getAttribute('id');
-				//console.log("Texture id: " + id);
 
 				componentelem['texture'] = id;
+
+				if(componentelem['texture'] == null)
+				{
+					return "Texture reference missing in component: '" + componentelem['id'] + "'";
+				}
+
+				var resultCheckTexture = this.checkifTextureValid(componentelem['id'], componentelem['texture']);
+				if(resultCheckTexture != null)
+				{
+					return resultCheckTexture;
+				}
 
 				//Children
 				var children = component[i].getElementsByTagName('children');
 				if (children == null  || children.length==0) 
 				{
-					return "children element is missing.";
+					return "Children tag is missing: '" + componentelem['id'] + "'";
 				}
 
 				var nchildren = children[0].children.length;
 				var kids = children[0].children;
-
-				//console.log("NUM of Children: " + nchildren);
-
-
 				var primitiveslst = [];
 				var childrenlst = [];
 
-				componentelem['children'] = null;
-				componentelem['primitives'] = null;
+				componentelem['children'] = [];
+				componentelem['primitives'] = [];
 
 				for(var j = 0; j < nchildren; j++)
 				{
@@ -1090,39 +1247,101 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 					if(tag_name === 'componentref')
 					{
 						id = kids[j].getAttribute('id');
-						//console.log("Reference to component with the id = " + id);
 						childrenlst.push(id);
 					}
 					else if(tag_name === 'primitiveref')
 					{
 						id = kids[j].getAttribute('id');
-						//console.log("Reference to primitive with the id = " + id);
 						primitiveslst.push(id);
 					}
 					else
 					{
-						console.log("The references must be: compoenetref or primitiveref");
+						console.log("The references must be: compoenetref or primitiveref in component: '" + componentelem['id'] + "'" );
 					}
 				}
 
-				if(primitiveslst.length != 0)
+				componentelem['primitives'] = primitiveslst;
+				componentelem['children'] = childrenlst;
+
+				var n_refs = primitiveslst.length + childrenlst.length;
+
+				if(n_refs < 1)
 				{
-					componentelem['primitives'] = primitiveslst;
+					return "Must have at least one Children or/and at least on Primitives reference/s. Component: '" + componentelem['id'] + "'"
 				}
 
-				if(childrenlst.length != 0)
+				if(primitiveslst.length > 0)
 				{
-
-					componentelem['children'] = childrenlst;
+					var primitiveCheckValid = this.checkifPrimitesValid(componentelem['id'], primitiveslst);
+					if(primitiveCheckValid != null)
+					{
+					    return primitiveCheckValid;
+					}
 				}
+
 
 				this.componentslist.push(componentelem);
     		}//end if ignore
    		 }//end for cycle
 	}
+
+	var error = this.checkIfValidComponents()
+	if(error != null)
+	{
+		this.onXMLError(error);
+		return;
+	}
+
 };
 
+MySceneGraph.prototype.checkIfValidComponents=function()
+{
+	for(var i = 0; i < this.componentslist.length; i++)
+	{
+		var nodeName = this.componentslist[i]['id'];
+		var nodeChildren = this.componentslist[i].children;
 
+		if(nodeChildren.length > 0)
+		{
+			var valid = this.checknoderefs(nodeName, nodeChildren);
+			if(valid != null)
+			{
+				return valid;
+			}
+		}
+	}
+};
+
+/*
+ * CHECK if component refrences are non-existing and if children calls itself
+ */
+MySceneGraph.prototype.checknoderefs=function(nodeName, nodeChildren)
+{
+	for(var i = 0; i < nodeChildren.length; i++)
+	{
+		var childname = nodeChildren[i];
+		var n=0;
+
+		if(childname == nodeName)
+		{
+			return "Component '" + nodeName + "' is referencing itself. INFINITE LOOP";
+		}
+
+		for(var j=0; j < this.componentslist.length; j++)
+		{
+			if(childname == this.componentslist[j]['id'])
+			{
+				n++;
+				break;
+			}
+		}
+
+		if(n < 1)
+		{
+			return "Reference: '"  + childname + "' in '" + nodeName + "'  is not defined as a component";
+		}
+	}
+};
 
 	
 /*
