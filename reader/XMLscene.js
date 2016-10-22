@@ -24,16 +24,6 @@ XMLscene.prototype.init = function (application)
 
 
 	this.axis=new CGFaxis(this);
-
-	this.clickedMaterials = 0;
-
-	//test triangel
-	this.ttriangel = new MyTriangle(this,0,0,0,1,-0,0,0,1,0,1,1);
-
-	//test rectangel
-	this.rectangel = new MyRectangle(this, 0,0,1,1,1,1);
-
-	this.semi = new MySphere(this, 1, 100, 100);
 };
 
 
@@ -69,7 +59,6 @@ XMLscene.prototype.setLightsGraph = function ()
 	var lightBoxLength = lightBox.length;
 
 	console.log("Testing lights ");
-	console.log(lightBox);
 
 	for(var i = 0; i < lightBoxLength; i++)
 	{
@@ -105,9 +94,6 @@ XMLscene.prototype.setLightsGraph = function ()
 	}
 	
 };
-
-
-
 
 XMLscene.prototype.setIlluminationGraph = function () 
 {
@@ -253,57 +239,51 @@ XMLscene.prototype.setTransformationsGraph = function()
 		var id = this.graph.transformationlist[i]['id'];
 
 		var matrix = mat4.create();
-			
-		//SCALING
-		var sx = this.graph.transformationlist[i]['scale']['x'];
-		var sy = this.graph.transformationlist[i]['scale']['y'];
-		var sz = this.graph.transformationlist[i]['scale']['z'];
+		var n_translist = this.graph.transformationlist[i]['list'].length;
 
-		var scalevector = vec3.fromValues(sx,sy,sz);
-
-		
-
-		//ROTATION
-		var axis = this.graph.transformationlist[i]['rotate']['axis'];
-		var axisvec;
-		var angle = this.graph.transformationlist[i]['rotate']['angle'];
-
-		if(axis == 'x')
+		for(var j = 0; j < n_translist; j++)
 		{
-			axisvec = vec3.fromValues(1,0,0);
+			if(this.graph.transformationlist[i]['list'][j]['type'] == 'translate')
+			{
+				var tx = this.graph.transformationlist[i]['list'][j]['x'];
+				var ty = this.graph.transformationlist[i]['list'][j]['y'];
+				var tz = this.graph.transformationlist[i]['list'][j]['z'];
+				var transvec = vec3.fromValues(tx,ty,tz);
+				mat4.translate(matrix, matrix, transvec);
+			}
+			else if(this.graph.transformationlist[i]['list'][j]['type'] == 'scale')
+			{
+				var sx = this.graph.transformationlist[i]['list'][j]['x'];
+				var sy = this.graph.transformationlist[i]['list'][j]['y'];
+				var sz = this.graph.transformationlist[i]['list'][j]['z'];
+				var scalevector = vec3.fromValues(sx,sy,sz);
+				mat4.scale(matrix, matrix, scalevector);
+			}
+			else if(this.graph.transformationlist[i]['list'][j]['type'] == 'rotate')
+			{
+				var axis = this.graph.transformationlist[i]['list'][j]['axis'];
+				var angle = this.graph.transformationlist[i]['list'][j]['angle'];
+				var axisvec;
+				
+				if(axis == 'x')
+				{
+					axisvec = vec3.fromValues(1,0,0);
+				}
+				else if(axis == 'y')
+				{
+					axisvec = vec3.fromValues(0,1,0);
+				}
+				else if(axis == 'z')
+				{
+					axisvec = vec3.fromValues(0,0,1);
+				}
+
+				var angle = (Math.PI*angle)/180;
+				mat4.rotate(matrix,matrix,angle,axisvec);
+			}
 		}
-		else if(axis == 'y')
-		{
-			axisvec = vec3.fromValues(0,1,0);
-		}
-		else if(axis == 'z')
-		{
-			axisvec = vec3.fromValues(0,0,1);
-		}
 
-		var angle = (Math.PI*angle)/180;
-
-		
-
-		
-
-		//TRANSLATION
-		var tx = this.graph.transformationlist[i]['translate']['x'];
-		var ty = this.graph.transformationlist[i]['translate']['y'];
-		var tz = this.graph.transformationlist[i]['translate']['z'];
-		var transvec = vec3.fromValues(tx,ty,tz);
-		
-		
-		
-		mat4.scale(matrix, matrix, scalevector);
-		mat4.rotate(matrix,matrix,angle,axisvec);
-		mat4.translate(matrix, matrix, transvec);
-		
-
-		this.transformations[id] = matrix;
-
-
-		
+		this.transformations[id] = matrix;	
 	}
 };
 
@@ -391,70 +371,77 @@ XMLscene.prototype.createGraph = function()
 	{
 		var id = this.graph.componentslist[i]['id'];
 		var node = new Node(this.graph.componentslist[i]['id']);
-
-		var ref = this.graph.componentslist[i]['transformationref'];
-		if(ref == null)
+		var transformation = [];
+	
+		//transformations
+		if(this.graph.componentslist[i]['transformations'][0]['type']  == 'transformationref')
 		{
-			node.setIdentity();
-			
-			//SCALING
-			var sx = this.graph.componentslist[i]['scaleX'];
-			var sy = this.graph.componentslist[i]['scaleY'];
-			var sz = this.graph.componentslist[i]['scaleZ'];
-
-			
-
-			//ROTATION
-			var axis = this.graph.componentslist[i]['rotateAxis'];
-			var axisvec;
-			var angle = this.graph.componentslist[i]['rotateAngle'];
-
-			var rx;
-			var ry;
-			var rz;
-
-			if(axis == 'x')
-			{
-				rx =1; ry=0; rz=0;
-			}
-			else if(axis == 'y')
-			{
-				rx =0; ry=1; rz=0;
-			}
-			else if(axis == 'z')
-			{
-				rx =0; ry=0; rz=1;
-			}
-
-			var angle = (Math.PI*angle)/180;
-
-			
-
-			//TRANSLATION
-			var tx = this.graph.componentslist[i]['translationX'];
-			var ty = this.graph.componentslist[i]['translationY'];
-			var tz = this.graph.componentslist[i]['translationZ'];
-			
-		
-
-			node.scale(sx,sy,sz);
-			node.rotate(rx,ry,rz,angle);
-			node.translate(tx,ty,tz);
-
+			transformation['type'] = 'transformationref';
+			transformation['transformation'] = this.graph.componentslist[i]['transformations'][0]['id'];
 		}
 		else
 		{
-			node.setTransformationref(ref);
+			transformation['type'] = 'transformation';
+			var n_trans = this.graph.componentslist[i]['transformations'].length;
+			var matrix = mat4.create();
+
+			for(var j = 0; j < n_trans; j++)
+			{
+				if(this.graph.componentslist[i]['transformations'][j]['type'] == 'translate')
+				{
+					var tx = this.graph.componentslist[i]['transformations'][j]['x'];
+					var ty = this.graph.componentslist[i]['transformations'][j]['y'];
+					var tz = this.graph.componentslist[i]['transformations'][j]['z'];
+					var transvec = vec3.fromValues(tx,ty,tz);
+					mat4.translate(matrix, matrix, transvec);
+				}
+				else if(this.graph.componentslist[i]['transformations'][j]['type'] == 'scale')
+				{
+					var sx = this.graph.componentslist[i]['transformations'][j]['x'];
+					var sy = this.graph.componentslist[i]['transformations'][j]['y'];
+					var sz = this.graph.componentslist[i]['transformations'][j]['z'];
+					var scalevector = vec3.fromValues(sx,sy,sz);
+					mat4.scale(matrix, matrix, scalevector);
+				}
+				else if(this.graph.componentslist[i]['transformations'][j]['type'] == 'rotate')
+				{
+					var axis =  this.graph.componentslist[i]['transformations'][j]['axis'];
+					var angle =  this.graph.componentslist[i]['transformations'][j]['angle'];
+					var axisvec;
+
+					if(axis == 'x')
+					{
+						axisvec = vec3.fromValues(1,0,0);
+					}
+					else if(axis == 'y')
+					{
+						axisvec = vec3.fromValues(0,1,0);
+					}
+					else if(axis == 'z')
+					{
+						axisvec = vec3.fromValues(0,0,1);
+					}
+
+					var angle = (Math.PI*angle)/180;
+					mat4.rotate(matrix,matrix,angle,axisvec);
+				}
+			}
+			transformation['transformation'] = matrix;
 		}
+		node.setTransformation(transformation);
 
+		//materials
 		var n_materials = this.graph.componentslist[i]['materials'].length;
-
-		//node.setMaterial("none")
 		
 		for(var j = 0; j < n_materials; j++)
 		{
 			var mat = this.graph.componentslist[i]['materials'][j];
 			node.setMaterial(mat);
+
+			if(j == 0)
+			{
+				node.setdefaultMaterial(mat);
+			}
 		}
 		
 		var textur = this.graph.componentslist[i]['texture'];
@@ -484,10 +471,6 @@ XMLscene.prototype.createGraph = function()
 		this.nodes[id] = node;
 
 	}
-
-	console.log(this.nodes);
-
-
 };
 
 
@@ -526,7 +509,6 @@ XMLscene.prototype.onGraphLoaded = function ()
 
 	//creating graph
 	this.createGraph();
-
 };
 
 XMLscene.prototype.processMaterialsIndex=function(materialslist)
@@ -552,95 +534,96 @@ XMLscene.prototype.processMaterialsIndex=function(materialslist)
 	return idindex;
 }
 
-XMLscene.prototype.displayNodes=function(id, transformation, materials, texture, children, primitive)
+XMLscene.prototype.displayNodes=function(id, transformation, material, texture, children, primitive)
 {
-		
-			if(primitive.length > 0)
-			{	
 
-				for(var i = 0; i < primitive.length; i++)
-				{
-					this.pushMatrix();	
-						this.multMatrix(transformation);
-						
-						if(materials.length != 0 && materials.length != null)
-						{
-							if(this.materials[0] != "none")
-							{
-								var idindex = this.processMaterialsIndex(materials);
-								this.materials[materials[idindex]].apply();
-							}
-						}
-						else
-						{
-							console.log("WARING: Can't Process materials, length 0 or undefined");
-						}
-
-
-						this.primitives[primitive[i]].display();
-					this.popMatrix();
-				}
-			}
-			
-			
-			if(children.length > 0)
+	if(primitive.length > 0)
+	{
+		for(var i = 0; i < primitive.length; i++)
+		{
+			if(material != "none")
 			{
-				for (var j = 0; j < children.length; j++)
-				{
-					
-					var newid = children[j];
-
-					var trans;
-					var transref  = this.nodes[newid].transformationref;
-					if(transref != null)
-					{
-						trans = this.transformations[transref];
-					}
-					else
-					{
-						trans = this.nodes[newid].transformation;
-					}
-
-					var matrixtrans = mat4.create();
-					mat4.multiply(matrixtrans, transformation, trans);
-
-					var ch = this.nodes[newid].children;
-					var pr = this.nodes[newid].primitive;
-
-					this.displayNodes(newid, matrixtrans, materials, texture, ch, pr);		
-					
-				}
+				this.materials[material].apply();
 			}
-			
-		
-		
+			this.pushMatrix();	
+				this.multMatrix(transformation);
+				this.primitives[primitive[i]].display();
+			this.popMatrix();
+		}
+	}
+
+	if(children.length > 0)
+	{
+		for(var i = 0; i < children.length; i++)
+		{
+			var newid = children[i];
+			var matrixtrans = mat4.create();
+			var transtype = this.nodes[newid].transformation['type'];
+			var trans;
+			 
+			if(transtype == 'transformationref')
+			{
+				var transid = this.nodes[newid].transformation['transformation'];
+				trans = this.transformations[transid];
+			}
+			else
+			{
+				trans = this.nodes[newid].transformation['transformation'];
+			}
+			mat4.multiply(matrixtrans, transformation, trans);
+
+			var newmaterial;
+			if(this.nodes[newid].defaultMaterial == "inherit")
+			{
+				newmaterial = material;
+			}
+			else
+			{
+				newmaterial = this.nodes[newid].defaultMaterial;
+			}
+
+			var newTexture;
+			if(this.nodes[newid].texture == "inherit")
+			{
+				newTexture = texture;
+			}
+			else
+			{
+				newTexture = this.nodes[newid].texture;
+			}
+
+			var newChildren = this.nodes[newid].children;
+			var newPrimitives = this.nodes[newid].primitive;
+
+			this.displayNodes(newid, matrixtrans, newmaterial, newTexture, newChildren, newPrimitives);	
+		}
+	}
 };
 
 XMLscene.prototype.displayGraphElems=function()
 {
 	var id = this.root;
 
-	
+	var transformationtype = this.nodes[id].transformation['type'];
 	var transformation;
-	/*var transformationref  = this.nodes[id].transformationref;
 
-	if(transformationref != null)
+	if(transformationtype == 'transformationref')
 	{
-		transformation = this.transformations[transformationref];
+		var transformationID =  this.nodes[id].transformation['transformation'];
+		transformation = this.transformations[transformationID];
 	}
 	else
 	{
-		transformation = this.nodes[id].transformation;
+		transformation = this.nodes[id].transformation['transformation'];
 	}
 
-	var materialst = this.nodes[id].materials;
+	var materialst = this.nodes[id].defaultMaterial;
 	var texture = this.nodes[id].texture;
 	var children = this.nodes[id].children;
 	var primitive = this.nodes[id].primitive;
-	*/
-
 		
-	//this.displayNodes(id, transformation, materialst, texture, children, primitive);
+	
+	this.displayNodes(id, transformation, materialst, texture, children, primitive);
 	
 };
 
@@ -671,12 +654,9 @@ XMLscene.prototype.display = function ()
 	// it is important that things depending on the proper loading of the graph
 	// only get executed after the graph has loaded correctly.
 	// This is one possible way to do it
-
-
 	
 	if (this.graph.loadedOk)
 	{
-		
 		this.displayGraphElems();
 		
 		

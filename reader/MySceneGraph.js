@@ -102,10 +102,9 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
-
-	this.loadedOk=true;
-	//As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
 	this.scene.onGraphLoaded();
+	this.loadedOk=true;
+	
 };
 
 /*
@@ -937,6 +936,11 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 				var ntranformation = transformationsTag[0].children.length;
 				var transformations = transformationsTag[0].children;
+
+				if(transformations.length < 1)
+				{
+					return "Transformation missing in component: '" + idComponent + "'";
+				}
 				var componenttranslist = [];
 
 
@@ -991,6 +995,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 				}
 
 				componentelem['transformations'] = componenttranslist;
+
 	
 				if(idComponent == this.root && componentelem['transformations'].length < 1)
 				{
@@ -1026,6 +1031,11 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 				//Materials - no problem if id repeated, just goes through it as a list of elems to display
 				var materials = component[i].getElementsByTagName('materials');
+				
+				if(materials.length < 1)
+				{
+					return "Component: '" + componentelem['id'] + "' has no material tag";
+				}
 
 				var nmaterials = materials[0].children.length;
 				var material = materials[0].children;
@@ -1034,7 +1044,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 				if(nmaterials < 1)
 				{
-					return "Component: '" + componentelem['id'] + "' must have at least one material reference";
+					return "Component: '" + componentelem['id'] + "' must have at least one material reference, inherit or none";
 				}
 
 				for(var j = 0; j < nmaterials; j++)
@@ -1063,7 +1073,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 				if(ntextures < 1)
 				{
-					return "Must have a texture reference. Component ID: '" + componentelem['id'] + "'";
+					return "Must have a texture reference, inherit or none. Component ID: '" + componentelem['id'] + "'";
 				}
 
 				if(ntextures > 1)
@@ -1142,8 +1152,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 
 				this.componentslist.push(componentelem);
-    		}//end if ignore
-   		 }//end for cycle
+    		}
+   		 }
 	}
 
 	var error = this.checkIfValidComponents()
@@ -1159,43 +1169,59 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 MySceneGraph.prototype.checkifMaterialValid = function(id, materialslist)
 {
-	if((materialslist[0] == "inherit" ||  materialslist[0]== "none") && id == this.root)
+
+	var inheritcount = 0;	
+	var othercount = 0;	
+
+	for(var v = 0; v < materialslist.length; v++)
 	{
-		return "Cannot define: " + materialslist[0] + " for root: " + id;
+		if(materialslist[v] == "inherit")
+		{
+			inheritcount++;
+		}
+		else
+		{
+			othercount++;
+		}
 	}
 
-	if(materialslist[0] == "inherit" ||  materialslist[0] == "none")
+	if(inheritcount > 0 && id == this.root)
 	{
-		return;
+		return "Cannot define: inherit as Material for root: " + id;
 	}
-	
 
 	for(var i = 0; i < materialslist.length; i++)
 	{
 		var m_name = materialslist[i];
 		var n = 0;
-
-		for(var j = 0; j < this.materialslist.length; j++)
+	
+		if(m_name != "inherit")
 		{
-			if(m_name == this.materialslist[j]['id'])
+			for(var j = 0; j < this.materialslist.length; j++)
+			{	
+
+				if(m_name == this.materialslist[j]['id'])
+				{
+					n++;
+					break;
+				}	
+			}
+
+			if(n < 1)
 			{
-				n++;
-				break;
+				return "Invalid reference to material: '" + m_name + "' in component: '" + id + "'";
 			}
 		}
-
-		if(n < 1)
-		{
-			return "Invalid reference to material: '" + m_name + "' in component: '" + id + "'";
-		}
 	}
+
+		
 };
 
 MySceneGraph.prototype.checkifTextureValid = function(id, texture)
 {
-	if((texture == "inherit" ||  texture== "none") && id == this.root)
+	if((texture == "inherit") && id == this.root)
 	{
-		return "Cannot define texture: " + texture + " for root: " + id;
+		return "Cannot define texture 'inherit' for root: " + id;
 	}
 
 	if(texture == "inherit" ||  texture == "none")

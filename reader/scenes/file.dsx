@@ -20,7 +20,7 @@
     <scene root="paizinho" axis_length="1.2"/>
     
     
-    <views default="third">
+    <views default="second">
     
         <!-- declaracao obrigatoria de pelo menos uma vista; -->
         <!-- se varias vistas declaradas, o default e' a -->
@@ -33,7 +33,7 @@
         </perspective>
         
         <perspective id="second" near="0.1" far="100" angle="25">
-            <from x="15" y="15" z="15" />
+            <from x="1" y="1" z="1" />
             <to x="0" y="0" z="0" />
         </perspective>
         
@@ -140,9 +140,9 @@
         <transformation id="translate">
            <!-- instrucoes a usar sem limite nem ordem -->
            <!-- deve existir pelo menos uma transformacao -->
-           <translate x="1" y="0" z="0" />
-           <rotate axis="y" angle="0" />
-           <scale x="1" y="1" z="1" />
+           <translate x="20" y="32" z="45" />
+           <rotate axis="y" angle="90" />
+           <scale x="45" y="12" z="1" />
         </transformation>
         
     </transformations>
@@ -225,7 +225,7 @@
 		<component id="paizinho">
         
             <transformation>
-                <transformationref id="nothing"/>       
+                <transformationref id="nothing"/>      
             </transformation>
        		
        		<materials>
@@ -273,7 +273,7 @@
             <texture id="window"/>
             
             <children>
-               <componentref id="paizinho" />
+               <primitiveref id="sphere" />
             </children>
             
         </component>
