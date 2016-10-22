@@ -135,7 +135,7 @@ MySceneGraph.prototype.parseSceneRoot = function(rootElement)
 
 	if(this.axis_length == null)
 	{
-		console.info("WARING: Axis Length missing, setting axis with 2 unit of length");
+		console.warn("WARING: Axis Length missing, setting axis with 2 unit of length");
 		this.axis_length = 2.0;
 	}
 	
@@ -172,12 +172,23 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 				console.warn("WARNING: Default tag not found, setting the first perpestive: '" + perspective['id'] + "'");
 				this.default = perspective['id'];
 			}
+
+			if(perspective['id'] == null)
+			{
+				return "Missing ID in perspective number: " + i;
+			}
 				
 			perspective['near'] = perspectives[i].getAttribute('near');
 			perspective['far'] = perspectives[i].getAttribute('far');
 			perspective['angle'] = perspectives[i].getAttribute('angle');
 
 			var elemFrom = perspectives[i].getElementsByTagName('from');
+			
+			if(elemFrom.length < 1)
+			{
+				return "No 'From' content in perspective: '" + perspective['id'] + "'";
+			}
+
 			var from = [];
 			from['x'] = elemFrom[0].getAttribute('x');
 			from['y'] = elemFrom[0].getAttribute('y');
@@ -185,6 +196,12 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 			perspective['from'] = from;
 
 			var elemTo = perspectives[i].getElementsByTagName('to');
+
+			if(elemTo.length < 1)
+			{
+				return "No 'To' content in perspective: '" + perspective['id'] + "'";
+			}
+
 			var to = [];
 			to['x'] = elemTo[0].getAttribute('x');
 			to['y'] = elemTo[0].getAttribute('y');
@@ -205,7 +222,7 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 		}
 		else
 		{
-			console.warn("WARNING: Default defined but no perspectives defined, creating perspective with id '" + this.default + "' 'default' and setting as default");
+			console.warn("WARNING: Default defined but no perspectives defined, creating perspective with id '" + this.default + "' as default and setting as default");
 			perspective['id'] = this.default;
 		}
 
@@ -266,20 +283,20 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 
 	if(this.doublesided == null)
 	{
-		console.warn("WARNING: Doublesided not found. Setting as true");
-		this.doublesided = 1;
+		console.warn("WARNING: Doublesided not found. Setting as false");
+		this.doublesided = 0;
 	}
 
 	if(this.local == null)
 	{
-		console.warn("WARNING: Local not found. Setting as true");
-		this.local = 1;
+		console.warn("WARNING: Local not found. Setting as false");
+		this.local = 0;
 	}
 
 	this.ambientIllumination = [];
 
 	var ambientContent = elems[0].getElementsByTagName('ambient');
-	if(ambientContent == null || ambientContent == 0)
+	if(ambientContent == null || ambientContent.length == 0)
 	{
 		console.warn("WARNING: Ambient Illumination not found, setting predefined attributes: R=0.2 G=0.2 B=0.2 A=1");
 		this.ambientIllumination['r'] = 0.2;
@@ -299,7 +316,7 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 	this.background = [];
 	var backgroundContent = elems[0].getElementsByTagName('background');
 
-	if(backgroundContent == null || backgroundContent == 0)
+	if(backgroundContent == null || backgroundContent.length == 0)
 	{
 		console.warn("WARNING: Background color not found, setting predefined attributes: R=1 G=1 B=1 A=1");
 		this.background['r'] = 0;
@@ -338,6 +355,12 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 
 
 	var light = elems[0].children;
+
+	if(light.length < 1)
+	{	
+		console.warn("WARNING: No lights defined");
+	}
+
 	this.lightslist = [];
 	var tagMissing = false;
 
@@ -348,13 +371,31 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 
 		if(typelight == 'omni')
 		{
-			lights['id'] = this.reader.getFloat(light[i], 'id');
-			lights.enabled = this.reader.getBoolean(light[i], 'enabled');
-			lights.omni = true;
-			lights.spot = false;
+			lights['id'] = this.reader.getString(light[i], 'id');
+			if(lights['id'] == null)
+			{
+				return "Missing id in Light numeber: " + i;
+			}
+			
+			lights['enabled'] = this.reader.getBoolean(light[i], 'enabled');
+			if(lights['enabled'] == null)
+			{
+				return "Missing enable value in Light: '" + lights['id'] + "'";
+			}
+
+			lights['omni'] = true;
+			lights['spot'] = false;
 
 			var location = [];
-			var elemLocation = light[i].getElementsByTagName('location');
+			var elemLocation = light[i].getElementsByTagName('location');		
+			if(elemLocation.length < 1)
+			{
+				return "No location Paramethers for light '" + lights['id'] +  "'"; 
+			}
+			if(elemLocation.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one Location Element, setting the first one encounteredo");
+			}
 			location.x = elemLocation[0].getAttribute('x');
 			location.y = elemLocation[0].getAttribute('y');
 			location.z = elemLocation[0].getAttribute('z');
@@ -363,6 +404,14 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 
 			var ambient = [];
 			var elemAmbient = light[i].getElementsByTagName('ambient');
+			if(elemAmbient.length < 1)
+			{
+				return "No Ambient Paramethers for light '" + lights['id'] +  "'"; 
+			}
+			if(elemAmbient.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one Ambient Element, setting the first one encounteredo");
+			}
 			ambient.r = elemAmbient[0].getAttribute('r');
 			ambient.g = elemAmbient[0].getAttribute('g');
 			ambient.b = elemAmbient[0].getAttribute('b');
@@ -371,6 +420,14 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 
 			var diffuse = [];
 			var elemDiffuse = light[i].getElementsByTagName('diffuse');
+			if(elemDiffuse.length < 1)
+			{
+				return "No Diffuse Parametheres for light '" + lights['id'] +  "'"; 
+			}
+			if(elemDiffuse.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one Diffuse Element, setting the first one encounteredo");
+			}
 			diffuse.r = elemDiffuse[0].getAttribute('r');
 			diffuse.g = elemDiffuse[0].getAttribute('g');
 			diffuse.b = elemDiffuse[0].getAttribute('b');
@@ -379,6 +436,14 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 
 			var specular = [];
 			var elemSpecular = light[i].getElementsByTagName('specular');
+			if(elemSpecular.length < 1)
+			{
+				return "No Specular Parametheres for light '" + lights['id'] +  "'"; 
+			}
+			if(elemSpecular.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one Specular Element, setting the first one encounteredo");
+			}
 			specular.r = elemSpecular[0].getAttribute('r');
 			specular.g = elemSpecular[0].getAttribute('g');
 			specular.b = elemSpecular[0].getAttribute('b');
@@ -389,15 +454,39 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 		}
 		else if(typelight == 'spot')
 		{
-			lights.id = this.reader.getFloat(light[i], 'id');
+			lights.id = this.reader.getString(light[i], 'id');
+			if(lights['id'] == null)
+			{
+				return "Missing id in Light";
+			}
 			lights.enabled = this.reader.getBoolean(light[i], 'enabled');
+			if(lights['enabled'] == null)
+			{
+				return "Missing enable value in Light: '" + lights['id'] + "'";
+			}
 			lights.angle = this.reader.getFloat(light[i], 'angle');
+			if(lights['angle'] == null)
+			{
+				return "Missing angle value in Light: '" + lights['id'] + "'";
+			}
 			lights.exponent = this.reader.getFloat(light[i], 'exponent');
+			if(lights['exponent'] == null)
+			{
+				return "Missing exponent value in Light: '" + lights['id'] + "'";
+			}
 			lights.omni = false;
 			lights.spot = true;
 
 			var target = [];
 			var elemTarget = light[i].getElementsByTagName('target');
+			if(elemTarget.length < 1)
+			{
+				return "No target Paramethers for light '" + lights['id'] +  "'"; 
+			}
+			if(elemTarget.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one target Element, setting the first one encounteredo");
+			}
 			target.x = elemTarget[0].getAttribute('x');
 			target.y = elemTarget[0].getAttribute('y');
 			target.z = elemTarget[0].getAttribute('z');
@@ -405,13 +494,30 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 
 			var location = [];
 			var elemLocation = light[i].getElementsByTagName('location');
+			if(elemLocation.length < 1)
+			{
+				return "No location Paramethers for light '" + lights['id'] +  "'"; 
+			}
+			if(elemLocation.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one Location Element, setting the first one encounteredo");
+			}
 			location.x = elemLocation[0].getAttribute('x');
 			location.y = elemLocation[0].getAttribute('y');
 			location.z = elemLocation[0].getAttribute('z');
 			lights['location'] = location;
 
+
 			var ambient = [];
 			var elemAmbient = light[i].getElementsByTagName('ambient');
+			if(elemAmbient.length < 1)
+			{
+				return "No Ambient Paramethers for light '" + lights['id'] +  "'"; 
+			}
+			if(elemAmbient.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one Ambient Element, setting the first one encounteredo");
+			}
 			ambient.r = elemAmbient[0].getAttribute('r');
 			ambient.g = elemAmbient[0].getAttribute('g');
 			ambient.b = elemAmbient[0].getAttribute('b');
@@ -420,6 +526,14 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 			
 			var diffuse = [];
 			var elemDiffuse = light[i].getElementsByTagName('diffuse');
+			if(elemDiffuse.length < 1)
+			{
+				return "No Diffuse Parametheres for light '" + lights['id'] +  "'"; 
+			}
+			if(elemDiffuse.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one Diffuse Element, setting the first one encounteredo");
+			}
 			diffuse.r = elemDiffuse[0].getAttribute('r');
 			diffuse.g = elemDiffuse[0].getAttribute('g');
 			diffuse.b = elemDiffuse[0].getAttribute('b');
@@ -428,6 +542,14 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 
 			var specular = [];
 			var elemSpecular = light[i].getElementsByTagName('specular');
+			if(elemSpecular.length < 1)
+			{
+				return "No Specular Parametheres for light '" + lights['id'] +  "'"; 
+			}
+			if(elemSpecular.length > 1)
+			{
+				console.warn("WARNING: Light: '" + lights['id'] + "' as more than one Specular Element, setting the first one encounteredo");
+			}
 			specular.r = elemSpecular[0].getAttribute('r');
 			specular.g = elemSpecular[0].getAttribute('g');
 			specular.b = elemSpecular[0].getAttribute('b');
@@ -562,16 +684,27 @@ MySceneGraph.prototype.parseMaterials = function(rootElement)
 	else
 	{
 		var material = elems[0].children;
-		
 		for(var i = 0; i < nmaterials; i++)
 		{
 			var id = material[i].getAttribute('id');
 			var materials = [];
 
 			materials['id'] = id;
+			if(id == null)
+			{
+				return "Missing id in Material number: " + i;
+			}
 
 			var emissionAtt = [];
 			var emission = material[i].getElementsByTagName('emission');
+			if(emission.length < 1)
+			{
+				return "No Emission Parametheres for Material '" + id +  "'"; 
+			}
+			if(emission.length > 1)
+			{
+				console.warn("WARNING: Material '" + id + "' as more than one Emission Element, setting the first one encounteredo");
+			}
 			emissionAtt.r = emission[0].getAttribute('r');
 			emissionAtt.g = emission[0].getAttribute('g');
 			emissionAtt.b = emission[0].getAttribute('b');
@@ -580,6 +713,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement)
 
 			ambientAtt = [];
 			var ambient = material[i].getElementsByTagName('ambient');
+			if(ambient.length < 1)
+			{
+				return "No Ambient Parametheres for Material '" + id +  "'"; 
+			}
+			if(ambient.length > 1)
+			{
+				console.warn("WARNING: Material '" + id + "' as more than one Ambient Element, setting the first one encounteredo");
+			}
 			ambientAtt.r = ambient[0].getAttribute('r');
 			ambientAtt.g = ambient[0].getAttribute('g');
 			ambientAtt.b = ambient[0].getAttribute('b');
@@ -588,6 +729,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement)
 
 			diffuseAtt = [];
 			var diffuse = material[i].getElementsByTagName('diffuse');
+			if(diffuse.length < 1)
+			{
+				return "No Diffuse Parametheres for Material '" + id +  "'"; 
+			}
+			if(diffuse.length > 1)
+			{
+				console.warn("WARNING: Material '" + id + "' as more than one Diffuse Element, setting the first one encounteredo");
+			}
 			diffuseAtt.r = diffuse[0].getAttribute('r');
 			diffuseAtt.g = diffuse[0].getAttribute('g');
 			diffuseAtt.b = diffuse[0].getAttribute('b');
@@ -596,6 +745,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement)
 
 			specularAtt = [];
 			var specular = material[i].getElementsByTagName('specular');
+			if(specular.length < 1)
+			{
+				return "No Specular Parametheres for Material '" + id +  "'"; 
+			}
+			if(specular.length > 1)
+			{
+				console.warn("WARNING: Material '" + id + "' as more than one Specular Element, setting the first one encounteredo");
+			}
 			specularAtt.r = specular[0].getAttribute('r');
 			specularAtt.g = specular[0].getAttribute('g');
 			specularAtt.b = specular[0].getAttribute('b');
@@ -604,6 +761,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement)
 
 			shininessAtt = [];
 			var shininess = material[i].getElementsByTagName('shininess');
+			if(shininess.length < 1)
+			{
+				return "No Shininess Parametheres for Material '" + id +  "'"; 
+			}
+			if(shininess.length > 1)
+			{
+				console.warn("WARNING: Material '" + id + "' as more than one Shininess Element, setting the first one encounteredo");
+			}
 			shininessAtt.value = shininess[0].getAttribute('value');
 
 			materials['shininess'] = shininessAtt;
@@ -663,30 +828,38 @@ MySceneGraph.prototype.parseTransformations = function(rootElement)
 		{
 			var transformation = [];
 			transformation['id'] = transformations[i].getAttribute('id');
+			if(transformation['id'] == null)
+			{
+				return "Missing ID in Transformation number: " + i + ""; 
+			}
 
 			var operations = transformations[i].children;
 			var noperations = transformations[i].children.length;
+			if(noperations < 1)
+			{
+				console.warn("WARNING: No Transformation elements found in Transformation: '" + transformation['id'] + "'")
+			}
 			var transformationsList = [];
 
 			for(var j = 0; j < noperations; j++)
 			{
 				var operation = operations[j].tagName;
 				var transformationInfo = [];
-				if(operation === 'translate')
+				if(operation == 'translate')
 				{
 					transformationInfo['type'] = 'translate';
 					transformationInfo['x'] = operations[j].getAttribute('x');
 					transformationInfo['y'] = operations[j].getAttribute('y');
 					transformationInfo['z'] = operations[j].getAttribute('z');
 				}
-				else if(operation === 'scale')
+				else if(operation == 'scale')
 				{
 					transformationInfo['type'] = 'scale';
 					transformationInfo['x'] = operations[j].getAttribute('x');
 					transformationInfo['y'] = operations[j].getAttribute('y');
 					transformationInfo['z'] = operations[j].getAttribute('z');
 				}
-				else if(operation === 'rotate')
+				else if(operation == 'rotate')
 				{
 					transformationInfo['type'] = 'rotate';
 					transformationInfo['axis'] = operations[j].getAttribute('axis');
@@ -780,10 +953,18 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 		for (var i = 0; i < nprimitives; i++)
 		{
 			var primtype = primitive[i].children[0].tagName;
-
 			var primitiveitem = [];
 
 			var id = primitive[i].getAttribute('id');
+			if(id == null)
+			{
+				return "Missing ID in transformation number: " + i ;
+			}
+
+			if(primtype == null)
+			{
+				return "Primitive: '" + id + "' has no valid Primitive Type";
+			}
 
 			primitiveitem['type'] = primtype;
 			primitiveitem['id'] = id;
@@ -920,6 +1101,10 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 		for(var i = 0; i < ncomponents; i++)
 		{
 			var idComponent = component[i].getAttribute('id');
+			if(idComponent == null)
+			{
+				return "Component number: " + i + " has no ID"; 
+			}
 
 			if(idComponent != 'ignore')
 			{
