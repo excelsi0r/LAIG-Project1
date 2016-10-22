@@ -263,7 +263,27 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 		console.warn("WARNING: Not existing default in the Perspective content, setting as: " + this.default);	
 	}
 
-}
+		//check for repeated ids
+
+	for(var i = 0; i < this.perspectiveContent.length; i++)
+	{
+		var name_view = this.perspectiveContent[i]['id'];
+		var n = 0;
+
+		for(var j = 0; j < this.perspectiveContent.length; j++)
+		{
+			if(this.perspectiveContent[j]['id'] == name_view)
+			{
+				n++;
+			}
+		}
+
+		if(n > 1)
+		{
+			return "Perspective repeated. ID: '" + name_view + "'";
+		}
+	}
+};
 MySceneGraph.prototype.parseIllumination=function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('illumination');

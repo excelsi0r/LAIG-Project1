@@ -7,6 +7,7 @@ function Node(id)
 	this.children = [];
 	this.primitive = [];
 	this.defaultMaterial = null;
+	this.defaultMaterialIndex = null;
 };
 
 
@@ -35,7 +36,8 @@ Node.prototype.setPrimitive=function(pr)
 	this.primitive.push(pr);
 };
 
-Node.prototype.setdefaultMaterial=function(material)
+Node.prototype.setdefaultMaterial=function(material, nr)
 {
 	this.defaultMaterial = material;
+	this.defaultMaterialIndex = nr;
 };

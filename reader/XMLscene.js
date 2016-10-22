@@ -97,9 +97,6 @@ XMLscene.prototype.setLightsGraph = function ()
 			console.log("ERROR - Missing OMNI or SPOT lights.");
 		}
 		this.lights[i].setVisible(true);
-		
-		//console.log(lightBox[i].enabled);//debug print
-
 		if(lightBox[i].enabled)
 		{
 			this.lights[i].enable();
@@ -156,15 +153,12 @@ XMLscene.prototype.setViewsGraph = function()
 		var cm = new CGFcamera(angle, parseFloat(near), parseFloat(far), vec3.fromValues(fromx, fromy, fromz), vec3.fromValues(tox, toy, toz));
 		this.cameras[id] = cm;
 
-
 		if(defaultID == id)
 		{
 			this.camera = this.cameras[id];
 			this.cameraIndex = i;
 		}
 	}
-
-	console.log(this.cameras['4']);
 
 
 };
@@ -460,7 +454,7 @@ XMLscene.prototype.createGraph = function()
 
 			if(j == 0)
 			{
-				node.setdefaultMaterial(mat);
+				node.setdefaultMaterial(mat, 0);
 			}
 		}
 		
@@ -684,7 +678,27 @@ XMLscene.prototype.updateCamera=function()
 };  
 XMLscene.prototype.materialsUpdate=function()
 {
+	for(var i = 0; i < this.graph.componentslist.length; i++)
+	{
+		var idNode = this.graph.componentslist[i]['id'];
+		var n_materiais = this.nodes[idNode]['materials'].length;
 
+		if(n_materiais > 1)
+		{
+			var currMatIndex = this.nodes[idNode].defaultMaterialIndex;
+			if(currMatIndex >= n_materiais - 1)
+			{
+				currMatIndex = 0;
+				this.nodes[idNode].setdefaultMaterial( this.nodes[idNode]['materials'][currMatIndex],currMatIndex);
+			}
+			else
+			{
+				currMatIndex = currMatIndex + 1;
+				this.nodes[idNode].setdefaultMaterial( this.nodes[idNode]['materials'][currMatIndex],currMatIndex);
+			}
+
+		}
+	}
 };
 XMLscene.prototype.display = function () 
 {
