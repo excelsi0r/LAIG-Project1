@@ -26,6 +26,12 @@ XMLscene.prototype.init = function (application)
 	this.axis=new CGFaxis(this);
 };
 
+XMLscene.prototype.setInterface=function(interface)
+{
+	this.interface=interface;
+	this.interface.scene = this;	
+};
+
 
 //DEFAULT PARTS
 XMLscene.prototype.initLights = function () 
@@ -56,12 +62,17 @@ XMLscene.prototype.setDefaultAppearance = function ()
 XMLscene.prototype.setLightsGraph = function ()
  {
 	var lightBox = this.graph.lightslist;
+	this.interface.addLights(lightBox);
+	
 	var lightBoxLength = lightBox.length;
 
 	console.log("Testing lights ");
 
+	this.lights = [];
+
 	for(var i = 0; i < lightBoxLength; i++)
 	{
+		this.lights[i] = new CGFlight(this, i);
 		this.lights[i].setAmbient(lightBox[i].ambient.r,
 		lightBox[i].ambient.g, lightBox[i].ambient.b, lightBox[i].ambient.a);
 		this.lights[i].setDiffuse(lightBox[i].diffuse.r,
@@ -69,7 +80,8 @@ XMLscene.prototype.setLightsGraph = function ()
 		this.lights[i].setSpecular(lightBox[i].specular.r,lightBox[i].specular.g,
 		lightBox[i].specular.b,lightBox[i].specular.a);
 
-		if(lightBox[i].omni){
+		if(lightBox[i].omni)
+		{
 			this.lights[i].setPosition(lightBox[i].location.x,lightBox[i].location.y,
 			lightBox[i].location.z,lightBox[i].location.w);
 		}
@@ -88,10 +100,13 @@ XMLscene.prototype.setLightsGraph = function ()
 		
 		//console.log(lightBox[i].enabled);//debug print
 
-		if(lightBox[i].enabled){
+		if(lightBox[i].enabled)
+		{
 			this.lights[i].enable();
 		}
 	}
+	
+	
 	
 };
 
@@ -145,8 +160,13 @@ XMLscene.prototype.setViewsGraph = function()
 		if(defaultID == id)
 		{
 			this.camera = this.cameras[id];
+			this.cameraIndex = i;
 		}
 	}
+
+	console.log(this.cameras['4']);
+
+
 };
 
 XMLscene.prototype.setMaterialsGraph = function()
@@ -487,7 +507,7 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.setAxisGraph();
 
 	//views
-	//this.setViewsGraph();
+	this.setViewsGraph();
 		
 	//new Aperence
 	this.setIlluminationGraph();
@@ -627,7 +647,45 @@ XMLscene.prototype.displayGraphElems=function()
 	
 };
 
+XMLscene.prototype.updateLights=function()
+{
+	for(var i = 0; i < this.lights.length; i++)
+	{
+		var id = this.graph.lightslist[i]['id'];
 
+		if(this.lightstates[id] == true)
+			this.lights[i].enable();
+		else
+			this.lights[i].disable();
+
+		this.lights[i].update();
+	}
+};
+
+XMLscene.prototype.updateCamera=function()
+{
+	var camerasLength = this.graph.perspectiveContent.length;
+
+	if(this.cameraIndex == camerasLength - 1)
+	{
+		this.cameraIndex = 0;
+	}
+	else
+	{
+		this.cameraIndex = this.cameraIndex + 1;
+	}
+
+	var newcm = this.graph.perspectiveContent[this.cameraIndex]['id'];
+	console.log(newcm);
+	this.camera = this.cameras[newcm];
+	this.interface.setActiveCamera(this.camera);
+	this.display();
+
+};  
+XMLscene.prototype.materialsUpdate=function()
+{
+
+};
 XMLscene.prototype.display = function () 
 {
 	// ---- BEGIN Background, camera and axis setup
@@ -658,12 +716,8 @@ XMLscene.prototype.display = function ()
 	if (this.graph.loadedOk)
 	{
 		this.displayGraphElems();
+		this.updateLights();
 		
-		
-		for(var i = 0; i < this.lights.length; i++)
-		{
-			this.lights[i].update();
-		}
 	
 	};
 
