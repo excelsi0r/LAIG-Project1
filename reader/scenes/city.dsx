@@ -57,12 +57,12 @@
             <diffuse r="1" g="1" b="1" a="0.5" />
             <specular r="0" g="0" b="0" a="0.5" />
         </omni>
-        <spot id="Light 5" enabled="0" angle="0" exponent="1">
-            <target x="2" y="0" z="2" />
-            <location x="3" y="8" z="3" />
-            <ambient r="1" g="1" b="1" a="1" />
-            <diffuse r="1" g="1" b="1" a="1" />
-            <specular r="0.5" g="1" b="0" a="1" />
+        <spot id="Light 5" enabled="0" angle="20" exponent="3">
+            <target x="3" y="0" z="3"/>
+            <location x="3" y="10" z="3" />
+            <ambient r="0.1" g="0.1" b="0.1" a="1" />
+            <diffuse r="0.5" g="0.9" b="0" a="1" />
+            <specular r="0.5" g="0.9" b="0" a="1" />
         </spot>
     </lights>
 
@@ -398,7 +398,7 @@
                 <material id="green" />
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="grass" />
             <children>
                 <primitiveref id="rectangle1" />
             </children>
@@ -411,7 +411,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="grass" />
+            <texture id="none" />
             <children>
                 <primitiveref id="rectangle1" />
             </children>

@@ -1,4 +1,3 @@
-
 function XMLscene() 
 {
     CGFscene.call(this);
@@ -73,24 +72,23 @@ XMLscene.prototype.setLightsGraph = function ()
 	for(var i = 0; i < lightBoxLength; i++)
 	{
 		this.lights[i] = new CGFlight(this, i);
-		this.lights[i].setAmbient(lightBox[i].ambient.r,
-		lightBox[i].ambient.g, lightBox[i].ambient.b, lightBox[i].ambient.a);
-		this.lights[i].setDiffuse(lightBox[i].diffuse.r,
-		lightBox[i].diffuse.g, lightBox[i].diffuse.b, lightBox[i].diffuse.a);
-		this.lights[i].setSpecular(lightBox[i].specular.r,lightBox[i].specular.g,
-		lightBox[i].specular.b,lightBox[i].specular.a);
+		this.lights[i].setAmbient(lightBox[i].ambient.r,lightBox[i].ambient.g, lightBox[i].ambient.b, lightBox[i].ambient.a);
+		this.lights[i].setDiffuse(lightBox[i].diffuse.r,lightBox[i].diffuse.g, lightBox[i].diffuse.b, lightBox[i].diffuse.a);
+		this.lights[i].setSpecular(lightBox[i].specular.r,lightBox[i].specular.g,lightBox[i].specular.b,lightBox[i].specular.a);
 
 		if(lightBox[i].omni)
 		{
-			this.lights[i].setPosition(lightBox[i].location.x,lightBox[i].location.y,
-			lightBox[i].location.z,lightBox[i].location.w);
+			this.lights[i].setPosition(lightBox[i].location.x,lightBox[i].location.y,lightBox[i].location.z,lightBox[i].location.w);
 		}
-		else if(lightBox[i].spot){
-			this.lights[i].setPosition(lightBox[i].location.x,lightBox[i].location.y,
-			lightBox[i].location.z,lightBox[i].location.w);
-			this.lights[i].setSpotDirection(lightBox[i].target.x,lightBox[i].target.y,
-			lightBox[i].target.z);
+		else if(lightBox[i].spot)
+		{
+			this.lights[i].setPosition(lightBox[i].location.x,lightBox[i].location.y,lightBox[i].location.z,lightBox[i].location.w);
+			this.lights[i].setSpotDirection(
+				lightBox[i].target.x - lightBox[i].location.x,
+				lightBox[i].target.y - lightBox[i].location.y,
+				lightBox[i].target.z - lightBox[i].location.z);
 			this.lights[i].setSpotExponent(lightBox[i].exponent);
+			this.lights[i].setSpotCutOff(lightBox[i].angle * Math.PI/180);
 		}
 		else
 		{
@@ -225,16 +223,8 @@ XMLscene.prototype.setTextureGraph = function()
 		var length_s = this.graph.texturelist[i]['length_s'];
 		var length_t = this.graph.texturelist[i]['length_t'];
 		
-		var text = new CGFappearance(this);
-		text.setAmbient(0.1,0.1,0.1,1);
-		text.setDiffuse(0.9,0.9,0.9,1);
-		text.setSpecular(0.2,0.2,0.2,1);
-		text.setShininess(10);
-		text.loadTexture(file);
-		text.setTextureWrap('REPEAT', 'REPEAT');
-		
 
-		texture['texture'] = text;
+		texture['texture'] = new CGFtexture(this, file);
 		texture['length_s'] = parseFloat(length_s);
 		texture['length_t'] = parseFloat(length_t);
 
@@ -555,14 +545,25 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 	{
 		for(var i = 0; i < primitive.length; i++)
 		{
-			if(material != "none")
+			
+			var materialToApply = this.materials[material];
+			if(texture != "none")
 			{
-				this.materials[material].apply();
+				materialToApply.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
+				materialToApply.setTexture(this.textures[texture]['texture']);
 			}
+
+			var obj = this.primitives[primitive[i]];
+			//obj.updateTextureCoords(this.textures[texture]['length_s'], this.textures[texture]['length_t']);
+				
 			this.pushMatrix();	
 				this.multMatrix(transformation);
-				this.primitives[primitive[i]].display();
+				materialToApply.apply();			
+				obj.display();			
 			this.popMatrix();
+
+			materialToApply.setTexture(null);
+
 		}
 	}
 
