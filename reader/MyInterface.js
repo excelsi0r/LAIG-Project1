@@ -18,6 +18,8 @@ MyInterface.prototype.init = function(application)
 };
 /**
  * Pushes all the lights to the Lights folder.
+ * Creates a lightstates array to save the states of each light
+ * each index saves the state of the light in the same index
  */
 MyInterface.prototype.addLights=function(lights)
 {
@@ -30,7 +32,11 @@ MyInterface.prototype.addLights=function(lights)
         this.lightsgroup.add(this.scene.lightstates,lights[i].id);
     }
 }; 
-
+/**
+ * Overload the process Keyboard fucntion.
+ * When M/m is pressed changes materials of every Node in the graph
+ * When V/v is pressed changes the actvie camera of the scene
+ */
 MyInterface.prototype.processKeyboard = function(event) 
 {
 	CGFinterface.prototype.processKeyboard.call(this,event);

@@ -595,6 +595,7 @@ XMLscene.prototype.createGraph = function()
 };
 
 /**
+ * DISPLAY GRAPH SECTION
  * Funtion to prepare everything for the display cycle starting from the root.
  * Sets every default argument defined in the root and passes it through the 
  * displayNodes. The rules tested in MySceneGraph prevents from errors to pass 
@@ -745,6 +746,7 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 };
 
 /**
+ * UPDATES FROM INTERFACE SECTION
  * Funtion called when pressed V/v. Checks if the current camera index is the last 
  * of cameras list. 
  * If true sets as 0 and sets the current camera the one with index 0
@@ -807,6 +809,7 @@ XMLscene.prototype.materialsUpdate=function()
 };
 
 /**
+ * UPDATE LIGHTS SECTION
  * Function called to update lights
  * Enables and disables lights if states are true or false.
  * Usefull with the Interface Lights folder checkboxes.

@@ -22,9 +22,11 @@ function MySceneGraph(filename, scene)
 	this.reader.open('scenes/'+filename, this);  
 }
 
-/*
- * 	Callback to be executed after successful reading. Checks if file is dsx type and starts to parse Everything by order
- *	as specified in the  file.dsx example
+/**
+ * Callback to be executed after successful reading. Checks if file is dsx type and starts to parse Everything by order
+ * as specified in the  file.dsx example
+ * Order of functions called have to be maintained
+ * Checks for DSX name tag firts
  */
 MySceneGraph.prototype.onXMLReady=function() 
 {
@@ -107,8 +109,14 @@ MySceneGraph.prototype.onXMLReady=function()
 	
 };
 
-/*
+/**
  * Method to parse the Root and axis, stores in global variables
+ * Checks if scene tag is 1, if 0 or more than 1 returns error
+ * Checks if root tag exists, returns error if missing, passes 
+ * as scene root the first one found and saves in 'root' class variable.
+ * Checks if axis_lenght tag exists. If missing gives a warning and 
+ * sets default of 2.0. If existing passes the first value found and
+ * saves in 'axis_length' class variable.
  */
 MySceneGraph.prototype.parseSceneRoot = function(rootElement)
  {
@@ -124,24 +132,45 @@ MySceneGraph.prototype.parseSceneRoot = function(rootElement)
 	}
 
 	this.root = elems[0].getAttribute('root');
-
+	
 	if(this.root == null)
 	{
 		return "Scene Root not defined";
 	}
 
-
 	this.axis_length = elems[0].getAttribute('axis_length');
-
 	if(this.axis_length == null)
 	{
 		console.warn("WARING: Axis Length missing, setting axis with 2 unit of length");
 		this.axis_length = 2.0;
 	}
-	
-   
 };
 
+/**
+ * Checks if tag Views exists, returns error if 0 or more than 1
+ * Retrieves default view name
+ * If default view null or empty. Sets as default the first one parsed 
+ * Passes all the perspectives to an array 'perspectiveContent' with:
+ * 
+ * 			['id'], 
+ * 			['near'], 
+ * 			['far'], 
+ * 			['angle'],
+ * 			['from']['x'], ['from']['y'], ['from']['z'], 
+ * 			['to']['x'], ['to']['y'] and ['to']['z']
+ * 
+ * If 'id', 'from' or 'to' tag missing returns error.
+ * If no perspectives in the View, creates a default view with the default name parsed
+ * If the default id is not defined, and no perspectives in the View tag
+ * creates a default view with 'default' name and sets
+ * that one as the default view. Gives Warning in any of this cases.
+ * 
+ * In case default view name exists and more than one tags as been parsed, searches for
+ * the default view in the perspectives array. If not existing gives warning and sets 
+ * a new default corresponding the first perspective in the array.
+ * Checks for repeated id's in the array. If more than two same 'id' name found
+ * returns error. 
+ */
 MySceneGraph.prototype.parseViews = function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('views');
@@ -284,6 +313,25 @@ MySceneGraph.prototype.parseViews = function(rootElement)
 		}
 	}
 };
+
+/**
+ * Function to parse the Ambient and Illumination values of the DSX file.
+ * If 'illumination' tag missing returns error. If 0 or more than 1 found 
+ * return error.
+ * Parses the first doublesided and local values found and saves them to
+ * 'doublesided' and 'local' class variables respectivly.
+ * If the parsed values are 'null' (meaning not found) setting both as 0
+ * Tries to get the Ambient Illumination values and to save them in 'ambientIllumination'
+ * array class variable
+ * If missing creates default values as R=0.2 G=0.2 B=0.2 A=1, saves in
+ * ['r'], ['g'], ['b'], ['a'] respectivly and gives warning.
+ * If exists saves respectivle in: ['r'], ['g'], ['b'], ['a'].	
+ * Tries to get the Background values and to save them in 'background' array
+ * class variable
+ * If missing creates default values as	R=0 G=0 B=0 A=1, saves in 
+ * ['r'], ['g'], ['b'], ['a'] respectivly and gives warning.
+ * If exists saves respectivle in: ['r'], ['g'], ['b'], ['a']. 
+ */
 MySceneGraph.prototype.parseIllumination=function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('illumination');
@@ -353,6 +401,9 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 	}
 }
 
+/**
+ * 
+ */
 MySceneGraph.prototype.parseLights=function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('lights');

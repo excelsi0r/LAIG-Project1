@@ -1,4 +1,13 @@
-function MySphere(scene,radius,slices,stacks) {
+/**
+ * Sphere
+ * @param scene CGFscene where the Rectangle will be displayed
+ * @param radius Sphere radius
+ * @param slices number of slices the sphere will be divided into along its perimeter
+ * @param stacks number of stacks the sphere will be divided into along its height
+ * @constructor
+ */
+function MySphere(scene, radius, slices, stacks) 
+{
     CGFobject.call(this,scene);
 
     this.radius = radius;
@@ -11,51 +20,37 @@ function MySphere(scene,radius,slices,stacks) {
 MySphere.prototype = Object.create(CGFobject.prototype);
 MySphere.prototype.constructor=MySphere;
 
-
-/*
- MySphere.prototype.updateTexCoords=function(amplifS, amplifT){
-
- var width = this.Rbotx;
- var height = this.Ltopy;
-
- this.texCoords = [
- 0,0,
- 0.0, height /amplifT,
- width /amplifS, height /amplifT,
- width /amplifS, 0.0
- ];
-
-
- this.updateTexCoordsGLBuffers();
-
-
- };
+/**
+ * Initializes the Sphere buffers (vertices, indices and normals)
  */
-
 MySphere.prototype.initBuffers = function () {
     this.vertices = [];
     this.normals = [];
     this.indices = [];
 
-    for(var s = 0;s <= this.stacks; s++){
-        var verticalAngle = s * Math.PI/this.stacks;
-        var cosV = Math.cos(verticalAngle);
-        var sinV = Math.sin(verticalAngle);
+    for(var i = 0; i <= this.stacks; i++)
+    {
+        var verticalAngle = Math.PI/this.stacks * i;
+        var cosvertical = Math.cos(verticalAngle);
+        var sinvertical = Math.sin(verticalAngle);
 
-        for(var l=0;l<=this.slices;l++){
-            var horizontalAngle = l * Math.PI * 2 / this.slices;
+        for(var j = 0; j <= this.slices; j++)
+        {
+            var horizontalAngle = Math.PI * 2/this.slices * j;
             var cosH = Math.cos(horizontalAngle);
             var sinH = Math.sin(horizontalAngle);
 
-            this.vertices.push(this.radius*sinV*cosH,this.radius*sinV*sinH,this.radius*cosV);
-            this.normals.push(sinV*cosH,sinV*sinH,cosV);
+            this.vertices.push(this.radius * sinvertical * cosH, this.radius * sinvertical * sinH, this.radius*cosvertical);
+            this.normals.push(sinvertical * cosH, sinvertical * sinH, cosvertical);
         }
     }
 
-    for (var s = 0; s < this.stacks; s++) {
-        for (var l = 0; l < this.slices; l++) {
-            this.indices.push((s * (this.slices + 1)) + l,(s * (this.slices + 1)) + l + this.slices + 1,(s * (this.slices + 1)) + l+1);
-            this.indices.push((s * (this.slices + 1)) + l + this.slices + 1,(s * (this.slices + 1)) + l + this.slices + 2,(s * (this.slices + 1)) + l + 1);
+    for (var i = 0; i < this.stacks; i++) 
+    {
+        for (var j = 0; j < this.slices; j++) 
+        {
+            this.indices.push((i * (this.slices + 1)) + j, (i * (this.slices + 1)) + j + this.slices + 1, (i * (this.slices + 1)) + j + 1);
+            this.indices.push((i * (this.slices + 1)) + j + this.slices + 1, (i * (this.slices + 1)) + j + this.slices + 2, (i * (this.slices + 1)) + j + 1);
         }
     }
 

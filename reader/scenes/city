@@ -70,11 +70,6 @@
     <textures>
 
         <texture id="grass" file="textures/grass.jpg" length_s="1" length_t="1" />
-        <texture id="green_metal" file="textures/green_metal.jpg" length_s="1" length_t="1" />
-        <texture id="picture" file="textures/picture.jpg" length_s="1" length_t="1" />
-        <texture id="picture1" file="textures/picture1.jpg" length_s="1" length_t="1" />
-        <texture id="picture2" file="textures/picture2.jpg" length_s="1" length_t="1" />
-        <texture id="picture3" file="textures/picture3.jpg" length_s="1" length_t="1" />
 
     </textures>
 

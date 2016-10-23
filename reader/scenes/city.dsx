@@ -289,7 +289,7 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="none" />
+            <texture id="window" />
             <children>
                 <componentref id="triangle_1" />
                 <componentref id="triangle_2" />
@@ -297,6 +297,7 @@
                 <componentref id="triangle_4" />
             </children>
         </component>
+
         <component id="triangle_1">
             <transformation>
                 <transformationref id="transf_triangle_1"/>
@@ -304,11 +305,12 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="none" />
+            <texture id="window" />
             <children>
                 <primitiveref id="tria" />
             </children>
         </component>
+
         <component id="triangle_2">
             <transformation>
                 <transformationref id="transf_triangle_2"/>
@@ -316,7 +318,7 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="tria" />
             </children>
@@ -328,11 +330,12 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="tria" />
             </children>
         </component>
+
         <component id="triangle_4">
             <transformation>
                 <transformationref id="transf_triangle_4"/>
@@ -340,7 +343,7 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="tria" />
             </children>
@@ -571,7 +574,7 @@
                 <material id="green" />
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="window" />
             <children>
                 <primitiveref id="rectangle1" />
             </children>
