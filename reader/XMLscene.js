@@ -6,36 +6,77 @@ function XMLscene()
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
 
+/**
+ * XML Scene function called upon initiation of XMLScene
+ * Creates a default Scene even if Graph never Loads
+ */
 XMLscene.prototype.init = function (application) 
 {
     CGFscene.prototype.init.call(this, application);
 
     this.initCameras();
-
     this.initLights();
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
     this.gl.clearDepth(100.0);
     this.gl.enable(this.gl.DEPTH_TEST);
 	this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
 
-
 	this.axis=new CGFaxis(this);
 };
 
+/**
+ * Display Function. Called constantly before and after Graph Loaded
+ */
+XMLscene.prototype.display = function () 
+{
+	// ---- BEGIN Background, camera and axis setup
+	
+	// Clear image and depth buffer everytime we update the scene
+    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+	// Initialize Model-View matrix as identity (no transformation
+	this.updateProjectionMatrix();
+    this.loadIdentity();
+    this.enableTextures(true);
+
+	// Apply transformations corresponding to the camera position relative to the origin
+	this.applyViewMatrix();
+
+	// Draw axis
+	this.axis.display();
+
+	this.setDefaultAppearance();
+	// ---- END Background, camera and axis setup
+	
+	// it is important that things depending on the proper loading of the graph
+	// only get executed after the graph has loaded correctly.
+	// This is one possible way to do it	
+	if (this.graph.loadedOk)
+	{
+		this.displayGraphElems();
+		this.updateLights();
+	};
+};
+
+/**
+ * Bidirectional Connection between Interface and Scene
+ */
 XMLscene.prototype.setInterface=function(interface)
 {
 	this.interface=interface;
 	this.interface.scene = this;	
 };
 
-
-//DEFAULT PARTS
+/**
+ * DEFAULT SECTION. 
+ * Creates a default Graph before loaded graph
+ * Creates default Lights, Cameras and Ambient Appearence
+ */
 XMLscene.prototype.initLights = function () 
 {
-	
 	this.lights[0].setPosition(2, 3, 3, 1);
     this.lights[0].setDiffuse(1.0,1.0,1.0,1.0);
     this.lights[0].enable();
@@ -43,12 +84,10 @@ XMLscene.prototype.initLights = function ()
     this.lights[0].update();
     
 };
-
 XMLscene.prototype.initCameras = function ()
 {
     this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
 };
-
 XMLscene.prototype.setDefaultAppearance = function () 
 {
    	this.setAmbient(0.2, 0.4, 0.8, 1.0);
@@ -57,15 +96,128 @@ XMLscene.prototype.setDefaultAppearance = function ()
     this.setShininess(10.0);	
 };
 
-//GRAPH PARTS
-XMLscene.prototype.setLightsGraph = function ()
+/**
+ * DSX and GRAPH SECTION
+ * Handler called when the graph is finally loaded. 
+ * As loading is asynchronous, 
+ * this may be called already after the application has started the run loop
+ */
+XMLscene.prototype.onGraphLoaded = function () 
+{
+	//scene root
+	this.setRootGraph();
+
+	//new axis
+	this.setAxisGraph();
+
+	//views
+	this.setViewsGraph();
+		
+	//new Aperence
+	this.setIlluminationGraph();
+
+	//new lights
+	this.setLightsGraph();
+
+	//new materials
+	this.setMaterialsGraph();
+
+	//new textures
+	this.setTextureGraph();
+
+	//new transformations
+	this.setTransformationsGraph();	
+
+	//new primitives
+	this.setPrimitivesGraph();
+
+	//creating graph
+	this.createGraph();
+};
+
+/**
+ * Setting the Scene Root Graph given from the DSX file.
+ */
+XMLscene.prototype.setRootGraph = function()
+{
+	console.info("Setting new Scene Root");
+	this.root = this.graph.root;
+};
+
+/**
+ * Setting new Axis on the Scene given from the DSX file.
+ */
+XMLscene.prototype.setAxisGraph = function()
+{
+	console.info("Setting new Axis Graph");
+	this.axis = new CGFaxis(this, this.graph.axis_length);
+};
+
+/**
+ * Creating Views Array given from the DSX file.
+ * When the Default view ID is processed,
+ * sets that camera as default and as current camera
+ */
+XMLscene.prototype.setViewsGraph = function()
+{
+	console.info("Setting new Cameras");
+	this.cameras = [];
+
+	var defaultID = this.graph.default;
+
+	var n_views = this.graph.perspectiveContent.length;
+
+	for(var i = 0; i < n_views; i++)
+	{
+		var id = this.graph.perspectiveContent[i]['id'];
+		var near = this.graph.perspectiveContent[i]['near'];
+		var far = this.graph.perspectiveContent[i]['far'];
+		var angle = this.graph.perspectiveContent[i]['angle'];
+
+		var angle = (angle*Math.PI)/180;
+
+		var fromx = this.graph.perspectiveContent[i]['from']['x'];
+		var fromy = this.graph.perspectiveContent[i]['from']['y'];
+		var fromz = this.graph.perspectiveContent[i]['from']['z'];
+
+		var tox = this.graph.perspectiveContent[i]['to']['x'];
+		var toy = this.graph.perspectiveContent[i]['to']['y'];
+		var toz = this.graph.perspectiveContent[i]['to']['z'];
+		
+		var cm = new CGFcamera(angle, parseFloat(near), parseFloat(far), vec3.fromValues(fromx, fromy, fromz), vec3.fromValues(tox, toy, toz));
+		this.cameras[id] = cm;
+
+		if(defaultID == id)
+		{
+			this.camera = this.cameras[id];
+			this.cameraIndex = i;
+		}
+	}
+};
+
+/**
+ * Setting new Backgroud color and Ambient Light given from the
+ * loaded DSX File
+ */
+XMLscene.prototype.setIlluminationGraph = function () 
+{
+	console.info("Setting new ambient illumination and color values");
+	this.gl.clearColor(this.graph.background['r'],this.graph.background['g'],this.graph.background['b'],this.graph.background['a']);
+   	this.setGlobalAmbientLight(this.graph.ambientIllumination['r'], this.graph.ambientIllumination['g'], this.graph.ambientIllumination['b'], this.graph.ambientIllumination['a']);
+};
+
+/**
+ * Creating new Omni and Spot Lights from DSX file.
+ * All set as visible
+ */
+XMLscene.prototype.setLightsGraph = function()
  {
+	console.info("Creating new Lights from DSX file");
+	
 	var lightBox = this.graph.lightslist;
 	this.interface.addLights(lightBox);
 	
 	var lightBoxLength = lightBox.length;
-
-	console.log("Testing lights ");
 
 	this.lights = [];
 
@@ -100,69 +252,15 @@ XMLscene.prototype.setLightsGraph = function ()
 			this.lights[i].enable();
 		}
 	}
-	
-	
-	
 };
 
-XMLscene.prototype.setIlluminationGraph = function () 
-{
-	this.gl.clearColor(this.graph.background['r'],this.graph.background['g'],this.graph.background['b'],this.graph.background['a']);
-   	this.setGlobalAmbientLight(this.graph.ambientIllumination['r'], this.graph.ambientIllumination['g'], this.graph.ambientIllumination['b'], this.graph.ambientIllumination['a']);
-};
-
-
-XMLscene.prototype.setRootGraph = function()
-{
-	this.root = this.graph.root;
-};
-
-XMLscene.prototype.setAxisGraph = function()
-{
-	this.axis = new CGFaxis(this, this.graph.axis_length);
-};
-
-
-XMLscene.prototype.setViewsGraph = function()
-{
-	this.cameras = [];
-
-	var defaultID = this.graph.default;
-
-	var n_views = this.graph.perspectiveContent.length;
-
-	for(var i = 0; i < n_views; i++)
-	{
-		var id = this.graph.perspectiveContent[i]['id'];
-		var near = this.graph.perspectiveContent[i]['near'];
-		var far = this.graph.perspectiveContent[i]['far'];
-		var angle = this.graph.perspectiveContent[i]['angle'];
-
-		var angle = (angle*Math.PI)/180;
-
-		var fromx = this.graph.perspectiveContent[i]['from']['x'];
-		var fromy = this.graph.perspectiveContent[i]['from']['y'];
-		var fromz = this.graph.perspectiveContent[i]['from']['z'];
-
-		var tox = this.graph.perspectiveContent[i]['to']['x'];
-		var toy = this.graph.perspectiveContent[i]['to']['y'];
-		var toz = this.graph.perspectiveContent[i]['to']['z'];
-		
-		var cm = new CGFcamera(angle, parseFloat(near), parseFloat(far), vec3.fromValues(fromx, fromy, fromz), vec3.fromValues(tox, toy, toz));
-		this.cameras[id] = cm;
-
-		if(defaultID == id)
-		{
-			this.camera = this.cameras[id];
-			this.cameraIndex = i;
-		}
-	}
-
-
-};
-
+/**
+ * Creating new Materials from DSX file
+ */
 XMLscene.prototype.setMaterialsGraph = function()
 {
+	console.info("Creating new Materials from DSX file");
+	
 	this.materials = [];
 
 	var n_materials = this.graph.materialslist.length;
@@ -203,12 +301,14 @@ XMLscene.prototype.setMaterialsGraph = function()
 
 		this.materials[id] = ape;
 	}
-
-
 };
-
+/**
+ * Creating new Textures from DSX file
+ */
 XMLscene.prototype.setTextureGraph = function()
 {
+	console.info("Creating new Textures from DSX file");
+	
 	this.textures = [];
 
 	var n_texture = this.graph.texturelist.length;
@@ -232,8 +332,13 @@ XMLscene.prototype.setTextureGraph = function()
 	}
 };
 
+/**
+ * Creating new Transformations reference from DSX file
+ */
 XMLscene.prototype.setTransformationsGraph = function()
 {
+	console.info("Creating new Transformations from DSX file");
+	
 	this.transformations = [];
 
 	var n_transformations = this.graph.transformationlist.length;
@@ -286,13 +391,16 @@ XMLscene.prototype.setTransformationsGraph = function()
 				mat4.rotate(matrix,matrix,angle,axisvec);
 			}
 		}
-
 		this.transformations[id] = matrix;	
 	}
 };
 
+/**
+ * Creating new Primiteves from DSX file
+ */
 XMLscene.prototype.setPrimitivesGraph = function()
 {
+	console.info("Creating new Primitives from DSX file");
 	this.primitives = [];
 
 	var n_prim = this.graph.primitiveslist.length;
@@ -365,8 +473,13 @@ XMLscene.prototype.setPrimitivesGraph = function()
 		
 };
 
+/**
+ * Create new Graph from Components on DSX file
+ */
 XMLscene.prototype.createGraph = function()
 {
+	console.info("Creating new Graph");
+	
 	this.nodes = [];
 
 	var n_node = this.graph.componentslist.length;
@@ -377,7 +490,8 @@ XMLscene.prototype.createGraph = function()
 		var node = new Node(this.graph.componentslist[i]['id']);
 		var transformation = [];
 	
-		//transformations
+		
+		//Setting Transformation for component from DSX file
 		if(this.graph.componentslist[i]['transformations'][0]['type']  == 'transformationref')
 		{
 			transformation['type'] = 'transformationref';
@@ -434,7 +548,8 @@ XMLscene.prototype.createGraph = function()
 		}
 		node.setTransformation(transformation);
 
-		//materials
+		
+		//Setting Materials, setting first as current and default	 
 		var n_materials = this.graph.componentslist[i]['materials'].length;
 		
 		for(var j = 0; j < n_materials; j++)
@@ -448,20 +563,11 @@ XMLscene.prototype.createGraph = function()
 			}
 		}
 		
+		//Setting Texture for component from DSX file
 		var textur = this.graph.componentslist[i]['texture'];
 		node.setTexture(textur);
-
-		if(this.graph.componentslist[i]['children'] != null)
-		{			
-			var n_children = this.graph.componentslist[i]['children'].length;
-			for(var t = 0; t < n_children; t++)
-			{
-				var ch = this.graph.componentslist[i]['children'][t];
-				node.setChildren(ch);
-
-			}			
-		}
-
+			
+		//Setting Primitives for component from DSX file
 		if(this.graph.componentslist[i]['primitives'] != null)
 		{			
 			var n_primitives = this.graph.componentslist[i]['primitives'].length;
@@ -469,75 +575,81 @@ XMLscene.prototype.createGraph = function()
 			{
 				var pr = this.graph.componentslist[i]['primitives'][k];
 				node.setPrimitive(pr);
-			}			
+			}		
 		}
-
-		this.nodes[id] = node;
-
-	}
-};
-
-
-
-// Handler called when the graph is finally loaded. 
-// As loading is asynchronous, this may be called already after the application has started the run loop
-XMLscene.prototype.onGraphLoaded = function () 
-{
-
-	//scene root
-	this.setRootGraph();
-
-	//new axis
-	this.setAxisGraph();
-
-	//views
-	this.setViewsGraph();
 		
-	//new Aperence
-	this.setIlluminationGraph();
-
-	//new lights
-	this.setLightsGraph();
-
-	//new materials
-	this.setMaterialsGraph();
-
-	//new textures
-	this.setTextureGraph();
-
-	//new transformations
-	this.setTransformationsGraph();	
-
-	//new primitives
-	this.setPrimitivesGraph();
-
-	//creating graph
-	this.createGraph();
+		//Setting Children for component from DSX file
+		if(this.graph.componentslist[i]['children'] != null)
+		{			
+			var n_children = this.graph.componentslist[i]['children'].length;
+			for(var t = 0; t < n_children; t++)
+			{
+				var ch = this.graph.componentslist[i]['children'][t];
+				node.setChildren(ch);
+			}		
+		}
+		
+		// Pushing to Graph Array		 
+		this.nodes[id] = node;
+	}
 };
 
-XMLscene.prototype.processMaterialsIndex=function(materialslist)
+/**
+ * Funtion to prepare everything for the display cycle starting from the root.
+ * Sets every default argument defined in the root and passes it through the 
+ * displayNodes. The rules tested in MySceneGraph prevents from errors to pass 
+ * down the graph.
+ * Passes a transformation matrix, the current/default material in Node, the Texture,
+ * the children list and the primitives list.
+ * This allows to apply the current transformation matrix to the other transformations
+ * down the graph (Allways loads a transformation matrix even if Reference or not)
+ * Allows the material from the root to be applied in case of inherit.
+ * Even if the default material is changed by pressing M/m it displays again the new 
+ * current/default material
+ * Allows the texture to be applied if "inherit" appens downs the graph and to ingnored
+ * if "none" happens.
+ */
+XMLscene.prototype.displayGraphElems=function()
 {
-	var idindex = 0;
-	if(materialslist.length > 1)
-	{
-		if(this.clickedMaterials > 0)
-		{
-			idindex = this.clickedMaterials % materialslist.length;
+	var id = this.root;
 
-			if(idindex == 0)
-			{
-				idindex = materialslist.length - 1 ;
-			}
-			else
-			{
-				idindex = idindex - 1;
-			}
-		}
+	var transformationtype = this.nodes[id].transformation['type'];
+	var transformation;
+
+	if(transformationtype == 'transformationref')
+	{
+		var transformationID =  this.nodes[id].transformation['transformation'];
+		transformation = this.transformations[transformationID];
+	}
+	else
+	{
+		transformation = this.nodes[id].transformation['transformation'];
 	}
 
-	return idindex;
-}
+	var materialst = this.nodes[id].defaultMaterial;
+	var texture = this.nodes[id].texture;
+	var children = this.nodes[id].children;
+	var primitive = this.nodes[id].primitive;
+		
+	
+	this.displayNodes(id, transformation, materialst, texture, children, primitive);
+	
+};
 
+/**
+ * Function called for display primitives and recursivle call again for 
+ * the next children.
+ * 
+ * PRIMITIVES: if any primitive is passed as argument:
+ * - Able to process more than one primitive with internal cycle
+ * - Updates textCoords from length_s and length_t, sets 'CLAMP_TO_EDGE',
+ * and sets designated texture if texture argument is different from "none".
+ * - The material always exisits to apply. "Inherit" material is passsed as argument
+ * in the previous children and is applied. 
+ * - Applies the Transformation matrix passed as argument to the scene
+ * 
+ * CHILDREN: if any children 
+ */
 XMLscene.prototype.displayNodes=function(id, transformation, material, texture, children, primitive)
 {
 
@@ -546,16 +658,16 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 		for(var i = 0; i < primitive.length; i++)
 		{
 			
+			var obj = this.primitives[primitive[i]];
 			var materialToApply = this.materials[material];
+			
 			if(texture != "none")
 			{
 				materialToApply.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 				materialToApply.setTexture(this.textures[texture]['texture']);
+				obj.updateTextureCoords(this.textures[texture]['length_s'], this.textures[texture]['length_t']);
 			}
-
-			var obj = this.primitives[primitive[i]];
-			//obj.updateTextureCoords(this.textures[texture]['length_s'], this.textures[texture]['length_t']);
-				
+	
 			this.pushMatrix();	
 				this.multMatrix(transformation);
 				materialToApply.apply();			
@@ -615,32 +727,7 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 	}
 };
 
-XMLscene.prototype.displayGraphElems=function()
-{
-	var id = this.root;
 
-	var transformationtype = this.nodes[id].transformation['type'];
-	var transformation;
-
-	if(transformationtype == 'transformationref')
-	{
-		var transformationID =  this.nodes[id].transformation['transformation'];
-		transformation = this.transformations[transformationID];
-	}
-	else
-	{
-		transformation = this.nodes[id].transformation['transformation'];
-	}
-
-	var materialst = this.nodes[id].defaultMaterial;
-	var texture = this.nodes[id].texture;
-	var children = this.nodes[id].children;
-	var primitive = this.nodes[id].primitive;
-		
-	
-	this.displayNodes(id, transformation, materialst, texture, children, primitive);
-	
-};
 
 XMLscene.prototype.updateLights=function()
 {
@@ -701,41 +788,5 @@ XMLscene.prototype.materialsUpdate=function()
 		}
 	}
 };
-XMLscene.prototype.display = function () 
-{
-	// ---- BEGIN Background, camera and axis setup
-	
-	// Clear image and depth buffer everytime we update the scene
-    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-	// Initialize Model-View matrix as identity (no transformation
-	this.updateProjectionMatrix();
-    this.loadIdentity();
-    this.enableTextures(true);
-
-	// Apply transformations corresponding to the camera position relative to the origin
-	this.applyViewMatrix();
-
-	// Draw axis
-	this.axis.display();
-
-	this.setDefaultAppearance();
-	
-	// ---- END Background, camera and axis setup
-
-	// it is important that things depending on the proper loading of the graph
-	// only get executed after the graph has loaded correctly.
-	// This is one possible way to do it
-	
-	if (this.graph.loadedOk)
-	{
-		this.displayGraphElems();
-		this.updateLights();
-		
-	
-	};
-
-
-};
 
