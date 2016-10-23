@@ -599,14 +599,14 @@ XMLscene.prototype.createGraph = function()
  * Sets every default argument defined in the root and passes it through the 
  * displayNodes. The rules tested in MySceneGraph prevents from errors to pass 
  * down the graph.
- * Passes a transformation matrix, the current/default material in Node, the Texture,
+ * - Passes a transformation matrix, the current/default material in Node, the Texture,
  * the children list and the primitives list.
  * This allows to apply the current transformation matrix to the other transformations
  * down the graph (Allways loads a transformation matrix even if Reference or not)
- * Allows the material from the root to be applied in case of inherit.
+ * - Allows the material from the root to be applied in case of inherit.
  * Even if the default material is changed by pressing M/m it displays again the new 
  * current/default material
- * Allows the texture to be applied if "inherit" appens downs the graph and to ingnored
+ * - Allows the texture to be applied if "inherit" appens downs the graph and to ingnored
  * if "none" happens.
  */
 XMLscene.prototype.displayGraphElems=function()
@@ -648,11 +648,16 @@ XMLscene.prototype.displayGraphElems=function()
  * in the previous children and is applied. 
  * - Applies the Transformation matrix passed as argument to the scene
  * 
- * CHILDREN: if any children 
+ * CHILDREN: if any children is passed as argument: 
+ * - Process all children in the array from cycle (ignores if children invokes father)
+ * - Load the transformation matrix from Reference or Implicit. Applies to the father matrix.
+ * - Passes new material if children current material is not "inherit", otherwise passes the
+ * father material
+ * - Passes new texture if children texture is not "inherit", otherwise passes father texture
+ * - Passes childrens list and primitives list
  */
 XMLscene.prototype.displayNodes=function(id, transformation, material, texture, children, primitive)
 {
-
 	if(primitive.length > 0)
 	{
 		for(var i = 0; i < primitive.length; i++)
@@ -684,66 +689,68 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 		for(var i = 0; i < children.length; i++)
 		{
 			var newid = children[i];
-			var matrixtrans = mat4.create();
-			var transtype = this.nodes[newid].transformation['type'];
-			var trans;
-			 
-			if(transtype == 'transformationref')
+			if(newid != id)
 			{
-				var transid = this.nodes[newid].transformation['transformation'];
-				trans = this.transformations[transid];
+				var matrixtrans = mat4.create();
+				var transtype = this.nodes[newid].transformation['type'];
+				var trans;
+				
+				//Transformations
+				if(transtype == 'transformationref')
+				{
+					var transid = this.nodes[newid].transformation['transformation'];
+					trans = this.transformations[transid];
+				}
+				else
+				{
+					trans = this.nodes[newid].transformation['transformation'];
+				}
+				mat4.multiply(matrixtrans, transformation, trans);
+				
+				//Materials
+				var newmaterial;
+				if(this.nodes[newid].defaultMaterial == "inherit")
+				{
+					newmaterial = material;
+				}
+				else
+				{
+					newmaterial = this.nodes[newid].defaultMaterial;
+				}
+		
+				//Textures
+				var newTexture;
+				if(this.nodes[newid].texture == "inherit")
+				{
+					newTexture = texture;
+				}
+				else
+				{
+					newTexture = this.nodes[newid].texture;
+				}
+				
+				//Children
+				var newChildren = this.nodes[newid].children;
+				//Primitives
+				var newPrimitives = this.nodes[newid].primitive;
+		
+				this.displayNodes(newid, matrixtrans, newmaterial, newTexture, newChildren, newPrimitives);	
 			}
 			else
 			{
-				trans = this.nodes[newid].transformation['transformation'];
+				console.warn("WARNING: Prevented infinte loop. Children is calling Father: '" + id + "' <-> '" + newid + "'");
 			}
-			mat4.multiply(matrixtrans, transformation, trans);
-
-			var newmaterial;
-			if(this.nodes[newid].defaultMaterial == "inherit")
-			{
-				newmaterial = material;
-			}
-			else
-			{
-				newmaterial = this.nodes[newid].defaultMaterial;
-			}
-
-			var newTexture;
-			if(this.nodes[newid].texture == "inherit")
-			{
-				newTexture = texture;
-			}
-			else
-			{
-				newTexture = this.nodes[newid].texture;
-			}
-
-			var newChildren = this.nodes[newid].children;
-			var newPrimitives = this.nodes[newid].primitive;
-
-			this.displayNodes(newid, matrixtrans, newmaterial, newTexture, newChildren, newPrimitives);	
 		}
 	}
 };
 
-
-
-XMLscene.prototype.updateLights=function()
-{
-	for(var i = 0; i < this.lights.length; i++)
-	{
-		var id = this.graph.lightslist[i]['id'];
-
-		if(this.lightstates[id] == true)
-			this.lights[i].enable();
-		else
-			this.lights[i].disable();
-
-		this.lights[i].update();
-	}
-};
-
+/**
+ * Funtion called when pressed V/v. Checks if the current camera index is the last 
+ * of cameras list. 
+ * If true sets as 0 and sets the current camera the one with index 0
+ * If false adds 1 to the current camera index and sets the current camera the one
+ * in that new index in the cameras list.
+ */
 XMLscene.prototype.updateCamera=function()
 {
 	var camerasLength = this.graph.perspectiveContent.length;
@@ -763,7 +770,17 @@ XMLscene.prototype.updateCamera=function()
 	this.interface.setActiveCamera(this.camera);
 	this.display();
 
-};  
+}; 
+
+/**
+ * Function called when pressed M/m
+ * Goes through all the components in the graph and sets for each a new material
+ * if materials list is bigger than 1.
+ * If current material index is the last of materials index sets as 0 and sets the 
+ * material with index 0
+ * If current material index is not the last of materials index, adds 1 as to the index
+ * and sets the new material the material with the new index on the list.
+ */
 XMLscene.prototype.materialsUpdate=function()
 {
 	for(var i = 0; i < this.graph.componentslist.length; i++)
@@ -788,5 +805,27 @@ XMLscene.prototype.materialsUpdate=function()
 		}
 	}
 };
+
+/**
+ * Function called to update lights
+ * Enables and disables lights if states are true or false.
+ * Usefull with the Interface Lights folder checkboxes.
+ */
+XMLscene.prototype.updateLights=function()
+{
+	for(var i = 0; i < this.lights.length; i++)
+	{
+		var id = this.graph.lightslist[i]['id'];
+
+		if(this.lightstates[id] == true)
+			this.lights[i].enable();
+		else
+			this.lights[i].disable();
+
+		this.lights[i].update();
+	}
+};
+
+
 
 

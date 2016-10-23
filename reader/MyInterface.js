@@ -6,16 +6,19 @@ function MyInterface()
 MyInterface.prototype = Object.create(CGFinterface.prototype);
 MyInterface.prototype.constructor = MyInterface;
 
-
+/**
+ * Function called when Interface is created. Creates new Lights Folder
+ */
 MyInterface.prototype.init = function(application)
 {
     CGFinterface.prototype.init.call(this,application);
     this.gui= new dat.GUI();
     this.lightsgroup= this.gui.addFolder("Lights");
     this.lightsgroup.open();
-    return true;
 };
-
+/**
+ * Pushes all the lights to the Lights folder.
+ */
 MyInterface.prototype.addLights=function(lights)
 {
     this.scene.lightstates = [];
