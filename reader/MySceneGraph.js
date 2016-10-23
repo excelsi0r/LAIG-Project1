@@ -110,12 +110,17 @@ MySceneGraph.prototype.onXMLReady=function()
 };
 
 /**
+ * Error checks in Floats and String implementation removed because code became illegible. 
+ * User must always be conscient of valid arguments
+ */
+
+/**
  * Method to parse the Root and axis, stores in global variables
  * Checks if scene tag is 1, if 0 or more than 1 returns error
  * Checks if root tag exists, returns error if missing, passes 
  * as scene root the first one found and saves in 'root' class variable.
  * Checks if axis_lenght tag exists. If missing gives a warning and 
- * sets default of 2.0. If existing passes the first value found and
+ * sets default of 2.0, If existing passes the first value found and
  * saves in 'axis_length' class variable.
  */
 MySceneGraph.prototype.parseSceneRoot = function(rootElement)
