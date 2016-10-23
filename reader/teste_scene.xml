@@ -3,23 +3,23 @@
 
 
     <views default="default_view" >
-        <perspective id="default_view" near="0.1" far="500" angle="45">
+        <perspective id="1" near="0.1" far="500" angle="0.4">
             <from x="15" y="15" z="15" />
             <to x="0" y="0" z="0" />
         </perspective>
-        <perspective id="2" near="0.1" far="500" angle="45">
+        <perspective id="2" near="0.1" far="500" angle="0.4">
             <from x="10" y="15" z="15" />
             <to x="0" y="0" z="0" />
         </perspective>
-        <perspective id="3" near="0.1" far="500" angle="45">
+        <perspective id="3" near="0.1" far="500" angle="0.4">
             <from x="20" y="15" z="15" />
             <to x="0" y="0" z="0" />
         </perspective>
-        <perspective id="4" near="0.1" far="500" angle="45">
-            <from x="100" y="100" z="100" />
+        <perspective id="4" near="0.1" far="500" angle="0.9">
+            <from x="20" y="15" z="15" />
             <to x="0" y="0" z="0" />
         </perspective>
-        <perspective id="5" near="0.1" far="500" angle="45">
+        <perspective id="4" near="0.1" far="500" angle="0.9">
             <from x="10" y="15" z="15" />
             <to x="0" y="0" z="0" />
         </perspective>
@@ -27,137 +27,83 @@
 
 
     <illumination doublesided="tt" local="tt" >
-        <ambient r="0" g="0" b="0" a="1.0" />
-        <background r="0.18" g="0.03" b="0.33" a="1" />
+        <ambient r="0.2" g="0.2" b="0.2" a="1.0" />
+        <background r="0.0" g="0.7" b="1" a="1" />
     </illumination>
 
 
     <lights>
-        <omni id="Light 1" enabled="0" >
+        <omni id="Light 1" enabled="1" >
             <location x="1" y="3" z="6" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
             <diffuse r="1" g="1" b="1" a="0.5" />
-            <specular r="0" g="0" b="0" a="0.5" />
+            <specular r="0" g="0" b="1" a="0.5" />
         </omni>
-        <omni id="Light 2" enabled="0" >
+        <omni id="Light 2" enabled="1" >
             <location x="6" y="3" z="1" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
             <diffuse r="1" g="1" b="1" a="0.5" />
-            <specular r="0" g="0" b="0" a="0.5" />
+            <specular r="0" g="0" b="1" a="0.5" />
         </omni>
-        <omni id="Light 3" enabled="0" >
+        <omni id="Light 3" enabled="1" >
             <location x="6" y="3" z="6" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
             <diffuse r="1" g="1" b="1" a="0.5" />
-            <specular r="0" g="0" b="0" a="0.5" />
+            <specular r="0" g="0" b="1" a="0.5" />
         </omni>
-        <omni id="Light 4" enabled="0" >
+        <omni id="Light 4" enabled="1" >
             <location x="1" y="3" z="0" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
             <diffuse r="1" g="1" b="1" a="0.5" />
-            <specular r="0" g="0" b="0" a="0.5" />
+            <specular r="0" g="0" b="1" a="0.5" />
         </omni>
-        <spot id="Light 5" enabled="1" angle="20" exponent="3">
-            <target x="3" y="0" z="3"/>
-            <location x="3" y="10" z="3" />
-            <ambient r="0.1" g="0.1" b="0.1" a="1" />
-            <diffuse r="0.5" g="0.9" b="0" a="1" />
-            <specular r="0.5" g="0.9" b="0" a="1" />
+        <spot id="Light 5" enabled="0" angle="0" exponent="1">
+            <target x="2" y="0" z="2" />
+            <location x="3" y="8" z="3" />
+            <ambient r="1" g="1" b="1" a="1" />
+            <diffuse r="1" g="1" b="1" a="1" />
+            <specular r="0.5" g="1" b="0" a="1" />
         </spot>
-
-        <omni id="Light Yellowish1" enabled="1" >
-            <location x="1" y="3" z="6" w="1" />
-            <ambient r="0" g="0" b="0" a="0" />
-            <diffuse r="1" g="1" b="1" a="0.5" />
-            <specular r="0" g="0" b="0" a="0.5" />
-        </omni>
-        <omni id="Light Yellowish2" enabled="1" >
-            <location x="6" y="3" z="1" w="1" />
-            <ambient r="0" g="0" b="0" a="0" />
-            <diffuse r="0.92" g="0.92" b="0.68" a="1" />
-            <specular r="0.92" g="0.92" b="0.68" a="1" />
-        </omni>
-        <omni id="Light Yellowish3" enabled="1" >
-            <location x="6" y="3" z="6" w="1" />
-            <ambient r="0" g="0" b="0" a="0" />
-            <diffuse r="0.92" g="0.92" b="0.68" a="1" />
-            <specular r="0.92" g="0.92" b="0.68" a="1" />
-        </omni>
-        <omni id="Light Yellowish4" enabled="1" >
-            <location x="1" y="3" z="0" w="1" />
-            <ambient r="0" g="0" b="0" a="0" />
-            <diffuse r="0.92" g="0.92" b="0.68" a="1" />
-            <specular r="0.92" g="0.92" b="0.68" a="1" />
-        </omni>
     </lights>
 
 
     <textures>
 
-        <texture id="grass" file="../textures/floor.png" length_s="1" length_t="1" />
-		<texture id="picture1" file="../textures/floor.png" length_s="1" length_t="1" />
+        <texture id="grass" file="textures/grass.jpg" length_s="1" length_t="1" />
+        <texture id="green_metal" file="textures/green_metal.jpg" length_s="1" length_t="1" />
+        <texture id="picture" file="textures/picture.jpg" length_s="1" length_t="1" />
+        <texture id="picture1" file="textures/picture1.jpg" length_s="1" length_t="1" />
+        <texture id="picture2" file="textures/picture2.jpg" length_s="1" length_t="1" />
+        <texture id="picture3" file="textures/picture3.jpg" length_s="1" length_t="1" />
 
     </textures>
 
 
     <materials>
 
-         <material id="white" >
-            <emission r="0" g="0" b="0" a="1" />
-            <ambient r="1" g="1" b="1" a="1" />
-            <diffuse r="1" g="1" b="1" a="1" />
-            <specular r="1" g="1" b="1" a="1" />
-            <shininess value="30" />
-        </material>
-        <material id="red" >
-            <emission r="0" g="0" b="0" a="1" />
-            <ambient r="1" g="0" b="0" a="1" />
-            <diffuse r="1" g="0" b="0" a="1" />
-            <specular r="1" g="0" b="0" a="1" />
-            <shininess value="30" />
+        <material id="1" >
+            <emission r="ff" g="ff" b="ff" a="ff" />
+            <ambient r="ff" g="ff" b="ff" a="ff" />
+            <diffuse r="ff" g="ff" b="ff" a="ff" />
+            <specular r="ff" g="ff" b="ff" a="ff" />
+            <shininess value="ff" />
         </material>
 
-        <material id="green" >
-            <emission r="0" g="0" b="0" a="1" />
-            <ambient r="0" g="1" b="0" a="1" />
-            <diffuse r="0" g="1" b="0" a="1" />
-            <specular r="0" g="1" b="0" a="1" />
-            <shininess value="30" />
+        <material id="2" >
+            <emission r="ff" g="ff" b="ff" a="ff" />
+            <ambient r="ff" g="ff" b="ff" a="ff" />
+            <diffuse r="ff" g="ff" b="ff" a="ff" />
+            <specular r="ff" g="ff" b="ff" a="ff" />
+            <shininess value="ff" />
         </material>
 
-        <material id="blue" >
-            <emission r="0" g="0" b="0" a="1" />
-            <ambient r="0" g="0" b="1" a="1" />
-            <diffuse r="0" g="0" b="1" a="1" />
-            <specular r="0" g="0" b="1" a="1" />
-            <shininess value="30" />
+        <material id="3" >
+            <emission r="0.1" g="ff" b="ff" a="ff" />
+            <ambient r="ff" g="ff" b="ff" a="ff" />
+            <diffuse r="ff" g="ff" b="ff" a="ff" />
+            <specular r="ff" g="ff" b="ff" a="ff" />
+            <shininess value="ff" />
         </material>
-
-        <material id="retro-synth" >
-            <emission r="0.23" g="0.19" b="0.47" a="1" />
-            <ambient r="0.23" g="0.19" b="0.47" a="1" />
-            <diffuse r="0.23" g="0.19" b="0.47" a="1" />
-            <specular r="0.23" g="0.19" b="0.47" a="1" />
-            <shininess value="30" />
-        </material>
-
-        <material id="retro-synth1" >
-            <emission r="0.78" g="0.08" b="0.52" a="1" />
-            <ambient r="0.78" g="0.08" b="0.52" a="1" />
-            <diffuse r="0.78" g="0.08" b="0.52" a="1" />
-            <specular r="0.78" g="0.08" b="0.52" a="1" />
-            <shininess value="30" />
-        </material>
-
-        <material id="yellowish" >
-            <emission r="0.92" g="0.92" b="0.68" a="1" />
-            <ambient r="0.92" g="0.92" b="0.68" a="1" />
-            <diffuse r="0.92" g="0.92" b="0.68" a="1" />
-            <specular r="0.92" g="0.92" b="0.68" a="1" />
-            <shininess value="120" />
-        </material>
-        
-        
 
     </materials>
 
@@ -209,9 +155,6 @@
     </transformations>
 
     <primitives>
-        <primitive id="rectangle1">
-            <rectangle x1="0" y1="2" x2="2" y2="0" />
-        </primitive>
         <primitive id="rectangle">
             <rectangle x1="0" y1="2" x2="2" y2="0" />
         </primitive>
@@ -234,12 +177,14 @@
     <components>
         <component id="city">
             <transformation>
-                <translate x="0" y="0" z="0" />
+                <translate x="0" y = "0" z = "0" />
             </transformation>
             <materials>
-                <material id="retro-synth" />
-            </materials>                      
+                <material id="1" />
+            </materials>
+                         
             <texture id="none" />
+
             <children>
                 <componentref id="floor" />
                 <componentref id="zeppelin"/>
@@ -255,48 +200,26 @@
                 <componentref id="building7" />
                 <componentref id="building8" />
                 <componentref id="building9" />
-                <componentref id="ribbon" />
-				<componentref id="circularBuilding" />
+                <componentref id="circularBuilding" />
                 <componentref id="egypt" />
             </children>
         </component>
-		
-		<component id="egypt">
+
+        <component id="egypt">
             <transformation> 
                 <translate x="3" y="0" z="1"/>
                 <scale x="0.5" y="1" z="0.5" />
             </transformation>
-            <materials>
-                <material id="inherit"/>
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="pyramide"/>   
             </children>
         </component>
 
-        <component id="ribbon">
-            <transformation>
-                <translate x="-0.5" y="-0.01" z="6.5"/>
-                <rotate axis="x" angle="-90"/>
-                <scale x="3.5" y="3.5" z="3.5"/>
-            </transformation>
-            <materials>
-                <material id="yellowish" />
-            </materials>
-            <texture id="none" />
-            <children>
-                <primitiveref id="rectangle1" />
-            </children>
-        </component>
-		
          <component id="pyramide">
             <transformation>
                 <translate x="0" y="0" z="0"/>
             </transformation>
-            <materials>
-                <material id="inherit"/>
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="triangle_1" />
@@ -309,9 +232,6 @@
             <transformation>
                 <transformationref id="transf_triangle_1"/>
             </transformation>
-            <materials>
-                <material id="inherit"/>
-            </materials>
             <texture id="picture1" />
             <children>
                 <primitiveref id="tria" />
@@ -321,9 +241,6 @@
             <transformation>
                 <transformationref id="transf_triangle_2"/>
             </transformation>
-            <materials>
-                <material id="inherit"/>
-            </materials>
             <texture id="picture1" />
             <children>
                 <primitiveref id="tria" />
@@ -333,9 +250,6 @@
             <transformation>
                 <transformationref id="transf_triangle_3"/>
             </transformation>
-            <materials>
-                <material id="inherit"/>
-            </materials>
             <texture id="picture1" />
             <children>
                 <primitiveref id="tria" />
@@ -345,9 +259,6 @@
             <transformation>
                 <transformationref id="transf_triangle_4"/>
             </transformation>
-            <materials>
-                <material id="inherit"/>
-            </materials>
             <texture id="picture1" />
             <children>
                 <primitiveref id="tria" />
@@ -359,24 +270,17 @@
             <transformation>
                 <transformationref id="circular_building"/>
             </transformation>
-            <materials>
-                <material id="inherit"/>
-            </materials>
             <texture id="none" />
             <children>
                 <primitiveref id="cili" />   
             </children>
         </component>
 
-
         <component id="zeppelin">
             <transformation>
                 <translate x="2" y="5" z ="4"/>
                 <scale x="2.0" y="0.6" z="0.6" />
             </transformation>
-            <materials>
-                <material id="blue" />
-            </materials>
             <texture id="none" />
             <children>
                 <primitiveref id="sphereZep" />   
@@ -388,37 +292,26 @@
                 <translate x="2" y="4.3" z ="3.8"/>
                 <scale x="0.5" y="0.2" z="0.2" />
             </transformation>
-            <materials>
-                <material id="blue" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
             </children>
         </component>
-
         <component id="zeppelinWingH">
             <transformation>
                 <translate x="0.2" y="5" z ="3.5"/>
                 <scale x="0.2" y="0.01" z="0.5" />
             </transformation>
-            <materials>
-                <material id="blue" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
             </children>
         </component>
-
-        <component id="zeppelinWingV">
+           <component id="zeppelinWingV">
             <transformation>
                 <translate x="0.2" y="4.5" z ="4"/>
                 <scale x="0.2" y="0.5" z="0.01" />
             </transformation>
-            <materials>
-                <material id="blue" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
@@ -430,9 +323,6 @@
                 <translate x="0" y="0" z ="3"/>
                 <scale x="0.4" y="1.3" z="0.4" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
@@ -444,9 +334,6 @@
                 <translate x="1" y="0" z="1"/>
                 <scale x="0.2" y="0.7" z="0.2" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
@@ -458,9 +345,6 @@
                 <translate x="3" y="0" z="3"/>
                 <scale x="0.4" y="1" z="0.4" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
@@ -472,9 +356,6 @@
                 <translate x="5" y="0" z="0"/>
                 <scale x="0.2" y="0.5" z="0.7" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
@@ -486,9 +367,6 @@
                 <translate x="5" y="0" z="0"/>
                 <scale x="0.4" y="1" z="0.3" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
@@ -500,37 +378,26 @@
                 <translate x="4" y="0" z="4"/>
                 <scale x="0.4" y="0.5" z="0.4" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
             </children>
         </component>
-
          <component id="building7">
             <transformation>
                 <translate x="4.1" y="1" z="4.1"/>
                 <scale x="0.28" y="0.5" z="0.28" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
             </children>
         </component>
-
         <component id="building8">
             <transformation>
                 <translate x="4.15" y="2" z="4.15"/>
                 <scale x="0.21" y="0.5" z="0.21" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="cube" />   
@@ -542,22 +409,19 @@
                 <translate x="4.36" y="2" z="4.36"/>
                 <scale x="0.23" y="1.5" z="0.23" />
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <primitiveref id="sphere" />   
             </children>
         </component>
 
+       
+
+       
         <component id="cube">
             <transformation>
                 <translate x="0" y="0" z="0"/>
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
                 <componentref id="bottom_square" />
@@ -573,15 +437,9 @@
             <transformation>
                 <transformationref id="floor_city"/>
             </transformation>
-            <materials>
-                <material id="retro-synth1" />
-                <material id="blue" />
-                <material id="green" />
-                <material id="inherit" />
-            </materials>
             <texture id="none" />
             <children>
-                <primitiveref id="rectangle1" />
+                <primitiveref id="rectangle" />
             </children>
         </component>
 
@@ -589,12 +447,9 @@
             <transformation>
                 <transformationref id="transf_top_square"/>
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
-            <texture id="none" />
+            <texture id="grass" />
             <children>
-                <primitiveref id="rectangle1" />
+                <primitiveref id="rectangle" />
             </children>
         </component>
 
@@ -602,12 +457,9 @@
             <transformation>
                 <transformationref id="transf_bottom_square"/>
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
-            <texture id="none" />
+            <texture id="picture1" />
             <children>
-                <primitiveref id="rectangle1" />
+                <primitiveref id="rectangle" />
             </children>
         </component>
 
@@ -615,51 +467,36 @@
             <transformation>
                 <transformationref id="transf_corner_square_1"/>
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
-            <texture id="none" />
+            <texture id="picture" />
             <children>
-                <primitiveref id="rectangle1" />
+                <primitiveref id="rectangle" />
             </children>
         </component>
-
         <component id="corner_square_2">
             <transformation>
                 <transformationref id="transf_corner_square_2"/>
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
-            <texture id="none" />
+            <texture id="picture1" />
             <children>
-                <primitiveref id="rectangle1" />
+                <primitiveref id="rectangle" />
             </children>
         </component>
-
         <component id="corner_square_3">
             <transformation>
                 <transformationref id="transf_corner_square_3"/>
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
-            <texture id="none" />
+            <texture id="picture2" />
             <children>
-                <primitiveref id="rectangle1" />
+                <primitiveref id="rectangle" />
             </children>
         </component>
-        
         <component id="corner_square_4">
             <transformation>
                 <transformationref id="transf_corner_square_4"/>
             </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
-            <texture id="none" />
+            <texture id="picture3" />
             <children>
-                <primitiveref id="rectangle1" />
+                <primitiveref id="rectangle" />
             </children>
         </component>
     </components>

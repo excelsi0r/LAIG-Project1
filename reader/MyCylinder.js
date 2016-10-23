@@ -1,133 +1,97 @@
-/**
- * MyTriangle
- * @param gl {WebGLRenderingContext}
- * @constructor
- */
-function MyCylinder(scene, base, top, height, slices, stacks) {
-	CGFobject.call(this,scene);
-	this.base = base;
-	this.top = top;
-	this.height = height;
-	this.slices = slices;
-	this.stacks = stacks;
-	this.initBuffers();
+function MyCylinder(scene,base,top,height,slices,stacks) {
+    CGFobject.call(this,scene);
+
+    this.base = base;
+    this.top = top;
+    this.height = height;
+    this.slices = slices;
+    this.stacks = stacks;
+
+    this.initBuffers();
 };
 
 MyCylinder.prototype = Object.create(CGFobject.prototype);
 MyCylinder.prototype.constructor=MyCylinder;
 
+
+/*
+ MyCylinder.prototype.updateTexCoords=function(amplifS, amplifT){
+
+ var width = this.Rbotx;
+ var height = this.Ltopy;
+
+ this.texCoords = [
+ 0,0,
+ 0.0, height /amplifT,
+ width /amplifS, height /amplifT,
+ width /amplifS, 0.0
+ ];
+
+
+ this.updateTexCoordsGLBuffers();
+
+
+ };
+ */
+
 MyCylinder.prototype.initBuffers = function () {
     this.vertices = [];
- 	this.indices = [];
- 	this.normals = [];
- 	this.texCoords = [];
+    this.normals = [];
+    this.indices = [];
+    ///////////////Corpo
+    //vertices + normais
+    var step = this.height/this.stacks;
+    var radius_difference = (this.top - this.base);
+    var alpha = 2 * Math.PI/this.slices;
+    for(var h=0 ; h <= this.stacks ; h++){
 
- 	var deg2Rad = Math.PI/180.0;
+       var radius_percentage = h/this.stacks;
+       var radius = radius_percentage * radius_difference + this.base;
 
-	//Build the cylinder's main surface
- 	var deltaAlpha = 360.0/this.slices
- 	var deltaZ = this.height/this.stacks;
- 	var deltaR = (this.top - this.base)/this.stacks;
+        for(var s=0;s < this.slices;s++){
+            var angle = s*alpha;
+            this.vertices.push(radius*Math.cos(angle),radius*Math.sin(angle),h*step);
+            this.normals.push(Math.cos(angle), Math.sin(angle), 0);
+        }
+    }
+    //indices
+    var current_slice = 1;
+    for(var t=0;t<this.slices*this.stacks;t++){
 
-	var z = -this.height/2.0;
-	var r = this.base;
-	for(var k = 0; k <= this.stacks; k++)
-	{
-		var alpha = 0;
-		for(var i = 0; i <= this.slices; i++)
-		{
-			var alphaRad = alpha*deg2Rad;
-
-			//Generate the vertices
-			this.vertices.push(r*Math.cos(alphaRad),r*Math.sin(alphaRad),z);
-
-			//Generate the indices
-			if(i > 0 && k > 0)
-			{
-				this.indices.push((this.slices+1)*(k)+(i),(this.slices+1)*(k)+(i-1),(this.slices+1)*(k-1)+(i-1));
-				this.indices.push((this.slices+1)*(k)+(i),(this.slices+1)*(k-1)+(i-1),(this.slices+1)*(k-1)+(i));
-			}
-
-			//Generate the normals
-			var vecA = [-Math.sin(alphaRad),Math.cos(alphaRad),0];
-			var vecZ = [this.top*Math.cos(alphaRad) - this.base*Math.cos(alphaRad), this.top*Math.sin(alphaRad) - this.base*Math.sin(alphaRad), this.height];
-			var vecNorm = this.crossProduct(vecA,vecZ);
-			this.normals.push(vecNorm[0],vecNorm[1],vecNorm[2]);
-
-			//Generate the texture coords
-			this.texCoords.push(i/(this.slices), 1 -k/this.stacks);
-
-			alpha += deltaAlpha;
-		}
-		
-		z += deltaZ;
-		r += deltaR;
-	}
-
-	//Build the cylinder's base lid
-	var baseIdx = (this.slices+1)*(this.stacks+1);
-	alpha = 0;
-	
-	this.vertices.push(0,0,-this.height/2);
-	this.normals.push(0,0,-1);
-	this.texCoords.push(0.5,0.5);
-
-	for(var i = 0; i <= this.slices; i++)
-	{
-		var alphaRad = alpha*deg2Rad;
-
-		//Generate the vertices
-		this.vertices.push(this.base*Math.cos(alphaRad),this.base*Math.sin(alphaRad),-this.height/2);
-
-		//Generate the indices
-		if(i > 0)
-		{
-			this.indices.push(baseIdx, baseIdx+(i+1), baseIdx+i); 
-		}
-
-		//Generate the normals
-		this.normals.push(0,0,-1);
-
-		//Generate the texture coords
-		this.texCoords.push(0.5 + 0.5*Math.cos(alphaRad), 0.5 - 0.5*Math.sin(alphaRad));
-
-		alpha += deltaAlpha;
-	}
-
-	//Build the cylinder's top lid
-	baseIdx += (this.slices + 2); 
-	alpha = 0;
-	
-	this.vertices.push(0,0,this.height/2);
-	this.normals.push(0,0,1);
-	this.texCoords.push(0.5,0.5);
-
-	for(var i = 0; i <= this.slices; i++)
-	{
-		var alphaRad = alpha*deg2Rad;
-
-		//Generate the vertices
-		this.vertices.push(this.top*Math.cos(alphaRad),this.top*Math.sin(alphaRad),this.height/2);
-
-		//Generate the indices
-		if(i > 0)
-		{
-			this.indices.push(baseIdx, baseIdx+i, baseIdx+(i+1)); 
-		}
-
-		//Generate the normals
-		this.normals.push(0,0,1);
-
-		//Generate the texture coords
-		this.texCoords.push(0.5 + 0.5*Math.cos(alphaRad), 0.5 - 0.5*Math.sin(alphaRad));
-
-		alpha += deltaAlpha;
-	}
-		
-	this.primitiveType=this.scene.gl.TRIANGLES;
-	this.initGLBuffers();
-};
-
-MyCylinder.prototype.crossProduct = function(v1, v2) {
-	return [v1[1]*v2[2] - v1[2]*v2[1], v1[2]*v2[0] - v1[0]*v2[2], v1[0]*v2[1] - v1[1]*v2[0]];
-};
+        if(current_slice == this.slices) { //quando chega à última slice, queremos que ligue o vertice ao primeiro e não ao primeiro da próxima stack
+            this.indices.push(t, t - this.slices + 1, t + this.slices);
+            this.indices.push(t+this.slices, t - this.slices + 1, t + 1);
+            current_slice = 1;
+        }
+        else{
+            this.indices.push(t,t+1,t+this.slices);
+            if(t != this.slices*this.stacks - 1)
+                this.indices.push(t+this.slices,t+1,t+1+this.slices);
+            current_slice++;
+        }
+    }
+    /////////////////////////////////////////////////////////////
+    /////////Tampas
+    this.vertices.push(0,0,0); //centro base
+    this.vertices.push(0,0,this.height); //centro top
+    var bot_center = (this.vertices.length/3) - 2;
+    var top_center = (this.vertices.length/3) - 1;
+    for(var i = 0; i<this.slices;i++) {
+        this.normals.push(0, 0, -1);
+        this.normals.push(0, 0, 1);
+    }
+    current_slice = 1;
+    for(var x = 0; x < this.slices ; x++){
+        if(current_slice == this.slices) { //quando chega à última slice, queremos que ligue o vertice ao primeiro e não ao primeiro da próxima stack
+            this.indices.push(bot_center, x+1-this.slices, x);
+            this.indices.push(x+this.stacks*this.slices,x+this.stacks*this.slices-this.slices+1,top_center);
+            current_slice = 1;
+        }
+        this.indices.push(bot_center,x+1,x);
+        this.indices.push(x+this.stacks*this.slices,x+1+this.stacks*this.slices,top_center);
+        current_slice++;
+    }
+    ////////////////////////////////////////////////////////////
+    this.primitiveType=this.scene.gl.TRIANGLES;
+    this.initGLBuffers();
+}

@@ -1,63 +1,65 @@
-/**
- * MySphere
- * @constructor
- */
- function MySphere(scene, radius, slices, stacks) {
- 	CGFobject.call(this,scene);
-	
-	this.slices=slices;
-	this.stacks=stacks;
-	this.raio = radius;
+function MySphere(scene,radius,slices,stacks) {
+    CGFobject.call(this,scene);
 
- 	this.initBuffers();
- };
+    this.radius = radius;
+    this.slices = slices;
+    this.stacks = stacks;
 
- MySphere.prototype = Object.create(CGFobject.prototype);
- MySphere.prototype.constructor = MySphere;
-
-MySphere.prototype.updateTexCoords=function(amplifS, amplifT){
-     
+    this.initBuffers();
 };
 
- MySphere.prototype.initBuffers = function() {
-
-	this.vertices = [];
-	this.indices = [];
-	this.normals = [];
-	this.texCoords = [];
-	
-	
-    for(var lat=0; lat <= this.stacks; lat++)
-    {
-    	var theta = Math.PI+lat * Math.PI / this.stacks;
-    	var sinTheta = Math.sin(theta);
-    	var cosTheta = Math.cos(theta);
-
-    	for(var long = 0; long <= this.slices; long++) {
-    		var alfa = long * 2 * Math.PI / this.slices;
-			var sinAlfa = Math.sin(alfa);
-			var cosAlfa = Math.cos(alfa);
-
-            
-            this.texCoords.push(1-(long/this.slices), 1-(lat/this.stacks));
-			this.vertices.push(this.raio * cosAlfa * sinTheta, this.raio * cosTheta, this.raio * sinAlfa * sinTheta);
-			this.normals.push(cosAlfa * sinTheta, cosTheta, sinAlfa * sinTheta);
-    	}
-    }
-
-    for(var lat = 0; lat < this.stacks; lat++)
-    {
-    	for(var long = 0; long < this.slices; long++)
-    	{
-    		var firstPoint = lat * (this.slices + 1) + long;
-    		var secondPoint = firstPoint + this.slices + 1;
-            
-    		this.indices.push(firstPoint, secondPoint, firstPoint + 1);
-    		this.indices.push(secondPoint, secondPoint + 1, firstPoint + 1);
-    	}
-    }
+MySphere.prototype = Object.create(CGFobject.prototype);
+MySphere.prototype.constructor=MySphere;
 
 
- 	this.primitiveType = this.scene.gl.TRIANGLES;
- 	this.initGLBuffers();
+/*
+ MySphere.prototype.updateTexCoords=function(amplifS, amplifT){
+
+ var width = this.Rbotx;
+ var height = this.Ltopy;
+
+ this.texCoords = [
+ 0,0,
+ 0.0, height /amplifT,
+ width /amplifS, height /amplifT,
+ width /amplifS, 0.0
+ ];
+
+
+ this.updateTexCoordsGLBuffers();
+
+
  };
+ */
+
+MySphere.prototype.initBuffers = function () {
+    this.vertices = [];
+    this.normals = [];
+    this.indices = [];
+
+    for(var s = 0;s <= this.stacks; s++){
+        var verticalAngle = s * Math.PI/this.stacks;
+        var cosV = Math.cos(verticalAngle);
+        var sinV = Math.sin(verticalAngle);
+
+        for(var l=0;l<=this.slices;l++){
+            var horizontalAngle = l * Math.PI * 2 / this.slices;
+            var cosH = Math.cos(horizontalAngle);
+            var sinH = Math.sin(horizontalAngle);
+
+            this.vertices.push(this.radius*sinV*cosH,this.radius*sinV*sinH,this.radius*cosV);
+            this.normals.push(sinV*cosH,sinV*sinH,cosV);
+        }
+    }
+
+    for (var s = 0; s < this.stacks; s++) {
+        for (var l = 0; l < this.slices; l++) {
+            this.indices.push((s * (this.slices + 1)) + l,(s * (this.slices + 1)) + l + this.slices + 1,(s * (this.slices + 1)) + l+1);
+            this.indices.push((s * (this.slices + 1)) + l + this.slices + 1,(s * (this.slices + 1)) + l + this.slices + 2,(s * (this.slices + 1)) + l + 1);
+        }
+    }
+
+
+    this.primitiveType=this.scene.gl.TRIANGLES;
+    this.initGLBuffers();
+}
