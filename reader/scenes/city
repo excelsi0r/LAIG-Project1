@@ -70,6 +70,7 @@
     <textures>
 
         <texture id="grass" file="textures/grass.jpg" length_s="1" length_t="1" />
+        <texture id="grass" file="textures/grass.jpg" length_s="1" length_t="1" />
 
     </textures>
 

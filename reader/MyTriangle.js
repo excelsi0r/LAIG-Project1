@@ -12,6 +12,8 @@
  * @param z3 z coordinate of the third triangle vertex
  * @constructor
  */
+
+
 function MyTriangle(scene,x1,y1,z1,x2,y2,z2,x3,y3,z3) {
     CGFobject.call(this,scene);
 
@@ -42,6 +44,7 @@ MyTriangle.prototype.updateTextureCoords=function(lengthS, lengthT){
 	/**
 	 * Calculo de coordenadas de mapeamento de texturas em triângulos - Alexandre Valle de Carvalho
 	 */
+ 
     var c = Math.sqrt(Math.pow(this.x2-this.x1, 2) + Math.pow(this.y2-this.y1, 2) + Math.pow(this.z2-this.z1, 2));
     var a = Math.sqrt(Math.pow(this.x3-this.x2, 2) + Math.pow(this.y3-this.y2, 2) + Math.pow(this.z3-this.z2, 2));
     var b = Math.sqrt(Math.pow(this.x1-this.x3, 2) + Math.pow(this.y1-this.y3, 2) + Math.pow(this.z1-this.z3, 2));
@@ -50,9 +53,8 @@ MyTriangle.prototype.updateTextureCoords=function(lengthS, lengthT){
     
     this.texCoords = [
 		0, 0,
-		c/lengthS, 0,
+		1, 0, 
 		(c-a*cosBeta)/lengthS, a*sinBeta/lengthT
-
     ];	
 
     this.updateTexCoordsGLBuffers();

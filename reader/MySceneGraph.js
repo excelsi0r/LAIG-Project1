@@ -402,7 +402,34 @@ MySceneGraph.prototype.parseIllumination=function(rootElement)
 }
 
 /**
+ * Function to parse the Lights
+ * Searchs for lights tag. Returns error if not found or found more than 1
+ * If there is no children of Lights (Omni or Spot lights) gives warning
+ * Tries to parse lights and store them in the 'lightslist' array class variable
+ * Searches for type of light. If different from Spot or Omni ignores.
  * 
+ * OMNI:
+ * Searches for id to save in ['id']. If missing returns error.
+ * Searches for enabled to save in ['enabled']. If missing returns error.
+ * Sets ['omni'] as true and ['spot'] as false.
+ * Searches for location element to save in ['x'], ['y'], ['z'] and ['w'] inside
+ * ['location']. If missing returns error.
+ * If more than one location found. Gives warning and sets the first values found.
+ * The Specular, Diffuse and Ambient parsing process is similar.
+ * Searches for the corresponding tag. If any one was not found returns error
+ * if more than one was found the first one of the same tag is set and gives a warning
+ * If values were parsed correctly the are stored in ['r'], ['g'], ['b'] and ['a']
+ * inside ['ambient'], for ambient, ['diffuse'], for diffuse and ['specular'] for specular
+ * 
+ * SPOT:
+ * The spot parsing process is similar to the OMNI, the only difference is that searches for 
+ * aditional values. Searches for angle and exponent, if any one was not found returns error
+ * sets ['omni'] as false and ['spot'] as true.
+ * And aditionally searches another paramether 'target'
+ * with ['x'], ['y'] and ['z'] inside ['target'] if this was not found returns error. If more than
+ * one found sets the first one and gives warning.
+ * 
+ * Finally. It starts to search if lights with the same id were parsed. If positive then returns error.
  */
 MySceneGraph.prototype.parseLights=function(rootElement)
 {
@@ -631,7 +658,7 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 		}
 	}
 
-
+	//Search for repeated ID's
 	var numberLights = this.lightslist.length;
 
 	for(var j = 0; j < numberLights; j++)
@@ -658,6 +685,20 @@ MySceneGraph.prototype.parseLights=function(rootElement)
 	}
 }
 
+/**
+ * Function to parse Textures
+ * Checks if 'textures' tag is missing or is more than 1. If positive returns error.
+ * Checks if there are 'texture' tags inside. If no Texture defined returns error. 
+ * Must have at least one.
+ * Starts to retrieve the texture and saves them in 'texturelist' array class variable:
+ * 
+ * 				['id']
+ * 				['file']
+ * 				['length_s']
+ * 				['length_t']
+ * 
+ * Finally searches for repeated ID in texture and returns error.
+ */
 MySceneGraph.prototype.parseTextures = function(rootElement)
 {
 	elems = rootElement.getElementsByTagName('textures');
@@ -697,8 +738,50 @@ MySceneGraph.prototype.parseTextures = function(rootElement)
 		this.texturelist.push(texture);		
 	}
 
-}
+	for(var i = 0; i < this.texturelist.length; i++)
+	{
+		var text_name = this.texturelist[i]['id'];
+		var n = 0;
 
+		for(var j = 0; j < this.texturelist.length; j++)
+		{
+			if(text_name == this.texturelist[j]['id'])
+			{
+				n++;
+			}
+		}
+
+		if(n > 1)
+		{
+			return "Texture with ID: '" + text_name + "' is repeated. Nr: " + n;
+		}
+	}
+
+}
+/**
+ * Function to Parse Materials
+ * Searches for materials tag. returns error if missing
+ * Checks if number of materials is bigger than 1.
+ * The materials will be parsed to the array 'materialslist' class variable
+ * If no materials declared a default one will be created
+ * with id 'default'. Sets r=0.1, g=0.1, b=0.1 and a=1 as ambient,
+ * diffuse and specular, sets emission with r=0, g=0, b=0 and a=1,
+ * and shininess as 20.
+ * If materials are declared goes through all.
+ * Checks for id. If missing returns error. Sets in ['id'].
+ * If emission Attribute not found returns error, if more than one declared
+ * gives warning and parses the first one declared.
+ * Same goes for the Ambient, Diffuse, Specular and Shininess attributes
+ * Saves them in: 
+ * 
+ * 		['emission']['r'],['emission']['b'],['emission']['g'],['emission']['a']
+ * 		['ambient']['r'],['ambient']['b'],['ambient']['g'],['ambient']['a']
+ * 		['diffuse']['r'],['diffuse']['b'],['diffuse']['g'],['diffuse']['a']
+ * 		['specular']['r'],['specular']['b'],['specular']['g'],['specular']['a']
+ * 		['shininess']
+ * 
+ * Finally checks if materials id are repeated and returns error
+ */
 MySceneGraph.prototype.parseMaterials = function(rootElement)
 {
 	elems = rootElement.getElementsByTagName('materials');
@@ -747,7 +830,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement)
 		materials['specular'] = specularAtt;
 
 		var shininessAtt = [];
-		shininessAtt.value = 0.1;
+		shininessAtt.value = 20;
 		materials['shininess'] = shininessAtt;
 		
 		this.materialslist.push(materials);
@@ -874,7 +957,24 @@ MySceneGraph.prototype.parseMaterials = function(rootElement)
 	}
 }
 
-
+/**
+ * Function to parse Transformations
+ * Checks if 'transformations' tag exists. Returns error if 0 or more than 1.
+ * All transformations will be stored in 'transformationlist' array class variable
+ * If number of transformations is 0 a default transformation is created and gives warning.
+ * with id 'default', translation (0,0,0), scale (1,1,1), rotation (x,0).
+ * If more than 0 transformations defined, they are all parsed to the array.
+ * A transformation can have has much operations as desired. If 0 then the Identity will later be
+ * loaded in the Scene.
+ * If there are more than 0 operations they are all selected through type: translate, scale, rotate
+ * and stored respectivly:
+ * 
+ * 		['type'] = 'translate', ['x'], ['y'], ['z']
+ * 		['type'] = 'scale', ['x'],['y'],['z']
+ * 		['type'] = 'rotate', ['axis'], ['angle']
+ * 
+ * Finally the checks if ID's are repeated and returns error if positive.
+ */
 MySceneGraph.prototype.parseTransformations = function(rootElement)
 {
     var elems = rootElement.getElementsByTagName('transformations');
@@ -996,6 +1096,24 @@ MySceneGraph.prototype.parseTransformations = function(rootElement)
 	}
 }
 
+/**
+ * Function to parse the primitives.
+ * Checks for 'primitives' tag, if 0 or more than 1 found returns error.
+ * If no primitives declared returns error. At least one must be defined.
+ * Primitives are stored in 'primitiveslist' array class variable.
+ * For each primitve:
+ * Checks if 'id' exists, if missing returs error, saves in ['id']
+ * Checks if primitive 'type' exists, if missing returns error, saves in ['type']
+ * acording to type, it will be parsed differently for all different primitives:
+ * 		
+ * 		['id'], ['type'] = 'rectangle', ['x1'], ['y1'], ['x2'], ['y2']
+ * 		['id'], ['type'] = 'triangle', ['x1'], ['y1'], ['z1'], ['x2'], ['y2'], ['z2'], ['x3'], ['y3'], ['z3']
+ * 		['id'], ['type'] = 'cylinder', ['base'], ['top'], ['height'], ['slices'], ['stacks']
+ * 		['id'], ['type'] = 'sphere', ['radius'], ['slices'], ['stacks']
+ * 		['id'], ['type'] = 'torus', ['inner'], ['outer'], ['slices'], ['loops']
+ * 
+ * Finally checks for repeated ID's and retursn error if positive
+ */
 MySceneGraph.prototype.parsePrimitives = function(rootElement)
 {
     var elems = rootElement.getElementsByTagName('primitives');
@@ -1146,6 +1264,64 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 	}
 };
 
+/**
+ * Function to parse the Components
+ * Checks if 'components' tag exists. Returns error if 0 or more than 1
+ * If 0 components declared. Returns error. at least one must be declared.
+ * Components will be stored in 'componentslist' array class variable.
+ * Parses id of component. If missing returns error. Stores in ['id'] 
+ * 
+ * TRANSFORMATIONS:
+ * Checks if 'transformation' tag exists, returns error if missing.
+ * For each transformation checks if is 'transformationref'. If true stores 
+ * in ['transformation']['type'] as 'transformationref'. Parses the id of
+ * that Reference and stores in ['transformation']['id']
+ * if different from 'transformationref' searches for 'translate', 'scale' or 'rotate'
+ * if any of this is given it will store in ['transformation']['type'] and:
+ * For translate:
+ * 						['transformation']['type'] = 'translate'
+ *						['transformation']['x']
+ *						['transformation']['y']
+ *						['transformation']['z']
+ *
+ * For scale: 
+ * 						['transformation']['type'] = 'scale'
+ *						['transformation']['x']
+ *						['transformation']['y']
+ *						['transformation']['z']
+ * 	
+ * For rotate:
+ * 						['transformation']['type'] = 'rotate'
+ *						['transformation']['axis']
+ *						['transformation']['angle']
+ *
+ * If the component being parsed is the Root it is set as Identity transformation.
+ * Checks if the Transformations are valid calling checkIfTransformationValid(id, transformations)
+ * if valid continues, returns error otherwise.
+ * 
+ * MATERIALS:
+ * Checks if 'materials' tag exist if false, returns error
+ * Checks if components as at least one material defined
+ * Parses all materials id's and stores in ['materials']
+ * Checks if materials are valid with checkifMaterialValid(id, materialslist),
+ * proceeds if true and returns if false
+ * 
+ * TEXTURES:
+ * Checks if 'textures' tag exists. returns error if missing.
+ * Checks if there is exactly one texture defined. 0 or more than 1 returns error.
+ * stores in ['texture'] component, if id of texture is null returns error.
+ * Checks if Texture is valid checkifTextureValid(id, texture)
+ * 
+ * CHILDREN:
+ * Checks if 'children' tag exists, returns error if missing
+ * Creates a primitives list and a children list. Everything that is a 'primitiveref' goes to
+ * the primitives list and everything that is 'componentref' goes to the children list
+ * If at least one primite or children not defined returns error
+ * Checks if the primitives list is valid with checkifPrimitesValid(id, primitives)
+ * If not valid returns error.
+ * 
+ * Finally checks if the graph is valid, if not returns error.
+ */
 MySceneGraph.prototype.parseComponents = function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('components');
@@ -1177,238 +1353,234 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 				return "Component number: " + i + " has no ID"; 
 			}
 
-			if(idComponent != 'ignore')
+			
+			var componentelem = [];
+			componentelem['id'] = idComponent;
+
+			//Transformations
+			var transformationsTag = component[i].getElementsByTagName('transformation');
+
+			if(transformationsTag.length < 1)
 			{
-				var componentelem = [];
-				componentelem['id'] = idComponent;
+				return "Transformation tag missing in component: '" + idComponent + "'";
+			}
 
-				//Transformations
-				var transformationsTag = component[i].getElementsByTagName('transformation');
+			var ntranformation = transformationsTag[0].children.length;
+			var transformations = transformationsTag[0].children;
 
-				if(transformationsTag.length < 1)
+			if(transformations.length < 1)
+			{
+				return "Transformation missing in component: '" + idComponent + "'";
+			}
+			var componenttranslist = [];
+
+
+			for(var j = 0; j < ntranformation; j++)
+			{
+				var tag_name = transformations[j].tagName;
+				var transformation = [];
+
+				if(tag_name == 'transformationref')
 				{
-					return "Transformation tag missing in component: '" + idComponent + "'";
+					transformation['type'] = 'transformationref';
+
+					var id = transformations[j].getAttribute('id');
+					transformation['id'] = id;
 				}
-
-				var ntranformation = transformationsTag[0].children.length;
-				var transformations = transformationsTag[0].children;
-
-				if(transformations.length < 1)
+				else
 				{
-					return "Transformation missing in component: '" + idComponent + "'";
-				}
-				var componenttranslist = [];
-
-
-				for(var j = 0; j < ntranformation; j++)
-				{
-					var tag_name = transformations[j].tagName;
-					var transformation = [];
-
-					if(tag_name == 'transformationref')
+					if(tag_name == 'translate')
 					{
-						transformation['type'] = 'transformationref';
+						var x = transformations[j].getAttribute('x');
+						var y = transformations[j].getAttribute('y');
+						var z = transformations[j].getAttribute('z');
 
-						var id = transformations[j].getAttribute('id');
-						transformation['id'] = id;
+						transformation['type'] = 'translate';
+						transformation['x'] = x;
+						transformation['y'] = y;
+						transformation['z'] = z;
+
 					}
-					else
+					else if(tag_name == 'scale')
 					{
-						if(tag_name == 'translate')
-						{
-							var x = transformations[j].getAttribute('x');
-							var y = transformations[j].getAttribute('y');
-							var z = transformations[j].getAttribute('z');
+						var x = transformations[j].getAttribute('x');
+						var y = transformations[j].getAttribute('y');
+						var z = transformations[j].getAttribute('z');
 
-							transformation['type'] = 'translate';
-							transformation['x'] = x;
-							transformation['y'] = y;
-							transformation['z'] = z;
-
-						}
-						else if(tag_name == 'scale')
-						{
-							var x = transformations[j].getAttribute('x');
-							var y = transformations[j].getAttribute('y');
-							var z = transformations[j].getAttribute('z');
-
-							transformation['type'] = 'scale';
-							transformation['x'] = x;
-							transformation['y'] = y;
-							transformation['z'] = z;
-						}
-						else if(tag_name == 'rotate')
-						{
-							var axis = transformations[j].getAttribute('axis');
-							var angle = transformations[j].getAttribute('angle');
-
-							transformation['type'] = 'rotate';
-							transformation['axis'] = axis;
-							transformation['angle'] = angle;
-						}
+						transformation['type'] = 'scale';
+						transformation['x'] = x;
+						transformation['y'] = y;
+						transformation['z'] = z;
 					}
-					componenttranslist.push(transformation);
-				}
-
-				componentelem['transformations'] = componenttranslist;
-
-	
-				if(idComponent == this.root && componentelem['transformations'].length < 1)
-				{
-					console.warn("Root as no Transformation. Setting Identity");
-
-					var transformationInfoT = [];
-					transformationInfoT['type'] = 'translate';
-					transformationInfoT['x'] = 0;
-					transformationInfoT['y'] = 0;
-					transformationInfoT['z'] = 0;
-					componenttranslist.push(transformationInfoT);
-
-					var transformationInfoS = [];
-					transformationInfoS['type'] = 'scale';
-					transformationInfoS['x'] = 1;
-					transformationInfoS['y'] = 1;
-					transformationInfoS['z'] = 1;
-					componenttranslist.push(transformationInfoS);
-
-					var transformationInfoR = [];
-					transformationInfoR['type'] = 'rotate';
-					transformationInfoR['axis'] = 'x';
-					transformationInfoR['angle'] = 0;
-					componenttranslist.push(transformationInfoR);
-				}
-
-				var error = this.checkIfTransformationValid(idComponent, componentelem['transformations']);
-				if(error != null)
-				{
-					return error;
-				}
-
-
-				//Materials - no problem if id repeated, just goes through it as a list of elems to display
-				var materials = component[i].getElementsByTagName('materials');
-				
-				if(materials.length < 1)
-				{
-					return "Component: '" + componentelem['id'] + "' has no material tag";
-				}
-
-				var nmaterials = materials[0].children.length;
-				var material = materials[0].children;
-				var materialslst = [];
-
-
-				if(nmaterials < 1)
-				{
-					return "Component: '" + componentelem['id'] + "' must have at least one material reference, inherit or none";
-				}
-
-				for(var j = 0; j < nmaterials; j++)
-				{
-					var id = material[j].getAttribute('id');
-					materialslst.push(id);
-				}
-
-				componentelem['materials'] = materialslst;
-				var materialisValid = this.checkifMaterialValid(componentelem['id'], materialslst);				
-
-				if(materialisValid != null)
-				{
-					return materialisValid;
-				}
-
-				//Textures
-				var textures = component[i].getElementsByTagName('texture');
-
-				if (textures == null  || textures.length==0) 
-				{
-					return "Textures element is missing: '" + componentelem['id'] + "'";
-				}
-				var ntextures = textures.length;
-
-
-				if(ntextures < 1)
-				{
-					return "Must have a texture reference, inherit or none. Component ID: '" + componentelem['id'] + "'";
-				}
-
-				if(ntextures > 1)
-				{
-					return "Can only have one Texture references. Component ID: '" + componentelem['id'] + "'";
-				}
-
-				var id = textures[0].getAttribute('id');
-
-				componentelem['texture'] = id;
-
-				if(componentelem['texture'] == null)
-				{
-					return "Texture reference missing in component: '" + componentelem['id'] + "'";
-				}
-
-				var resultCheckTexture = this.checkifTextureValid(componentelem['id'], componentelem['texture']);
-				if(resultCheckTexture != null)
-				{
-					return resultCheckTexture;
-				}
-
-				//Children
-				var children = component[i].getElementsByTagName('children');
-				if (children == null  || children.length==0) 
-				{
-					return "Children tag is missing: '" + componentelem['id'] + "'";
-				}
-
-				var nchildren = children[0].children.length;
-				var kids = children[0].children;
-				var primitiveslst = [];
-				var childrenlst = [];
-
-				componentelem['children'] = [];
-				componentelem['primitives'] = [];
-
-				for(var j = 0; j < nchildren; j++)
-				{
-					var tag_name = kids[j].tagName;
-
-					if(tag_name === 'componentref')
+					else if(tag_name == 'rotate')
 					{
-						id = kids[j].getAttribute('id');
-						childrenlst.push(id);
-					}
-					else if(tag_name === 'primitiveref')
-					{
-						id = kids[j].getAttribute('id');
-						primitiveslst.push(id);
-					}
-					else
-					{
-						console.log("The references must be: compoenetref or primitiveref in component: '" + componentelem['id'] + "'" );
+						var axis = transformations[j].getAttribute('axis');
+						var angle = transformations[j].getAttribute('angle');
+
+						transformation['type'] = 'rotate';
+						transformation['axis'] = axis;
+						transformation['angle'] = angle;
 					}
 				}
+				componenttranslist.push(transformation);
+			}
 
-				componentelem['primitives'] = primitiveslst;
-				componentelem['children'] = childrenlst;
+			componentelem['transformations'] = componenttranslist;
 
-				var n_refs = primitiveslst.length + childrenlst.length;
 
-				if(n_refs < 1)
+			if(idComponent == this.root && componentelem['transformations'].length < 1)
+			{
+				console.warn("Root as no Transformation. Setting Identity");
+
+				var transformationInfoT = [];
+				transformationInfoT['type'] = 'translate';
+				transformationInfoT['x'] = 0;
+				transformationInfoT['y'] = 0;
+				transformationInfoT['z'] = 0;
+				componenttranslist.push(transformationInfoT);
+
+				var transformationInfoS = [];
+				transformationInfoS['type'] = 'scale';
+				transformationInfoS['x'] = 1;
+				transformationInfoS['y'] = 1;
+				transformationInfoS['z'] = 1;
+				componenttranslist.push(transformationInfoS);
+
+				var transformationInfoR = [];
+				transformationInfoR['type'] = 'rotate';
+				transformationInfoR['axis'] = 'x';
+				transformationInfoR['angle'] = 0;
+				componenttranslist.push(transformationInfoR);
+			}
+
+			var error = this.checkIfTransformationValid(idComponent, componentelem['transformations']);
+			if(error != null)
+			{
+				return error;
+			}
+
+
+			//Materials - no problem if id repeated, just goes through it as a list of elems to display
+			var materials = component[i].getElementsByTagName('materials');
+			
+			if(materials.length < 1)
+			{
+				return "Component: '" + componentelem['id'] + "' has no material tag";
+			}
+
+			var nmaterials = materials[0].children.length;
+			var material = materials[0].children;
+			var materialslst = [];
+
+
+			if(nmaterials < 1)
+			{
+				return "Component: '" + componentelem['id'] + "' must have at least one material reference, inherit or none";
+			}
+
+			for(var j = 0; j < nmaterials; j++)
+			{
+				var id = material[j].getAttribute('id');
+				materialslst.push(id);
+			}
+
+			componentelem['materials'] = materialslst;
+			var materialisValid = this.checkifMaterialValid(componentelem['id'], materialslst);				
+
+			if(materialisValid != null)
+			{
+				return materialisValid;
+			}
+
+			//Textures
+			var textures = component[i].getElementsByTagName('texture');
+
+			if (textures == null  || textures.length==0) 
+			{
+				return "Textures element is missing: '" + componentelem['id'] + "'";
+			}
+			var ntextures = textures.length;
+
+
+			if(ntextures < 1)
+			{
+				return "Must have a texture reference, inherit or none. Component ID: '" + componentelem['id'] + "'";
+			}
+
+			if(ntextures > 1)
+			{
+				return "Can only have one Texture references. Component ID: '" + componentelem['id'] + "'";
+			}
+
+			var id = textures[0].getAttribute('id');
+
+			componentelem['texture'] = id;
+
+			if(componentelem['texture'] == null)
+			{
+				return "Texture reference missing in component: '" + componentelem['id'] + "'";
+			}
+
+			var resultCheckTexture = this.checkifTextureValid(componentelem['id'], componentelem['texture']);
+			if(resultCheckTexture != null)
+			{
+				return resultCheckTexture;
+			}
+
+			//Children
+			var children = component[i].getElementsByTagName('children');
+			if (children == null  || children.length==0) 
+			{
+				return "Children tag is missing: '" + componentelem['id'] + "'";
+			}
+
+			var nchildren = children[0].children.length;
+			var kids = children[0].children;
+			var primitiveslst = [];
+			var childrenlst = [];
+
+			componentelem['children'] = [];
+			componentelem['primitives'] = [];
+
+			for(var j = 0; j < nchildren; j++)
+			{
+				var tag_name = kids[j].tagName;
+
+				if(tag_name === 'componentref')
 				{
-					return "Must have at least one Children or/and at least on Primitives reference/s. Component: '" + componentelem['id'] + "'"
+					id = kids[j].getAttribute('id');
+					childrenlst.push(id);
 				}
-
-				if(primitiveslst.length > 0)
+				else if(tag_name === 'primitiveref')
 				{
-					var primitiveCheckValid = this.checkifPrimitesValid(componentelem['id'], primitiveslst);
-					if(primitiveCheckValid != null)
-					{
-					    return primitiveCheckValid;
-					}
+					id = kids[j].getAttribute('id');
+					primitiveslst.push(id);
 				}
+				else
+				{
+					console.log("The references must be: compoenetref or primitiveref in component: '" + componentelem['id'] + "'" );
+				}
+			}
 
+			componentelem['primitives'] = primitiveslst;
+			componentelem['children'] = childrenlst;
 
-				this.componentslist.push(componentelem);
-    		}
+			var n_refs = primitiveslst.length + childrenlst.length;
+
+			if(n_refs < 1)
+			{
+				return "Must have at least one Children or/and at least on Primitives reference/s. Component: '" + componentelem['id'] + "'"
+			}
+
+			if(primitiveslst.length > 0)
+			{
+				var primitiveCheckValid = this.checkifPrimitesValid(componentelem['id'], primitiveslst);
+				if(primitiveCheckValid != null)
+				{
+				    return primitiveCheckValid;
+				}
+			}
+			this.componentslist.push(componentelem);
    		 }
 	}
 
@@ -1421,11 +1593,17 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 };
 
-//VALIDATION FIELD
+/**
+ * VALIDATION OF COMPONETS FIELD
+ */
 
+/**
+ * Function to validate the material references of a Node
+ * If Root as a "inherit" reference returns error
+ * Checks if all of the materials references exist in the list of Materials
+ */
 MySceneGraph.prototype.checkifMaterialValid = function(id, materialslist)
 {
-
 	var inheritcount = 0;	
 	var othercount = 0;	
 
@@ -1472,7 +1650,13 @@ MySceneGraph.prototype.checkifMaterialValid = function(id, materialslist)
 
 		
 };
-
+/**
+ * Function to test the texture of a Node
+ * If root has "texture" inherit returns error
+ * Checks if the texture exists in the textures list
+ * "none" or "inherit" are ignored. They are valid and do not exist
+ * in the textures list
+ */
 MySceneGraph.prototype.checkifTextureValid = function(id, texture)
 {
 	if((texture == "inherit") && id == this.root)
@@ -1502,6 +1686,10 @@ MySceneGraph.prototype.checkifTextureValid = function(id, texture)
 	
 };
 
+/**
+ * Function to check if the Primitives are valid for a Node
+ * Checks if the Primitives reference exist in the Primitives list
+ */
 MySceneGraph.prototype.checkifPrimitesValid=function(id, primitiveslst)
 {
 	var n_prims = primitiveslst.length;
@@ -1529,6 +1717,12 @@ MySceneGraph.prototype.checkifPrimitesValid=function(id, primitiveslst)
 		
 };
 
+/**
+ * Function to check if the Transformations are valid for a Node
+ * If a Transformation has more than one Transformation error returns error
+ * If a Transformation reference and implicit transformations exist in the same node returns error
+ * If only has one transformation reference checks if exists in the transformations list
+ */
 MySceneGraph.prototype.checkIfTransformationValid=function(idComponent, transformations)
 {
 	var countref = 0;
@@ -1576,6 +1770,11 @@ MySceneGraph.prototype.checkIfTransformationValid=function(idComponent, transfor
 	}
 };
 
+/**
+ * Function to check if the Components are valid
+ * Goes through all the Graph and checks if the components reference of each node 
+ * exist in the final Components list
+ */
 MySceneGraph.prototype.checkIfValidComponents=function()
 {
 	for(var i = 0; i < this.componentslist.length; i++)
@@ -1594,7 +1793,7 @@ MySceneGraph.prototype.checkIfValidComponents=function()
 	}
 };
 
-/*
+/**
  * CHECK if component refrences are non-existing and if children calls itself
  */
 MySceneGraph.prototype.checknoderefs=function(nodeName, nodeChildren)
@@ -1626,7 +1825,7 @@ MySceneGraph.prototype.checknoderefs=function(nodeName, nodeChildren)
 };
 
 	
-/*
+/**
  * Callback to be executed on any read error
  */
  

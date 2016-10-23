@@ -1,3 +1,21 @@
+/**
+ * Node Class 
+ * Easier to manage Nodes
+ * @param id
+ * @returns
+ */
+
+/**
+ * Constructor
+ * Needs ID mandatory
+ * transformation is always a matrix
+ * materials is a list with id or inherit
+ * texture is a reference, inherit or none
+ * children is a list with all the children 
+ * primitive is a list with all the primitives
+ * defaultMaterial stores the current material of the Node
+ * defaultMaterialInsdex stores the actual Index of the current material
+ */
 function Node(id)
 {
 	this.id = id;
@@ -10,32 +28,49 @@ function Node(id)
 	this.defaultMaterialIndex = null;
 };
 
-
+/**
+ * Sets new Transformation matrix
+ */
 Node.prototype.setTransformation = function(trans)
 {
 	this.transformation = trans;
 };
 
+/**
+ * Sets new material in the list
+ */
 Node.prototype.setMaterial=function(material)
 {
 	this.materials.push(material);
 };
 
+/**
+ * Sets new Texture
+ */
 Node.prototype.setTexture=function(texture)
 {
 	this.texture = texture;
 };
 
+/**
+ * Sets new list of Children
+ */
 Node.prototype.setChildren=function(ch)
 {
 	this.children.push(ch);
 };
 
+/**
+ * Sets new primitives list
+ */
 Node.prototype.setPrimitive=function(pr)
 {
 	this.primitive.push(pr);
 };
 
+/**
+ * Sets a current material and a current index material
+ */
 Node.prototype.setdefaultMaterial=function(material, nr)
 {
 	this.defaultMaterial = material;
