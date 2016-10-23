@@ -83,20 +83,12 @@
             <diffuse r="0.92" g="0.92" b="0.68" a="1" />
             <specular r="0.92" g="0.92" b="0.68" a="1" />
         </omni>
-        <omni id="Light Yellowish4" enabled="1" >
-            <location x="1" y="3" z="0" w="1" />
-            <ambient r="0" g="0" b="0" a="0" />
-            <diffuse r="0.92" g="0.92" b="0.68" a="1" />
-            <specular r="0.92" g="0.92" b="0.68" a="1" />
-        </omni>
+
     </lights>
 
 
     <textures>
-
-        <texture id="grass" file="../textures/floor.png" length_s="1" length_t="1" />
-		<texture id="picture1" file="../textures/floor.png" length_s="1" length_t="1" />
-
+        <texture id="window" file="../textures/window.png" length_s="1" length_t="1" /> 
     </textures>
 
 
@@ -312,7 +304,7 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="picture1" />
+            <texture id="none" />
             <children>
                 <primitiveref id="tria" />
             </children>
@@ -324,7 +316,7 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="picture1" />
+            <texture id="none" />
             <children>
                 <primitiveref id="tria" />
             </children>
@@ -336,7 +328,7 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="picture1" />
+            <texture id="none" />
             <children>
                 <primitiveref id="tria" />
             </children>
@@ -348,7 +340,7 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="picture1" />
+            <texture id="none" />
             <children>
                 <primitiveref id="tria" />
             </children>
