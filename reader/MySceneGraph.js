@@ -97,6 +97,13 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
+	var error = this.parseAnimations(rootElement);
+	if(error != null)
+	{
+		this.onXMLError(error);
+		return;
+	}
+
 	var error = this.parseComponents(rootElement);
 	if(error != null)
 	{
@@ -1174,6 +1181,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				primitiveitem['y1'] = y1;
 				primitiveitem['x2'] = x2;
 				primitiveitem['y2'] = y2;
+				this.primitiveslist.push(primitiveitem);
 
 			}
 			else if(primtype == 'triangle')
@@ -1198,6 +1206,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				primitiveitem['x3'] = x3;
 				primitiveitem['y3'] = y3;
 				primitiveitem['z3'] = z3;
+				this.primitiveslist.push(primitiveitem);
 			}
 			else if(primtype == 'cylinder')
 			{
@@ -1212,6 +1221,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				primitiveitem['height'] = height;
 				primitiveitem['slices'] = slices;
 				primitiveitem['stacks'] = stacks;
+				this.primitiveslist.push(primitiveitem);
 
 
 			}
@@ -1224,6 +1234,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				primitiveitem['radius'] = radius;
 				primitiveitem['slices'] = slices;
 				primitiveitem['stacks'] = stacks;
+				this.primitiveslist.push(primitiveitem);
 
 
 			}
@@ -1238,8 +1249,20 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				primitiveitem['outer'] = outer;
 				primitiveitem['slices'] = slices;
 				primitiveitem['loops'] = loops;
+				this.primitiveslist.push(primitiveitem);
 			}
-			this.primitiveslist.push(primitiveitem);
+			else if(primtype == 'plane')
+			{
+				
+			}
+			else if(primtype == 'patch')
+			{
+
+			}
+			else if(primtype == 'vehicle')
+			{
+
+			}
 		};
 	}
 
@@ -1267,6 +1290,220 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 			n = 0;
 		}
 	}
+};
+
+MySceneGraph.prototype.parseAnimations = function(rootElement)
+{
+	var elems = rootElement.getElementsByTagName('animations');
+	
+	if(elems == null)
+	{
+		return "Animations block missing";
+	}
+	if(elems.length != 1)
+	{
+		return "Either zero or more than one 'animations' block tag found.";
+	}
+
+	var nanimations = elems[0].children.length;
+    var animations = elems[0].children;
+	this.animationslist = [];
+
+	if(nanimations < 1)
+	{
+		console.warn("WARING: No Animations declared.");
+	}
+
+	for(var i = 0; i < nanimations; i++)
+	{
+		var animationlist = [];
+
+		var tagname = animations[i].tagName;
+		if(tagname != "animation") console.warn("WARNING: Animation nr: " + i + " has no 'animation' tag name");
+		
+		var id = animations[i].getAttribute("id");
+		if(id == null || id == "") return "No id for animation nr: " + i;
+
+		var span = animations[i].getAttribute("span");
+		if(span == null || isNaN(span)) 
+		{
+			console.warn("WARNING: Animation '" + id + "' has no valid span time, setting default 10.0");
+			span = 10.0;
+		}
+
+		var type = animations[i].getAttribute("type");
+		if(type != "linear" && type != "circular") return "Animation  '" + id + "' has no valid type";
+
+		
+		if("linear" == type)
+		{				
+			var controlpointslist = [];
+			var controlpoints = animations[i].children;
+			var ncontrolpoints = controlpoints.length;
+
+			if(ncontrolpoints < 2)
+			{
+				console.warn("WARNING: Animation '" + id +"' has 0 or 1 controlpoints, setting (0,0,0) and (1,1,1) as default");
+
+				var point1 = [];
+				point1['x'] = 0.0;
+				point1['y'] = 0.0;
+				point1['z'] = 0.0;
+				controlpointslist.push(point1);
+
+				var point2 = [];
+				point2['x'] = 1.0;
+				point2['y'] = 1.0;
+				point2['z'] = 1.0;					
+				controlpointslist.push(point2);
+			}
+			else 
+			{
+				for(var j = 0; j < ncontrolpoints; j++)
+				{
+					var tag = controlpoints[j].tagName;
+					if(tag == null || tag != "controlpoint") console.warn("WARNING: Animation '" + id + "' has not controlpoint tag in controlpoint nr: " + j);
+
+					var point = [];
+
+					var x = controlpoints[j].getAttribute("xx");
+					if(x == null || isNaN(x))
+					{
+						console.warn("WARNING: Animation '" + id + "' has value 'x' of controlpoint number: "+ j + " undifined, setting 1.0");
+						x = 1.0;
+					}
+
+					var y = controlpoints[j].getAttribute("yy");
+					if(y == null || isNaN(y))
+					{
+						console.warn("WARNING: Animation '" + id + "' has value 'y' of controlpoint number: "+ j + " undifined, setting 1.0");
+						y = 1.0;
+					}
+
+					var z = controlpoints[j].getAttribute("zz");
+					if(z == null || isNaN(z))
+					{
+						console.warn("WARNING: Animation '" + id + "' has value 'z' of controlpoint number: "+ j + " undifined, setting 1.0");
+						z = 1.0;
+					}
+
+					point['x'] = x;
+					point['y'] = y;
+					point['z'] = z;
+
+					controlpointslist.push(point);
+				}
+			}
+
+			animationlist['controlpoints'] = controlpointslist;
+		}
+
+		else if("circular" == type)
+		{
+
+			var center = animations[i].getAttribute("center");
+			var centerlist = [];
+
+
+			if(center == null)
+			{
+				console.warn("Animation '" + id +"' has no center coords, setting default (0,0,0) ");
+
+				centerlist['x'] = 0.0;
+				centerlist['y'] = 0.0;
+				centerlist['z'] = 0.0;
+			}
+			else
+			{
+				var centerX = parseFloat(center);
+				var centerY;
+				var centerZ; 
+
+				if(centerX == null || isNaN(centerX)) 
+				{
+					console.warn("WARNING: Animation '" + id + "' as no valid Center coord. Setting (1.0, 1.0, 1.0)");
+					centerX = 1.0;
+					centerY = 1.0;
+					centerZ = 1.0;
+				}
+				else
+				{
+					var s = center.indexOf(" ") + 1;
+					var last = center.length - 1;
+
+					var newcenter1 = center.substring(s, last);
+
+					centerY = parseFloat(newcenter1);
+
+					if(centerY == null || isNaN(centerY)) 
+					{
+						console.warn("WARNING: Animation '" + id + "' as no valid Center coord. Setting (" + centerX +", 1.0, 1.0)");
+						centerY = 1.0;
+						centerZ = 1.0;
+					}
+
+					else
+					{
+						var j = newcenter1.indexOf(" ") + 1;
+						var last = newcenter1.length - 1;
+
+						var newcenter2 = newcenter1.substring(j,last);
+
+						centerZ = parseFloat(newcenter2);
+
+						if(centerZ == null || isNaN(centerZ)) 
+						{
+							console.warn("WARNING: Animation '" + id + "' as no valid Center coord. Setting (" + centerX +", " + centerY + ", 1.0)");
+							centerZ = 1.0;
+						}
+
+						centerlist['x'] = centerX;
+						centerlist['y'] = centerY;
+						centerlist['z'] = centerZ;							
+					}	
+				}				
+			}
+
+			var radius = animations[i].getAttribute("radius");
+			if(radius == null || isNaN(radius))
+			{
+				console.warn("WARNING: Animation + '" + id + "' has no valid radius, setting 1.0 as default");
+				radius = 1.0;
+			}
+
+
+			var startang = animations[i].getAttribute("startang");
+			if(startang == null || isNaN(startang))
+			{
+				console.warn("WARNING: Animation + '" + id + "' has no valid start angle, setting 0.0 as default");
+				startang = 0.0;
+			}
+			startang = startang*Math.PI/180;
+
+
+			var rotang = animations[i].getAttribute("rotang");
+			if(rotang == null || isNaN(rotang))
+			{
+				console.warn("WARNING: Animation + '" + id + "' has no valid rotation angle, setting 1.0 as default");
+				rotang = 1.0;
+			}
+			rotang = rotang*Math.PI/180;
+
+			animationlist['center'] = centerlist;
+			animationlist['radius'] = radius; 
+			animationlist['startang'] = startang;
+			animationlist['rotang'] = rotang;
+		}
+
+		animationlist['id'] = id;
+		animationlist['span'] = span;
+		animationlist['type'] = type;
+
+		this.animationslist.push(animationlist);
+	}
+
+	console.log(this.animationslist);
+
 };
 
 /**

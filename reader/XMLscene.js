@@ -241,6 +241,9 @@ XMLscene.prototype.setLightsGraph = function()
 				lightBox[i].target.z - lightBox[i].location.z);
 			this.lights[i].setSpotExponent(lightBox[i].exponent);
 			this.lights[i].setSpotCutOff(lightBox[i].angle * Math.PI/180);
+			this.lights[i].setConstantAttenuation(0);
+			this.lights[i].setLinearAttenuation(1);
+			this.lights[i].setQuadraticAttenuation(0);
 		}
 		else
 		{
