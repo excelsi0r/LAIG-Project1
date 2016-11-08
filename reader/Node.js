@@ -24,6 +24,7 @@ function Node(id)
 	this.texture = null;
 	this.children = [];
 	this.primitive = [];
+	this.animations = [];
 	this.defaultMaterial = null;
 	this.defaultMaterialIndex = null;
 };
@@ -66,6 +67,14 @@ Node.prototype.setChildren=function(ch)
 Node.prototype.setPrimitive=function(pr)
 {
 	this.primitive.push(pr);
+};
+
+/**
+ * Sets new animations list
+ */
+Node.prototype.setAnimation=function(pr)
+{
+	this.animations.push(pr);
 };
 
 /**

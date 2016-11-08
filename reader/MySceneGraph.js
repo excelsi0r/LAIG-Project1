@@ -1292,6 +1292,9 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 	}
 };
 
+/**
+ * Function to parse Animations.... finish doc later
+ */
 MySceneGraph.prototype.parseAnimations = function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('animations');
@@ -1502,7 +1505,24 @@ MySceneGraph.prototype.parseAnimations = function(rootElement)
 		this.animationslist.push(animationlist);
 	}
 
-	console.log(this.animationslist);
+	//Verify if Animations repeated
+
+	for(var i = 0; i < this.animationslist.length; i++)
+	{
+		var id = this.animationslist[i]['id'];
+		var n = 0;
+
+		for(var j = 0; j < this.animationslist.length; j++)
+		{
+			if(id == this.animationslist[j]['id'])
+				n++;
+		}
+
+		if(n > 1)
+		{
+			return "Animation '" + id + "' repeated: " + n;
+		}
+	}
 
 };
 
@@ -1768,6 +1788,47 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			{
 				return resultCheckTexture;
 			}
+			//Animations
+
+			var animations  = component[i].getElementsByTagName('animation');
+
+			componentelem['animations'] = [];
+						
+			if(animations.length > 1)
+			{
+				console.warn("Component '" + componentelem['id'] + "' has more than one Animation block defined, using the first one found");
+			}
+
+			if(animations == null || animations.length == 0)
+			{
+				console.warn("WARNING: No animations for Component: '" + componentelem['id'] + "'");
+			}
+			else
+			{
+				var animationsref = animations[0].children;
+
+				for(var ij = 0; ij < animationsref.length; ij++)
+				{
+					
+					var tag = animationsref[ij].tagName;
+					if(tag != "animationref") console.warn("WARNING: Animations  in Component '" + componentelem['id'] + "' has diferent tag name than 'animationref'");
+
+					var id = animationsref[ij].getAttribute('id');
+
+					if(id == null)
+					{
+						return "Animation nr: " + ij + " reference missing in component: '" + componentelem['id'] + "' ";
+					}
+
+					componentelem['animations'].push(id);
+				}
+			}
+
+			var error = this.checkIfAnimationValid(componentelem['id'], componentelem['animations'])
+			if(error != null)
+			{
+				return error;
+			}
 
 			//Children
 			var children = component[i].getElementsByTagName('children');
@@ -2008,6 +2069,35 @@ MySceneGraph.prototype.checkIfTransformationValid=function(idComponent, transfor
 		if(n < 1)
 		{
 			return "Undifined reference transformation reference in component: '" + idComponent + "' Reference: '" + transformations[0]['id'] + "'";
+		}
+	}
+};
+/**
+ * Function to check if the Animations referenced exist in the list of loaded Animations 
+ */
+MySceneGraph.prototype.checkIfAnimationValid=function(idComponent, animations)
+{
+	if(animations.length < 1)
+	{
+		return;
+	}	
+	else
+	{
+		for(var i = 0; i < animations.length; i++)
+		{
+			var id = animations[i];
+			var n = 0;
+			
+			for(var j = 0; j < this.animationslist.length; j++)
+			{
+				if(id == this.animationslist[j]['id'])
+					n++;
+			}
+
+			if(n != 1)
+			{
+				return "Component '" + idComponent + "' has animation reference to unexisting reference '" + id + "' ";
+			}
 		}
 	}
 };

@@ -251,6 +251,11 @@
                 <controlpoint xx="0.0" yy="2.0" zz="0.0"/> 
                 <controlpoint xx="0.0" yy="4.0" zz="0.0"/> 
         </animation>
+
+         <animation id="Bala2" span="3.0" type="linear">
+                <controlpoint xx="0.0" yy="2.0" zz="0.0"/> 
+                <controlpoint xx="0.0" yy="4.0" zz="0.0"/> 
+        </animation>
         
         <animation id="Roda" span="3.0" type="circular" center="2.0 3.0 4.0" radius="3.0" startang= "20.0" rotang="3.0"/>
                   
@@ -268,11 +273,8 @@
             <texture id="none" />
             <children>
                 <componentref id="floor" />
-                <componentref id="zeppelin"/>
-                <componentref id="zeppelincabin"/>
-                <componentref id="zeppelinWingH" />
-                <componentref id="zeppelinWingV" />
-                <componentref id="building1" />   
+                <componentref id="all_zepplin"/>
+                <componentref id="building1" />
                 <componentref id="building2" />
                 <componentref id="building3" />
                 <componentref id="building4" />
@@ -286,6 +288,28 @@
                 <componentref id="egypt" />
             </children>
         </component>
+
+        <component id="all_zepplin">
+                <transformation>
+                        <translate x="0" y="0" z="0"/>
+                </transformation>
+                <materials>
+                        <material id="inherit"/>
+                </materials>
+                <texture id="none"/>
+                <animation>
+                        <animationref id="Bala"/>
+                        <animationref id="Roda"/>
+                </animation>
+                <children>
+                        <componentref id="zeppelin"/>
+                        <componentref id="zeppelincabin"/>
+                        <componentref id="zeppelinWingH" />
+                        <componentref id="zeppelinWingV" />
+                </children>
+        </component>
+                        
+
 		
 		<component id="egypt">
             <transformation> 
@@ -407,6 +431,7 @@
                 <material id="blue" />
             </materials>
             <texture id="none" />
+
             <children>
                 <primitiveref id="sphereZep" />   
             </children>
@@ -435,6 +460,7 @@
                 <material id="blue" />
             </materials>
             <texture id="none" />
+            
             <children>
                 <componentref id="cube" />   
             </children>

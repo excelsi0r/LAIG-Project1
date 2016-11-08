@@ -131,6 +131,9 @@ XMLscene.prototype.onGraphLoaded = function ()
 	//new primitives
 	this.setPrimitivesGraph();
 
+	//new animatiosn
+	this.setAnimationsGraph();
+
 	//creating graph
 	this.createGraph();
 };
@@ -477,6 +480,41 @@ XMLscene.prototype.setPrimitivesGraph = function()
 };
 
 /**
+ * Create new Animations from DSX file
+ */
+
+XMLscene.prototype.setAnimationsGraph=function()
+{
+	console.info("Creating Animations");
+
+	this.animations = [];
+	var n_anim = this.graph.animationslist.length;
+
+	for(var i = 0; i < n_anim; i++)
+	{
+		var id = this.graph.animationslist[i]['id'];
+		var type = this.graph.animationslist[i]['type'];
+		var span = this.graph.animationslist[i]['span'];
+
+		if(type == "linear")
+		{
+			var controlpoints = this.graph.animationslist[i]['controlpoints'];
+			this.animations[id] = new LinearAnimation(span, type, controlpoints);
+		}
+		else if(type == "circular")
+		{
+			var center = this.graph.animationslist[i]['center'];
+			var radius = this.graph.animationslist[i]['radius'];
+			var startang = this.graph.animationslist[i]['startang'];
+			var rotang = this.graph.animationslist[i]['rotang'];
+			this.animations[id] = new CircularAnimation(span, type, center, radius, startang, rotang);
+		}
+	}
+}
+
+
+
+/**
  * Create new Graph from Components on DSX file
  */
 XMLscene.prototype.createGraph = function()
@@ -580,7 +618,16 @@ XMLscene.prototype.createGraph = function()
 				node.setPrimitive(pr);
 			}		
 		}
-		
+		//Setting Animations for component from DSX file
+		if(this.graph.componentslist[i]['animations'] != null)
+		{
+			var n_animations = this.graph.componentslist[i]['animations'].length;
+			for(var c = 0; c < n_animations; c++)
+			{
+				var ar = this.graph.componentslist[i]['animations'][c];
+				node.setAnimation(ar);
+			}
+		}
 		//Setting Children for component from DSX file
 		if(this.graph.componentslist[i]['children'] != null)
 		{			
@@ -634,9 +681,9 @@ XMLscene.prototype.displayGraphElems=function()
 	var texture = this.nodes[id].texture;
 	var children = this.nodes[id].children;
 	var primitive = this.nodes[id].primitive;
-		
+	var animations = this.nodes[id].animations;		
 	
-	this.displayNodes(id, transformation, materialst, texture, children, primitive);
+	this.displayNodes(id, transformation, materialst, texture, children, primitive, animations);
 	
 };
 
@@ -660,13 +707,12 @@ XMLscene.prototype.displayGraphElems=function()
  * - Passes new texture if children texture is not "inherit", otherwise passes father texture
  * - Passes childrens list and primitives list
  */
-XMLscene.prototype.displayNodes=function(id, transformation, material, texture, children, primitive)
+XMLscene.prototype.displayNodes=function(id, transformation, material, texture, children, primitive, animations)
 {
 	if(primitive.length > 0)
 	{
 		for(var i = 0; i < primitive.length; i++)
 		{
-			
 			var obj = this.primitives[primitive[i]];
 			var materialToApply = this.materials[material];
 			
@@ -687,7 +733,6 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 
 		}
 	}
-
 	if(children.length > 0)
 	{
 		for(var i = 0; i < children.length; i++)
@@ -732,13 +777,26 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 				{
 					newTexture = this.nodes[newid].texture;
 				}
+				//Animations
+				var newAnimations = [];
+				for(var f = 0; f < animations.length; f++)
+				{
+					newAnimations.push(animations[f]);
+				}
+				
+				for(var g = 0; g < this.nodes[newid].animations.length; g++)
+				{
+					newAnimations.push(this.nodes[newid].animations[g]);
+				}
+
+				//console.log(newAnimations);
 				
 				//Children
 				var newChildren = this.nodes[newid].children;
 				//Primitives
 				var newPrimitives = this.nodes[newid].primitive;
 		
-				this.displayNodes(newid, matrixtrans, newmaterial, newTexture, newChildren, newPrimitives);	
+				this.displayNodes(newid, matrixtrans, newmaterial, newTexture, newChildren, newPrimitives, newAnimations);	
 			}
 			else
 			{
