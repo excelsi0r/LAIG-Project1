@@ -6,10 +6,18 @@ function LinearAnimation(id, span, type, controlpoints)
     this.length = this.setLength();
     this.speed = this.setSpeed();
 
-    this.coords = this.controlpoints[0];
+    this.currCoords = this.controlpoints[0];
+    this.currContrtrolPoint = 0;
 
+    this.refresh =  1 / 60;
+    this.lengthinc = this.speed * this.refresh;
+
+    this.kinc = 1 / this.lengthinc;
+    
     this.state = "start";
 
+    this.transMatrix = mat4.create();
+    this.rotMatrix = mat4.create();
 };
 
 LinearAnimation.prototype.getControlPoints=function()
@@ -78,5 +86,30 @@ LinearAnimation.prototype.getID=function()
 
 LinearAnimation.prototype.update=function()
 {
-      
+      if(this.state != "end")
+      {
+           var n_cpoints = this.controlpoints.length - 1;
+
+           var x1 = this.currCoords['x'];
+           var y1 = this.currCoords['y'];
+           var z1 = this.currCoords['z'];
+
+           var x2 = this.controlpoints[this.currContrtrolPoint]['x'];
+           var y2 = this.controlpoints[this.currContrtrolPoint]['y'];           
+           var z2 = this.controlpoints[this.currContrtrolPoint]['z'];
+
+           var xnovo = x1 + this.kinc(x2 - x1);
+           var ynovo = y1 + this.kinc(y2 - y1);
+           var znovo = z1 + this.kinc(z2 - z1);
+
+           var vec3 = vec3.fromValues(xnovo - x1, ynovo - y1, znovo - z1);
+
+           mat4.translate(this.transMatrix, this.transMatrix, vec3);
+
+           if(xnovo == x2 )
+
+           //condiçoes de paragem,
+
+             
+      }
 };
