@@ -1404,68 +1404,34 @@ MySceneGraph.prototype.parseAnimations = function(rootElement)
 		else if("circular" == type)
 		{
 
-			var center = animations[i].getAttribute("center");
 			var centerlist = [];
-
-
-			if(center == null)
+			var centerx = parseFloat(animations[i].getAttribute("centerx"));
+			
+			if(centerx == null)
 			{
-				console.warn("Animation '" + id +"' has no center coords, setting default (0,0,0) ");
-
-				centerlist['x'] = 0.0;
-				centerlist['y'] = 0.0;
-				centerlist['z'] = 0.0;
+				console.warn("Animation '" + id +"' has no center x coord, setting default 0.0 ");
+				centerx = 0.0;
 			}
-			else
+
+			var centery = parseFloat(animations[i].getAttribute("centery"));
+
+			if(centery == null)
 			{
-				var centerX = parseFloat(center);
-				var centerY;
-				var centerZ; 
-
-				if(centerX == null || isNaN(centerX)) 
-				{
-					console.warn("WARNING: Animation '" + id + "' as no valid Center coord. Setting (1.0, 1.0, 1.0)");
-					centerX = 1.0;
-					centerY = 1.0;
-					centerZ = 1.0;
-				}
-				else
-				{
-					var s = center.indexOf(" ") + 1;
-					var last = center.length - 1;
-
-					var newcenter1 = center.substring(s, last);
-
-					centerY = parseFloat(newcenter1);
-
-					if(centerY == null || isNaN(centerY)) 
-					{
-						console.warn("WARNING: Animation '" + id + "' as no valid Center coord. Setting (" + centerX +", 1.0, 1.0)");
-						centerY = 1.0;
-						centerZ = 1.0;
-					}
-
-					else
-					{
-						var j = newcenter1.indexOf(" ") + 1;
-						var last = newcenter1.length - 1;
-
-						var newcenter2 = newcenter1.substring(j,last);
-
-						centerZ = parseFloat(newcenter2);
-
-						if(centerZ == null || isNaN(centerZ)) 
-						{
-							console.warn("WARNING: Animation '" + id + "' as no valid Center coord. Setting (" + centerX +", " + centerY + ", 1.0)");
-							centerZ = 1.0;
-						}
-
-						centerlist['x'] = centerX;
-						centerlist['y'] = centerY;
-						centerlist['z'] = centerZ;							
-					}	
-				}				
+				console.warn("Animation '" + id +"' has no center y coord, setting default 0.0 ");
+				centery = 0.0;
 			}
+			
+			var centerz = parseFloat(animations[i].getAttribute("centerz"));
+
+			if(centerz == null)
+			{
+				console.warn("Animation '" + id +"' has no center z coord, setting default 0.0 ");
+				centerz = 0.0;
+			}
+
+			centerlist['x'] = centerx;
+			centerlist['y'] = centery;
+			centerlist['z'] = centerz;
 
 			var radius = animations[i].getAttribute("radius");
 			if(radius == null || isNaN(radius))
