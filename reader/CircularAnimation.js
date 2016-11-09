@@ -1,6 +1,6 @@
-function CircularAnimation(span, type, center, radius, startang, rotang)
+function CircularAnimation(id, span, type, center, radius, startang, rotang)
 {
-     this.animation = new Animation(span, type);
+     this.animation = new Animation(id, span, type);
 
      this.center = center;
      this.radius = radius;
@@ -37,4 +37,14 @@ CircularAnimation.prototype.getSpan=function()
 CircularAnimation.prototype.getType=function()
 {
     return this.animation.getType();  
+};
+
+CircularAnimation.prototype.getID=function()
+{
+    return this.animation.getID();  
+};
+
+CircularAnimation.prototype.update=function()
+{
+      
 };

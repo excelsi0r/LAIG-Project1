@@ -1,5 +1,6 @@
-function Animation(span, type)
+function Animation(id, span, type)
 {
+    this.id = id;
     this.span = span;
     this.type = type;
 
@@ -12,4 +13,9 @@ Animation.prototype.getSpan=function()
 Animation.prototype.getType=function()
 {
     return this.type;
+};
+
+Animation.prototype.getID=function()
+{
+      return this.id;
 };

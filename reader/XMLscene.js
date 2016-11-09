@@ -24,6 +24,10 @@ XMLscene.prototype.init = function (application)
     this.gl.depthFunc(this.gl.LEQUAL);
 
 	this.axis=new CGFaxis(this);
+
+	this.setUpdatePeriod(1 / 60 * 1000);
+
+	this.seconds = 0;
 };
 
 /**
@@ -34,6 +38,7 @@ XMLscene.prototype.display = function ()
 	// ---- BEGIN Background, camera and axis setup
 	
 	// Clear image and depth buffer everytime we update the scene
+
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
@@ -499,7 +504,8 @@ XMLscene.prototype.setAnimationsGraph=function()
 		if(type == "linear")
 		{
 			var controlpoints = this.graph.animationslist[i]['controlpoints'];
-			this.animations[id] = new LinearAnimation(span, type, controlpoints);
+			var anim = new LinearAnimation(id, span, type, controlpoints);
+			this.animations.push(anim);
 		}
 		else if(type == "circular")
 		{
@@ -507,7 +513,8 @@ XMLscene.prototype.setAnimationsGraph=function()
 			var radius = this.graph.animationslist[i]['radius'];
 			var startang = this.graph.animationslist[i]['startang'];
 			var rotang = this.graph.animationslist[i]['rotang'];
-			this.animations[id] = new CircularAnimation(span, type, center, radius, startang, rotang);
+			var anim = new CircularAnimation(id, span, type, center, radius, startang, rotang);
+			this.animations.push(anim);
 		}
 	}
 }
@@ -777,19 +784,16 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 				{
 					newTexture = this.nodes[newid].texture;
 				}
+
 				//Animations
 				var newAnimations = [];
-				for(var f = 0; f < animations.length; f++)
-				{
-					newAnimations.push(animations[f]);
-				}
 				
 				for(var g = 0; g < this.nodes[newid].animations.length; g++)
 				{
 					newAnimations.push(this.nodes[newid].animations[g]);
 				}
 
-				//console.log(newAnimations);
+			
 				
 				//Children
 				var newChildren = this.nodes[newid].children;
@@ -890,6 +894,19 @@ XMLscene.prototype.updateLights=function()
 	}
 };
 
+/**
+ * Overriding Update
+ */
+XMLscene.prototype.update=function(currTime)
+{
 
+	if(this.animations != null)
+	{
+		for(var i = 0; i < this.animations.length; i++)
+		{
+			this.animations[i].update();	
+		}
+	} 
+};
 
 
