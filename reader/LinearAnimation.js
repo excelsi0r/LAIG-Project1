@@ -159,6 +159,6 @@ LinearAnimation.prototype.update=function()
             this.state = "end";
         }
 
-        console.log(this.transvec);
+      //  console.log(this.transvec);
    
 };
