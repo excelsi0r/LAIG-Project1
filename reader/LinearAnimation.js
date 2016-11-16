@@ -5,7 +5,7 @@ function LinearAnimation(id, span, type, controlpoints, updatePeriod)
     this.numberofreparts = this.controlpoints.length - 1;
 
     this.totallength = this.setLength();
-
+    
     this.currContrtrolPoint = 0;
 
     this.RPS = updatePeriod;
@@ -14,6 +14,7 @@ function LinearAnimation(id, span, type, controlpoints, updatePeriod)
 
     this.reparts = this.RPS*this.getSpan();//distribuition through length
     this.currPartition = 0; //update state point, to use with repart
+    this.Time;
 
 
     this.repartPoint;//for use with individual points
@@ -21,8 +22,8 @@ function LinearAnimation(id, span, type, controlpoints, updatePeriod)
         
     this.transMatrix = mat4.create();
     this.transvec;
+   
     this.rotMatrix = mat4.create();
-
     this.state = "start";
 };
 
@@ -90,7 +91,7 @@ LinearAnimation.prototype.getID=function()
     return this.animation.getID();  
 };
 
-LinearAnimation.prototype.update=function()
+LinearAnimation.prototype.update=function(currTime)
 {
     
        /* console.log("State: ", this.state);
@@ -101,8 +102,17 @@ LinearAnimation.prototype.update=function()
         console.log("Kinc: ", this.kinc);
         console.log("Matrix: ", this.transMatrix);*/
 
+       
+
+        if(this.currPartition == 0)
+        {
+            this.Time = currTime;
+        }
+
         if(this.state != "end" && this.currPartitionPoint == 0)
         {
+
+            //intial
    
             var x1 = parseFloat(this.controlpoints[this.currContrtrolPoint]['x']);
             var y1 = parseFloat(this.controlpoints[this.currContrtrolPoint]['y']);
@@ -114,9 +124,20 @@ LinearAnimation.prototype.update=function()
 
             var xv = x2 - x1;
             var yv = y2 - y1;
-            var zv = z2 - z1;
+            var zv = z2 - z1;            
 
             var veclength = Math.sqrt(xv*xv + yv*yv + zv*zv);
+            
+
+            //rotation
+            var rotAng = Math.acos(zv / veclength);
+			
+			var axisvec = vec3.fromValues(0,1,0);
+
+			this.rotMatrix = mat4.create();
+            this.rotMatrix = mat4.rotate(this.rotMatrix, this.rotMatrix, rotAng, axisvec);
+            
+            //translate 
 
             this.repartPoint = (this.reparts * veclength) / this.totallength;
             
@@ -127,9 +148,18 @@ LinearAnimation.prototype.update=function()
             var ynovo = y1 + this.kinc*(y2 - y1);
             var znovo = z1 + this.kinc*(z2 - z1);
 
+            var xinc = xnovo - x1;
+            var yinc = ynovo - y1;
+            var zinc = znovo - z1;
 
-            this.transvec = vec3.fromValues(xnovo - x1, ynovo - y1, znovo - z1);
+            var inclength = Math.sqrt(xinc*xinc + yinc*yinc + zinc*zinc);
 
+            this.transvec = vec3.fromValues(inclength*Math.cos(rotAng), yinc, inclength*Math.sin(rotAng));
+
+            //increments
+
+            //console.log("Vec and ang: ", xinc, yinc, zinc, rotAng);
+           
             this.currPartition++;
             this.currPartitionPoint++;
 
@@ -137,15 +167,23 @@ LinearAnimation.prototype.update=function()
 
         else if(this.state != "end")
         {
-             mat4.translate(this.transMatrix, this.transMatrix, this.transvec);
+            var diff = currTime - this.Time;
 
-            this.currPartition++;
-            this.currPartitionPoint++;
+            this.Time = currTime;
+
+
+            var n_part_asserts = (diff * this.RPS)  / 1000;
+            var assertPoint = Math.round(n_part_asserts);
+
+            for(var i = 0; i < assertPoint; i++)
+            {
+                mat4.translate(this.transMatrix, this.transMatrix, this.transvec);
+            }
+
+            this.currPartition += assertPoint;
+            this.currPartitionPoint += assertPoint;
         }
-
-        
-
-
+       
         if( this.currPartitionPoint >=  this.repartPoint)
         {
            this.currPartitionPoint = 0;

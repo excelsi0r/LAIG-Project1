@@ -755,15 +755,15 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 			//console.log(animations.length)
 				
 			this.pushMatrix();	
-
+						
 				for(var o = 0; o < animations.length; o++)
-				{				
-						this.multMatrix(this.animations[animations[o]].transMatrix);
+				{	
+										
+					this.multMatrix(this.animations[animations[o]].transMatrix);
+					this.multMatrix(this.animations[animations[o]].rotMatrix);
 				}			
 
 				this.multMatrix(transformation);
-
-				//console.log(this.getMatrix());
 
 				materialToApply.apply();			
 				obj.display();			
@@ -937,7 +937,7 @@ XMLscene.prototype.update=function(currTime)
 		{
 			var id = this.graph.animationslist[i]['id'];
 
-			this.animations[id].update();
+			this.animations[id].update(currTime);
 		}
 	} 
 
