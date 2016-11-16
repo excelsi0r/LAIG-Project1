@@ -479,6 +479,16 @@ XMLscene.prototype.setPrimitivesGraph = function()
 
 			object = new MyTorus(this, inner, outer, slices, loops);
 		}
+		else if(type == 'plane')
+		{
+			var dimx = this.graph.primitiveslist[i]['dimX'];
+			var dimy = this.graph.primitiveslist[i]['dimY'];
+			var partsx = this.graph.primitiveslist[i]['partsX'];
+			var partsy = this.graph.primitiveslist[i]['partsY'];
+
+			object = new MyPlane(this, dimx, dimy, partsx, partsy);
+			console.log(object);
+		}
 
 		this.primitives[id] = object;
 	}
@@ -744,12 +754,19 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 		{
 			var obj = this.primitives[primitive[i]];
 			var materialToApply = this.materials[material];
+
 			
-			if(texture != "none")
+			
+			if(texture != "none" && this.primitives[primitive[i]] instanceof CGFnurbsObject != true)
 			{
 				materialToApply.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 				materialToApply.setTexture(this.textures[texture]['texture']);
 				obj.updateTextureCoords(this.textures[texture]['length_s'], this.textures[texture]['length_t']);
+			}
+			else if(texture != "none" && this.primitives[primitive[i]] instanceof CGFnurbsObject == true)
+			{
+				materialToApply.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
+				materialToApply.setTexture(this.textures[texture]['texture']);
 			}
 	
 			//console.log(animations.length)

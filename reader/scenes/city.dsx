@@ -89,7 +89,8 @@
 
     <textures>
         <texture id="city_floor" file="../textures/1638.png" length_s="1" length_t="1" />
-        <texture id="windows" file="../textures/pixelcity_windows3.png" length_s="1" length_t="1" />  
+        <texture id="windows" file="../textures/pixelcity_windows3.png" length_s="1" length_t="1" /> 
+        <texture id="surface" file="../textures/texture.png" length_s="1" length_t="1" />   
 
     </textures>
 
@@ -231,7 +232,7 @@
         </primitive>
 
         <primitive id ="plane">
-              <plane dimX="3.0" dimY="2.0" partsX="10" partsY="7"/>
+              <plane dimX="3.0" dimY="3.0" partsX="20" partsY="20"/>
         </primitive>
 
         <primitive id = "patch">
@@ -319,8 +320,23 @@
                 <componentref id="ribbon" />
 				<componentref id="circularBuilding" />
                 <componentref id="egypt" />
+                <componentref id="surface"/>
             </children>
         </component>
+
+        <component id="surface">
+                 <transformation>
+                        <translate x="0" y="0" z="0"/>
+                </transformation>
+                <materials>
+                        <material id="inherit"/>
+                </materials>
+                <texture id="surface"/>
+                <children>
+                        <primitiveref id="plane"/>
+                </children>
+        </component>
+
 
         <component id="all_zepplin">
                 <transformation>
