@@ -1469,6 +1469,8 @@ MySceneGraph.prototype.parseAnimations = function(rootElement)
 		animationlist['type'] = type;
 
 		this.animationslist.push(animationlist);
+
+	
 	}
 
 	//Verify if Animations repeated
@@ -1773,6 +1775,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			{
 				var animationsref = animations[0].children;
 
+
+
 				for(var ij = 0; ij < animationsref.length; ij++)
 				{
 					
@@ -1787,8 +1791,12 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 					}
 
 					componentelem['animations'].push(id);
+
+
 				}
 			}
+
+			//console.log(componentelem['id'],componentelem['animations'])
 
 			var error = this.checkIfAnimationValid(componentelem['id'], componentelem['animations'])
 			if(error != null)

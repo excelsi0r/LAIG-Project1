@@ -1,4 +1,4 @@
-function CircularAnimation(id, span, type, center, radius, startang, rotang)
+function CircularAnimation(id, span, type, center, radius, startang, rotang, updatePeriod)
 {
      this.animation = new Animation(id, span, type);
 
@@ -6,6 +6,9 @@ function CircularAnimation(id, span, type, center, radius, startang, rotang)
      this.radius = radius;
      this.startang = startang;
      this.rotang = rotang;
+    this.refresh = 1 / updatePeriod;
+     this.transMatrix = mat4.create();
+     this.rotMatrix = mat4.create();
 };
 
 

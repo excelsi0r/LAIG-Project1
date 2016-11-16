@@ -25,7 +25,9 @@ XMLscene.prototype.init = function (application)
 
 	this.axis=new CGFaxis(this);
 
-	this.setUpdatePeriod(1 / 60 * 1000);
+	this.RPS = 60;
+
+	this.setUpdatePeriod(1 / this.RPS * 1000);
 
 	this.seconds = 0;
 };
@@ -504,8 +506,8 @@ XMLscene.prototype.setAnimationsGraph=function()
 		if(type == "linear")
 		{
 			var controlpoints = this.graph.animationslist[i]['controlpoints'];
-			var anim = new LinearAnimation(id, span, type, controlpoints);
-			this.animations.push(anim);
+			var anim = new LinearAnimation(id, span, type, controlpoints,this.RPS);
+			this.animations[id] = anim;
 		}
 		else if(type == "circular")
 		{
@@ -513,8 +515,8 @@ XMLscene.prototype.setAnimationsGraph=function()
 			var radius = this.graph.animationslist[i]['radius'];
 			var startang = this.graph.animationslist[i]['startang'];
 			var rotang = this.graph.animationslist[i]['rotang'];
-			var anim = new CircularAnimation(id, span, type, center, radius, startang, rotang);
-			this.animations.push(anim);
+			var anim = new CircularAnimation(id, span, type, center, radius, startang, rotang,this.RPS);
+			this.animations[id] = anim;
 		}
 	}
 }
@@ -528,7 +530,11 @@ XMLscene.prototype.createGraph = function()
 {
 	console.info("Creating new Graph");
 	
+	
+
 	this.nodes = [];
+
+
 
 	var n_node = this.graph.componentslist.length;
 
@@ -536,7 +542,10 @@ XMLscene.prototype.createGraph = function()
 	{
 		var id = this.graph.componentslist[i]['id'];
 		var node = new Node(this.graph.componentslist[i]['id']);
+
 		var transformation = [];
+
+
 	
 		
 		//Setting Transformation for component from DSX file
@@ -625,16 +634,25 @@ XMLscene.prototype.createGraph = function()
 				node.setPrimitive(pr);
 			}		
 		}
+
 		//Setting Animations for component from DSX file
 		if(this.graph.componentslist[i]['animations'] != null)
 		{
+
 			var n_animations = this.graph.componentslist[i]['animations'].length;
+
 			for(var c = 0; c < n_animations; c++)
 			{
 				var ar = this.graph.componentslist[i]['animations'][c];
-				node.setAnimation(ar);
+				node.animations.push(ar);
 			}
+
+
+			//console.log(id, node);
 		}
+
+	
+
 		//Setting Children for component from DSX file
 		if(this.graph.componentslist[i]['children'] != null)
 		{			
@@ -648,7 +666,9 @@ XMLscene.prototype.createGraph = function()
 		
 		// Pushing to Graph Array		 
 		this.nodes[id] = node;
+		
 	}
+	
 };
 
 /**
@@ -669,6 +689,7 @@ XMLscene.prototype.createGraph = function()
  */
 XMLscene.prototype.displayGraphElems=function()
 {
+
 	var id = this.root;
 
 	var transformationtype = this.nodes[id].transformation['type'];
@@ -688,8 +709,9 @@ XMLscene.prototype.displayGraphElems=function()
 	var texture = this.nodes[id].texture;
 	var children = this.nodes[id].children;
 	var primitive = this.nodes[id].primitive;
-	var animations = this.nodes[id].animations;		
-	
+
+	var animations = this.nodes[id].animations;
+
 	this.displayNodes(id, transformation, materialst, texture, children, primitive, animations);
 	
 };
@@ -730,8 +752,19 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 				obj.updateTextureCoords(this.textures[texture]['length_s'], this.textures[texture]['length_t']);
 			}
 	
+			//console.log(animations.length)
+				
 			this.pushMatrix();	
+
+				for(var o = 0; o < animations.length; o++)
+				{				
+						this.multMatrix(this.animations[animations[o]].transMatrix);
+				}			
+
 				this.multMatrix(transformation);
+
+				//console.log(this.getMatrix());
+
 				materialToApply.apply();			
 				obj.display();			
 			this.popMatrix();
@@ -787,19 +820,17 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 
 				//Animations
 				var newAnimations = [];
-				
-				for(var g = 0; g < this.nodes[newid].animations.length; g++)
-				{
-					newAnimations.push(this.nodes[newid].animations[g]);
-				}
+
+				newAnimations = animations.concat(this.nodes[newid].animations);
+
 
 			
-				
 				//Children
 				var newChildren = this.nodes[newid].children;
 				//Primitives
 				var newPrimitives = this.nodes[newid].primitive;
-		
+					
+				//console.log(newid, newAnimations);
 				this.displayNodes(newid, matrixtrans, newmaterial, newTexture, newChildren, newPrimitives, newAnimations);	
 			}
 			else
@@ -899,14 +930,18 @@ XMLscene.prototype.updateLights=function()
  */
 XMLscene.prototype.update=function(currTime)
 {
-
-	if(this.animations != null)
+	//console.log(this.getMatrix());
+	if(this.animations != null && this.graph.animationslist != null)
 	{
-		for(var i = 0; i < this.animations.length; i++)
+		for(var i = 0; i < this.graph.animationslist.length; i++)
 		{
-			this.animations[i].update();	
+			var id = this.graph.animationslist[i]['id'];
+
+			this.animations[id].update();
 		}
 	} 
+
+	
 };
 
 

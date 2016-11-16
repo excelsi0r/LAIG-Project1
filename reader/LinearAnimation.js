@@ -1,23 +1,29 @@
-function LinearAnimation(id, span, type, controlpoints)
+function LinearAnimation(id, span, type, controlpoints, updatePeriod)
 {
     this.animation = new Animation(id, span, type);
     this.controlpoints = controlpoints;
+    this.numberofreparts = this.controlpoints.length - 1;
 
-    this.length = this.setLength();
-    this.speed = this.setSpeed();
+    this.totallength = this.setLength();
 
-    this.currCoords = this.controlpoints[0];
     this.currContrtrolPoint = 0;
 
-    this.refresh =  1 / 60;
-    this.lengthinc = this.speed * this.refresh;
+    this.RPS = updatePeriod;
 
-    this.kinc = 1 / this.lengthinc;
-    
-    this.state = "start";
+    this.kinc;
 
+    this.reparts = this.RPS*this.getSpan();//distribuition through length
+    this.currPartition = 0; //update state point, to use with repart
+
+
+    this.repartPoint;//for use with individual points
+    this.currPartitionPoint = 0;//for use with currPartitionPoint
+        
     this.transMatrix = mat4.create();
+    this.transvec;
     this.rotMatrix = mat4.create();
+
+    this.state = "start";
 };
 
 LinearAnimation.prototype.getControlPoints=function()
@@ -86,30 +92,73 @@ LinearAnimation.prototype.getID=function()
 
 LinearAnimation.prototype.update=function()
 {
-      if(this.state != "end")
-      {
-           var n_cpoints = this.controlpoints.length - 1;
+    
+       /* console.log("State: ", this.state);
+        console.log("Repart:" , this.repart);
+        console.log("CurrRepart: ", this.currPartition);
+        console.log("Length:", this.length);
+        console.log("Speed: ", this.speed);
+        console.log("Kinc: ", this.kinc);
+        console.log("Matrix: ", this.transMatrix);*/
 
-           var x1 = this.currCoords['x'];
-           var y1 = this.currCoords['y'];
-           var z1 = this.currCoords['z'];
+        if(this.state != "end" && this.currPartitionPoint == 0)
+        {
+   
+            var x1 = parseFloat(this.controlpoints[this.currContrtrolPoint]['x']);
+            var y1 = parseFloat(this.controlpoints[this.currContrtrolPoint]['y']);
+            var z1 = parseFloat(this.controlpoints[this.currContrtrolPoint]['z']);
 
-           var x2 = this.controlpoints[this.currContrtrolPoint]['x'];
-           var y2 = this.controlpoints[this.currContrtrolPoint]['y'];           
-           var z2 = this.controlpoints[this.currContrtrolPoint]['z'];
+            var x2 = parseFloat(this.controlpoints[this.currContrtrolPoint + 1]['x']);
+            var y2 = parseFloat(this.controlpoints[this.currContrtrolPoint + 1]['y']);           
+            var z2 = parseFloat(this.controlpoints[this.currContrtrolPoint + 1]['z']);
 
-           var xnovo = x1 + this.kinc(x2 - x1);
-           var ynovo = y1 + this.kinc(y2 - y1);
-           var znovo = z1 + this.kinc(z2 - z1);
+            var xv = x2 - x1;
+            var yv = y2 - y1;
+            var zv = z2 - z1;
 
-           var vec3 = vec3.fromValues(xnovo - x1, ynovo - y1, znovo - z1);
+            var veclength = Math.sqrt(xv*xv + yv*yv + zv*zv);
 
-           mat4.translate(this.transMatrix, this.transMatrix, vec3);
+            this.repartPoint = (this.reparts * veclength) / this.totallength;
+            
+            this.kinc = (veclength / this.repartPoint) / veclength;
 
-           if(xnovo == x2 )
 
-           //condiçoes de paragem,
+            var xnovo = x1 + this.kinc*(x2 - x1);
+            var ynovo = y1 + this.kinc*(y2 - y1);
+            var znovo = z1 + this.kinc*(z2 - z1);
 
-             
-      }
+
+            this.transvec = vec3.fromValues(xnovo - x1, ynovo - y1, znovo - z1);
+
+            this.currPartition++;
+            this.currPartitionPoint++;
+
+        }
+
+        else if(this.state != "end")
+        {
+             mat4.translate(this.transMatrix, this.transMatrix, this.transvec);
+
+            this.currPartition++;
+            this.currPartitionPoint++;
+        }
+
+        
+
+
+        if( this.currPartitionPoint >=  this.repartPoint)
+        {
+           this.currPartitionPoint = 0;
+           this.currContrtrolPoint++;
+        } 
+        
+
+
+        if(this.currPartition >= this.repart || this.currContrtrolPoint >= this.numberofreparts)
+        {
+            this.state = "end";
+        }
+
+        console.log(this.transvec);
+   
 };

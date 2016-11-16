@@ -2,7 +2,7 @@
     <scene root="city" axis_length="5.0" />
 
 
-    <views default="default_view" >
+    <views default="4" >
         <perspective id="default_view" near="0.1" far="500" angle="45">
             <from x="15" y="15" z="15" />
             <to x="0" y="0" z="0" />
@@ -247,22 +247,19 @@
     </primitives>
 
     <animations>
-        <animation id="Bala" span="3.0" type="linear">
-                <controlpoint xx="0.0" yy="2.0" zz="0.0"/> 
-                <controlpoint xx="0.0" yy="4.0" zz="0.0"/> 
-        </animation>
-
-         <animation id="Bala2" span="3.0" type="linear">
-                <controlpoint xx="0.0" yy="2.0" zz="0.0"/> 
-                <controlpoint xx="0.0" yy="4.0" zz="0.0"/> 
+        <animation id="Bala" span="10.0" type="linear">
+                <controlpoint xx="0.0" yy="0.0" zz="0.0"/> 
+                <controlpoint xx="0.0" yy="0.0" zz="10.0"/>
+                <controlpoint xx="20.0" yy="0.0" zz="10.0"/>
         </animation>
         
-        <animation id="Roda" span="3.0" type="circular" centerx="2.0" centery="3.0" centerz="4.0" radius="3.0" startang= "20.0" rotang="3.0"/>
+        <animation id="Roda" span="10.0" type="circular" centerx="2.0" centery="3.0" centerz="4.0" radius="3.0" startang= "20.0" rotang="3.0"/>
                   
     </animations>
 
 
     <components>
+    
         <component id="city">
             <transformation>
                 <scale x="5" y="5" z="5" />
@@ -271,6 +268,9 @@
                 <material id="retro-synth" />
             </materials>                      
             <texture id="none" />
+            <animation>
+                       
+            </animation>
             <children>
                 <componentref id="floor" />
                 <componentref id="all_zepplin"/>
@@ -299,7 +299,6 @@
                 <texture id="none"/>
                 <animation>
                         <animationref id="Bala"/>
-                        <animationref id="Roda"/>
                 </animation>
                 <children>
                         <componentref id="zeppelin"/>
