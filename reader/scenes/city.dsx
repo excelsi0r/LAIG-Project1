@@ -321,9 +321,22 @@
                 <componentref id="ribbon" />
 				<componentref id="circularBuilding" />
                 <componentref id="egypt" />
-                <componentref id="surface"/>
-                <componentref id="patch1"/>
+                <componentref id="vehicle"/>
             </children>
+        </component>
+
+       <component id="vehicle">
+                 <transformation>
+                        <translate x="0" y="0" z="-2.5"/>
+                </transformation>
+                <materials>
+                        <material id="inherit"/>
+                </materials>
+                <texture id="surface"/>
+
+                <children>
+                        <primitiveref id="vehicle"/>
+                </children>
         </component>
 
         <component id="patch1">
