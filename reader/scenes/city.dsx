@@ -236,22 +236,22 @@
         </primitive>
 
         <primitive id = "patch">
-              <patch orderU="2" orderV="3" partsU="7" partsV="9" >    
-                  <controlpoint x="0.0" y="0.0" z="0.0" />
-                  <controlpoint x="2.0" y="0.0" z="1.0" />
-                  <controlpoint x="4.0" y="0.0" z="0.0" />
+              <patch orderU="2" orderV="3" partsU="20" partsV="20">    
+              
+                        <controlpoint x="0.0" y="0.0" z="0.0" />
+                        <controlpoint x="0.0" y="2.0" z="0.0" />
+                        <controlpoint x="0.0" y="4.0" z="0.0" />
+                        <controlpoint x="0.0" y="8.0" z="0.0" />
 
-                  <controlpoint x="0.0" y="2.0" z="0.0" />
-                  <controlpoint x="2.0" y="2.0" z="1.0" />
-                  <controlpoint x="4.0" y="2.0" z="0.0" />
+                        <controlpoint x="2.0" y="0.0" z="1.0" />
+                        <controlpoint x="2.0" y="2.0" z="1.0" />
+                        <controlpoint x="2.0" y="4.0" z="1.0" />
+                        <controlpoint x="2.0" y="8.0" z="1.0" />
 
-                  <controlpoint x="0.0" y="4.0" z="0.0" />
-                  <controlpoint x="2.0" y="4.0" z="1.0" />
-                  <controlpoint x="4.0" y="4.0" z="0.0" />
-
-                  <controlpoint x="0.0" y="8.0" z="0.0" />
-                  <controlpoint x="2.0" y="8.0" z="1.0" />
-                  <controlpoint x="4.0" y="8.0" z="0.0" />
+                        <controlpoint x="4.0" y="0.0" z="0.0" />
+                        <controlpoint x="4.0" y="2.0" z="0.0" />      
+                        <controlpoint x="4.0" y="4.0" z="0.0" />
+                        <controlpoint x="4.0" y="8.0" z="0.0" />
               </patch>
          </primitive>
 
@@ -260,21 +260,22 @@
                        <plane dimX="3.0" dimY="2.0" partsX="10" partsY="7"/> 
 
                         <patch orderU="2" orderV="3" partsU="7" partsV="9" >    
-                          <controlpoint x="0.0" y="0.0" z="0.0" />
-                          <controlpoint x="2.0" y="0.0" z="1.0" />
-                          <controlpoint x="4.0" y="0.0" z="0.0" />
 
-                          <controlpoint x="0.0" y="2.0" z="0.0" />
-                          <controlpoint x="2.0" y="2.0" z="1.0" />
-                          <controlpoint x="4.0" y="2.0" z="0.0" />
+                                <controlpoint x="0.0" y="0.0" z="0.0" />
+                                <controlpoint x="0.0" y="2.0" z="0.0" />
+                                <controlpoint x="0.0" y="4.0" z="0.0" />
+                                <controlpoint x="0.0" y="8.0" z="0.0" />
+                         
+                                <controlpoint x="2.0" y="0.0" z="1.0" />
+                                <controlpoint x="2.0" y="2.0" z="1.0" />
+                                <controlpoint x="2.0" y="4.0" z="1.0" />
+                                <controlpoint x="2.0" y="8.0" z="1.0" />
+                          
+                                <controlpoint x="4.0" y="0.0" z="0.0" />
+                                <controlpoint x="4.0" y="2.0" z="0.0" />      
+                                <controlpoint x="4.0" y="4.0" z="0.0" />
+                                <controlpoint x="4.0" y="8.0" z="0.0" />
 
-                          <controlpoint x="0.0" y="4.0" z="0.0" />
-                          <controlpoint x="2.0" y="4.0" z="1.0" />
-                          <controlpoint x="4.0" y="4.0" z="0.0" />
-
-                          <controlpoint x="0.0" y="8.0" z="0.0" />
-                          <controlpoint x="2.0" y="8.0" z="1.0" />
-                          <controlpoint x="4.0" y="8.0" z="0.0" />
                       </patch>
                 </vehicle>
          </primitive>
@@ -321,17 +322,33 @@
 				<componentref id="circularBuilding" />
                 <componentref id="egypt" />
                 <componentref id="surface"/>
+                <componentref id="patch1"/>
             </children>
         </component>
 
-        <component id="surface">
+        <component id="patch1">
                  <transformation>
-                        <translate x="0" y="0" z="0"/>
+                        <translate x="0" y="0" z="-2.5"/>
                 </transformation>
                 <materials>
                         <material id="inherit"/>
                 </materials>
                 <texture id="surface"/>
+
+                <children>
+                        <primitiveref id="patch"/>
+                </children>
+        </component>
+
+        <component id="surface">
+                 <transformation>
+                        <translate x="-5" y="0" z="0"/>
+                </transformation>
+                <materials>
+                        <material id="inherit"/>
+                </materials>
+                <texture id="surface"/>
+
                 <children>
                         <primitiveref id="plane"/>
                 </children>

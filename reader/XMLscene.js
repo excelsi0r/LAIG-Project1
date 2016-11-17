@@ -487,7 +487,17 @@ XMLscene.prototype.setPrimitivesGraph = function()
 			var partsy = this.graph.primitiveslist[i]['partsY'];
 
 			object = new MyPlane(this, dimx, dimy, partsx, partsy);
-			console.log(object);
+			
+		}
+		else if(type == 'patch')
+		{
+			var orderu = this.graph.primitiveslist[i]['orderU'];
+			var orderv = this.graph.primitiveslist[i]['orderV'];
+			var partsu = this.graph.primitiveslist[i]['partsU'];
+			var partsv = this.graph.primitiveslist[i]['partsV'];
+			var controlpoints = this.graph.primitiveslist[i]['controlpoints'];
+
+			object = new MyPatch(this, orderu, orderv, partsu, partsv, controlpoints);
 		}
 
 		this.primitives[id] = object;
@@ -757,17 +767,13 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 
 			
 			
-			if(texture != "none" && this.primitives[primitive[i]] instanceof CGFnurbsObject != true)
+			if(texture != "none")
 			{
 				materialToApply.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 				materialToApply.setTexture(this.textures[texture]['texture']);
 				obj.updateTextureCoords(this.textures[texture]['length_s'], this.textures[texture]['length_t']);
 			}
-			else if(texture != "none" && this.primitives[primitive[i]] instanceof CGFnurbsObject == true)
-			{
-				materialToApply.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
-				materialToApply.setTexture(this.textures[texture]['texture']);
-			}
+
 	
 			//console.log(animations.length)
 				

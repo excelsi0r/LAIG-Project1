@@ -11,18 +11,18 @@ function MyPlane(scene, dimX, dimY, partsX, partsY)
 	this.partsX = partsX;
 	this.partsY = partsY;
 
-	return this.makeSurface(1,1, 
-							[
-								[
-									[-this.dimX / 2, -this.dimY / 2, 0.0, 1],
-									[-this.dimX / 2,  this.dimY / 2, 0.0, 1]
-								],
-								[
-									[ this.dimX / 2, -this.dimY / 2, 0.0, 1],
-									[ this.dimX / 2,  this.dimY / 2, 0.0, 1]
-								
-								]
-							]);
+	this.plane = this.makeSurface(1,1, 
+										[
+											[
+												[-this.dimX / 2, -this.dimY / 2, 0.0, 1],
+												[-this.dimX / 2,  this.dimY / 2, 0.0, 1]
+											],
+											[
+												[ this.dimX / 2, -this.dimY / 2, 0.0, 1],
+												[ this.dimX / 2,  this.dimY / 2, 0.0, 1]
+
+											]
+										]);
 							
 				
 };
@@ -44,7 +44,8 @@ MyPlane.prototype.makeSurface = function (degree1, degree2, controlvertexes) {
 	return obj;		
 };
 
-MyPlane.prototype.getKnotsVector = function(degree) { 
+MyPlane.prototype.getKnotsVector = function(degree) 
+{ 
 	
 	var v = new Array();
 	for (var i=0; i<=degree; i++) {
@@ -55,3 +56,12 @@ MyPlane.prototype.getKnotsVector = function(degree) {
 	}
 	return v;
 };
+
+MyPlane.prototype.display = function()
+{
+	this.plane.display();
+};
+
+MyPlane.prototype.updateTextureCoords=function(s, t) {};
+
+

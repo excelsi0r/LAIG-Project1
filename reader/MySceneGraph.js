@@ -1312,12 +1312,13 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 					var y = parseFloat(controlpoints[kl].getAttribute('y'));
 					var z = parseFloat(controlpoints[kl].getAttribute('z'));
 
-					point['x'] = x;
-					point['y'] = y;
-					point['z'] = z;
+					point.push(x);
+					point.push(y);
+					point.push(z);
 
 					primitiveitem['controlpoints'].push(point);
 				}
+				this.primitiveslist.push(primitiveitem);
 			}
 			else if(primtype == 'vehicle')
 			{
@@ -1396,9 +1397,9 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 							var y = parseFloat(controlpoints[kl].getAttribute('y'));
 							var z = parseFloat(controlpoints[kl].getAttribute('z'));
 
-							point['x'] = x;
-							point['y'] = y;
-							point['z'] = z;
+								point.push(x);
+								point.push(y);
+								point.push(z);
 
 							surface['controlpoints'].push(point);
 						}
