@@ -215,6 +215,9 @@
         <primitive id="rectangle1">
             <rectangle x1="0" y1="2" x2="2" y2="0" />
         </primitive>
+        <primitive id="rectangletest">
+            <rectangle x1="-1" y1="2" x2="1" y2="0" />
+        </primitive>
         <primitive id="rectangle">
             <rectangle x1="0" y1="2" x2="2" y2="0" />
         </primitive>
@@ -296,7 +299,7 @@
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/>
         </animation>
         
-        <animation id="Roda" span="5.0" type="circular" centerx="0.0" centery="0.0" centerz="0.0" radius="2.0" startang="270" rotang="90"/>
+        <animation id="Roda" span="5.0" type="circular" centerx="5.0" centery="0.0" centerz="0.0" radius="3.0" startang="-90" rotang="90"/>
                   
     </animations>
 
@@ -328,10 +331,11 @@
             </materials>                      
             <texture id="none" />
             <animation>
+                <animationref id="Bala"/>
                 <animationref id="Roda"/>
-                </animation>
+            </animation>
             <children>
-                  <primitiveref id="rectangle1"/>
+                  <primitiveref id="rectangletest"/>
             </children>
         </component>
 

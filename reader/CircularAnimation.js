@@ -13,6 +13,7 @@ function CircularAnimation(id, span, type, center, radius, startang, rotang, upd
      this.repart;
 
      this.currRotAng = 0;
+     this.assertAng = Math.PI / 2;
 
      this.currX;
      this.currY = 0;
@@ -92,7 +93,7 @@ CircularAnimation.prototype.update=function(currTime)
             //rotating
             var axisvec = vec3.fromValues(0,1,0);
             this.rotMatrix = mat4.create();
-            this.rotMatrix = mat4.rotate(this.rotMatrix, this.rotMatrix, this.currRotAng + Math.PI/2, axisvec);
+            this.rotMatrix = mat4.rotate(this.rotMatrix, this.rotMatrix, this.currRotAng + this.assertAng, axisvec);
 
             //translating
             this.currX = this.radius * Math.sin(this.currRotAng);
@@ -125,11 +126,16 @@ CircularAnimation.prototype.update=function(currTime)
 CircularAnimation.prototype.initialize=function()
 {
         //intial rotation 
+        if(this.rotang < 0)
+        {
+            this.assertAng = -this.assertAng;
+        }
+
         this.currRotAng += this.startang + Math.PI / 2;
         
         var axisvec = vec3.fromValues(0,1,0);
         this.rotMatrix = mat4.create();
-        this.rotMatrix = mat4.rotate(this.rotMatrix, this.rotMatrix, this.currRotAng + Math.PI/2, axisvec);
+        this.rotMatrix = mat4.rotate(this.rotMatrix, this.rotMatrix, this.currRotAng + this.assertAng, axisvec);
 
 
         //initial translation
@@ -145,7 +151,7 @@ CircularAnimation.prototype.initialize=function()
         mat4.translate(this.transMatrix, this.transMatrix,transvec);   
 
         //calculating total partitions and incremet anglev
-        var totalrot = Math.abs(this.rotang);
+        //var totalrot = Math.abs(this.rotang);
         this.repart = this.RPS * this.getSpan();
-        this.incang = totalrot / this.repart;
+        this.incang = this.rotang / this.repart;
 };
