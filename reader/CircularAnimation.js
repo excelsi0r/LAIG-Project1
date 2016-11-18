@@ -144,9 +144,8 @@ CircularAnimation.prototype.initialize=function()
         this.transMatrix = mat4.create();
         mat4.translate(this.transMatrix, this.transMatrix,transvec);   
 
-        //calculating total partitions and incremet angle
-        var totalrot = parseFloat(this.startang) + parseFloat(this.rotang);
-        totalrot = Math.abs(totalrot);
+        //calculating total partitions and incremet anglev
+        var totalrot = Math.abs(this.rotang);
         this.repart = this.RPS * this.getSpan();
         this.incang = totalrot / this.repart;
 };

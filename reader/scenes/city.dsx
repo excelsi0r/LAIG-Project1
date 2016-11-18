@@ -296,7 +296,7 @@
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/>
         </animation>
         
-        <animation id="Roda" span="5.0" type="circular" centerx="0.0" centery="0.0" centerz="0.0" radius="2.0" startang= "90" rotang="90"/>
+        <animation id="Roda" span="5.0" type="circular" centerx="0.0" centery="0.0" centerz="0.0" radius="2.0" startang="270" rotang="90"/>
                   
     </animations>
 
