@@ -163,6 +163,11 @@ LinearAnimation.prototype.update=function(currTime)
             this.yinc = ynovo - y1;
             this.zinc = znovo - z1;
 
+            var transvec = vec3.fromValues(this.currX, this.currY, this.currZ);
+            this.transMatrix = mat4.create();
+
+            mat4.translate(this.transMatrix, this.transMatrix,transvec);
+
 
            //increments
             this.currPartition++;
@@ -262,4 +267,9 @@ LinearAnimation.prototype.initialize=function()
         this.xinc = xnovo - x1;
         this.yinc = ynovo - y1;
         this.zinc = znovo - z1;
+
+        var transvec = vec3.fromValues(this.currX, this.currY, this.currZ);
+        this.transMatrix = mat4.create();
+
+        mat4.translate(this.transMatrix, this.transMatrix,transvec);
 };

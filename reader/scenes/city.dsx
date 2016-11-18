@@ -281,7 +281,7 @@
 
         <animation id="Up" span="10.0" type="linear">
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/> 
-                <controlpoint xx="0.0" yy="10.0" zz="0.0"/>
+                <controlpoint xx="0.0" yy="5.0" zz="0.0"/>
         </animation>
 
         <animation id="Bala" span="10.0" type="linear">
@@ -296,7 +296,7 @@
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/>
         </animation>
         
-        <animation id="Roda" span="10.0" type="circular" centerx="2.0" centery="3.0" centerz="4.0" radius="3.0" startang= "20.0" rotang="3.0"/>
+        <animation id="Roda" span="5.0" type="circular" centerx="0.0" centery="0.0" centerz="0.0" radius="2.0" startang= "90" rotang="90"/>
                   
     </animations>
 
@@ -312,7 +312,6 @@
             </materials>                      
             <texture id="none" />
             <animation>
-                        
             </animation>
             <children>
                   <componentref id="rectangletest"/>
@@ -329,8 +328,7 @@
             </materials>                      
             <texture id="none" />
             <animation>
-                <animationref id="Bala"/>
-                <animationref id="BalaInv"/>
+                <animationref id="Roda"/>
                 </animation>
             <children>
                   <primitiveref id="rectangle1"/>
