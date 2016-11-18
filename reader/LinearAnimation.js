@@ -23,7 +23,7 @@ function LinearAnimation(id, span, type, controlpoints, updatePeriod)
     this.currY;
     this.currZ;
 
-    this.rotAng;
+    this.rotAng = 0;
 
     this.xinc;
     this.yinc;
@@ -207,7 +207,5 @@ LinearAnimation.prototype.update=function(currTime)
         {
             this.state = "end";
         }
-
-      console.log(this.rotAng);
    
 };

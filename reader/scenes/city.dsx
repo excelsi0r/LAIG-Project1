@@ -278,6 +278,12 @@
     </primitives>
 
     <animations>
+
+        <animation id="Up" span="10.0" type="linear">
+                <controlpoint xx="0.0" yy="0.0" zz="0.0"/> 
+                <controlpoint xx="0.0" yy="10.0" zz="0.0"/>
+        </animation>
+
         <animation id="Bala" span="10.0" type="linear">
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/> 
                 <controlpoint xx="0.0" yy="0.0" zz="3.0"/>
@@ -305,9 +311,26 @@
                 <material id="retro-synth" />
             </materials>                      
             <texture id="none" />
-                            <animation>
-                        <animationref id="Bala"/>
-                        <animationref id="BalaInv"/>
+            <animation>
+                        <animationref id="Up"/>
+            </animation>
+            <children>
+                  <componentref id="rectangletest"/>
+            </children>
+        </component>
+
+
+        <component id="rectangletest">
+            <transformation>
+                <translate x="0" y="0" z="0"/>
+            </transformation>
+            <materials>
+                <material id="retro-synth" />
+            </materials>                      
+            <texture id="none" />
+            <animation>
+                <animationref id="Bala"/>
+                <animationref id="BalaInv"/>
                 </animation>
             <children>
                   <primitiveref id="rectangle1"/>

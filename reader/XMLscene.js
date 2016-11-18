@@ -870,6 +870,7 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 				{
 					var transid = this.nodes[newid].transformation['transformation'];
 					trans = this.transformations[transid];
+
 				}
 				else
 				{
@@ -900,9 +901,42 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 				}
 
 				//Animations
+
+				var atualized = false;
+				var n_animations = animations.length;
+				
+				for(var o = 0; o < animations.length; o++)
+				{				
+					if(this.animations[animations[o]].state != "end")
+					{	
+						if(this.animations[animations[o]].state == "waiting")
+						{
+							this.animations[animations[o]].state = "start"
+						}
+						
+						atualized = true;
+
+						
+						mat4.multiply(matrixtrans, transformation, this.animations[animations[o]].transMatrix);
+						mat4.multiply(matrixtrans, matrixtrans, this.animations[animations[o]].rotMatrix);
+
+
+						
+
+						break;		
+					}			
+				}	
+
+				if(atualized == false && n_animations > 0)
+				{
+					
+					mat4.multiply(matrixtrans, transformation, this.animations[animations[n_animations - 1]].transMatrix);
+					mat4.multiply(matrixtrans, matrixtrans, this.animations[animations[n_animations - 1]].rotMatrix);
+				}
+
 				var newAnimations = [];
 
-				newAnimations = animations.concat(this.nodes[newid].animations);
+				newAnimations = this.nodes[newid].animations;
 
 
 			
