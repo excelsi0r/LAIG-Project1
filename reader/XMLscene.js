@@ -918,10 +918,7 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 
 						
 						mat4.multiply(matrixtrans, transformation, this.animations[animations[o]].transMatrix);
-						mat4.multiply(matrixtrans, matrixtrans, this.animations[animations[o]].rotMatrix);
-
-
-						
+						mat4.multiply(matrixtrans, matrixtrans, this.animations[animations[o]].rotMatrix);				
 
 						break;		
 					}			

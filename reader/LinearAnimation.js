@@ -33,6 +33,8 @@ function LinearAnimation(id, span, type, controlpoints, updatePeriod)
     this.rotMatrix = mat4.create();
 
     this.state = "waiting";
+
+    this.initialize();
 };
 
 LinearAnimation.prototype.getControlPoints=function()
@@ -168,7 +170,7 @@ LinearAnimation.prototype.update=function(currTime)
 
         }
 
-        else if(this.state != "end")
+        if(this.state != "end")
         {
             var diff = currTime - this.Time;
 
@@ -200,12 +202,64 @@ LinearAnimation.prototype.update=function(currTime)
            this.currPartitionPoint = 0;
            this.currContrtrolPoint++;
         } 
-        
-        
+   
 
         if(this.currPartition >= this.repart || this.currContrtrolPoint >= this.numberofreparts)
         {
             this.state = "end";
         }
    
+};
+
+LinearAnimation.prototype.initialize=function()
+{
+        var x1 = parseFloat(this.controlpoints[this.currContrtrolPoint]['x']);
+        var y1 = parseFloat(this.controlpoints[this.currContrtrolPoint]['y']);
+        var z1 = parseFloat(this.controlpoints[this.currContrtrolPoint]['z']);
+
+        var x2 = parseFloat(this.controlpoints[this.currContrtrolPoint + 1]['x']);
+        var y2 = parseFloat(this.controlpoints[this.currContrtrolPoint + 1]['y']);           
+        var z2 = parseFloat(this.controlpoints[this.currContrtrolPoint + 1]['z']);
+
+        this.currX = x1;
+        this.currY = y1;
+        this.currZ = z1;
+
+        var xv = x2 - x1;
+        var yv = y2 - y1;
+        var zv = z2 - z1;                       
+
+        //rotation
+        var veclengthXY = Math.sqrt(xv*xv + zv*zv);
+
+        if(veclengthXY > 0) 
+        {
+            this.rotAng = Math.acos( (xv * 0 + zv * 1) / veclengthXY);
+
+            if(xv < 0)
+            {
+                this.rotAng = -this.rotAng;
+            }
+
+            var axisvec = vec3.fromValues(0,1,0);
+
+            this.rotMatrix = mat4.create();
+            this.rotMatrix = mat4.rotate(this.rotMatrix, this.rotMatrix, this.rotAng, axisvec);
+        }            
+
+        //translate 
+        var veclength = Math.sqrt(xv*xv + yv*yv + zv*zv);
+
+        this.repartPoint = (this.reparts * veclength) / this.totallength;
+
+        this.kinc = (veclength / this.repartPoint) / veclength;
+
+
+        var xnovo = x1 + this.kinc*(x2 - x1);
+        var ynovo = y1 + this.kinc*(y2 - y1);
+        var znovo = z1 + this.kinc*(z2 - z1);
+
+        this.xinc = xnovo - x1;
+        this.yinc = ynovo - y1;
+        this.zinc = znovo - z1;
 };

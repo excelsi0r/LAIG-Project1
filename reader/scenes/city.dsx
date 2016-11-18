@@ -312,7 +312,7 @@
             </materials>                      
             <texture id="none" />
             <animation>
-                        <animationref id="Up"/>
+                        
             </animation>
             <children>
                   <componentref id="rectangletest"/>
