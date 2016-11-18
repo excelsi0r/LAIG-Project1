@@ -813,6 +813,9 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 				
 			this.pushMatrix();	
 						
+
+				this.multMatrix(transformation);
+				
 				for(var o = 0; o < animations.length; o++)
 				{	
 									
@@ -820,7 +823,7 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 					this.multMatrix(this.animations[animations[o]].rotMatrix);						
 				}			
 
-				this.multMatrix(transformation);
+				
 
 				materialToApply.apply();			
 				obj.display();			
