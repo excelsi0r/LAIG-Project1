@@ -32,7 +32,7 @@ function LinearAnimation(id, span, type, controlpoints, updatePeriod)
     this.transMatrix = mat4.create();   
     this.rotMatrix = mat4.create();
 
-    this.state = "start";
+    this.state = "waiting";
 };
 
 LinearAnimation.prototype.getControlPoints=function()
@@ -101,16 +101,6 @@ LinearAnimation.prototype.getID=function()
 
 LinearAnimation.prototype.update=function(currTime)
 {
-    
-       /* console.log("State: ", this.state);
-        console.log("Repart:" , this.repart);
-        console.log("CurrRepart: ", this.currPartition);
-        console.log("Length:", this.length);
-        console.log("Speed: ", this.speed);
-        console.log("Kinc: ", this.kinc);
-        console.log("Matrix: ", this.transMatrix);*/
-   
-
         if(this.currPartition == 0)
         {
             this.Time = currTime;
@@ -143,6 +133,11 @@ LinearAnimation.prototype.update=function(currTime)
             if(veclengthXY > 0) 
             {
                 this.rotAng = Math.acos( (xv * 0 + zv * 1) / veclengthXY);
+                
+                if(xv < 0)
+                {
+                    this.rotAng = -this.rotAng;
+                }
 
                 var axisvec = vec3.fromValues(0,1,0);
 
@@ -206,13 +201,13 @@ LinearAnimation.prototype.update=function(currTime)
            this.currContrtrolPoint++;
         } 
         
-
+        
 
         if(this.currPartition >= this.repart || this.currContrtrolPoint >= this.numberofreparts)
         {
             this.state = "end";
         }
 
-      //  console.log(this.transvec);
+      console.log(this.rotAng);
    
 };

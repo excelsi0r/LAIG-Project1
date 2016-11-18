@@ -815,17 +815,38 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 						
 
 				this.multMatrix(transformation);
+
+				var atualized = false;
+				var n_animations = animations.length;
 				
 				for(var o = 0; o < animations.length; o++)
-				{	
-									
-					this.multMatrix(this.animations[animations[o]].transMatrix);
-					this.multMatrix(this.animations[animations[o]].rotMatrix);						
-				}			
+				{				
+					if(this.animations[animations[o]].state != "end")
+					{	
+						if(this.animations[animations[o]].state == "waiting")
+						{
+							this.animations[animations[o]].state = "start"
+						}
+						
+						atualized = true;
+						
+						this.multMatrix(this.animations[animations[o]].transMatrix);
+						this.multMatrix(this.animations[animations[o]].rotMatrix);	
 
-				
+						break;		
+					}			
+				}	
 
-				materialToApply.apply();			
+				if(atualized == false && n_animations > 0)
+				{
+					this.multMatrix(this.animations[animations[n_animations - 1]].transMatrix);
+					this.multMatrix(this.animations[animations[n_animations - 1]].rotMatrix);	
+				}
+						
+		
+
+				materialToApply.apply();	
+						
 				obj.display();			
 			this.popMatrix();
 
@@ -997,7 +1018,10 @@ XMLscene.prototype.update=function(currTime)
 		{
 			var id = this.graph.animationslist[i]['id'];
 
-			this.animations[id].update(currTime);
+			if(this.animations[id].state == "start")
+			{
+				this.animations[id].update(currTime);
+			}	
 		}
 	} 
 

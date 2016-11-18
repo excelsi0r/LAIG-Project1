@@ -259,22 +259,18 @@
                 <vehicle>
                        <plane dimX="3.0" dimY="2.0" partsX="10" partsY="7"/> 
 
-                        <patch orderU="2" orderV="3" partsU="7" partsV="9" >    
+                        <patch orderU="1" orderV="3" partsU="7" partsV="9" >    
 
                                 <controlpoint x="0.0" y="0.0" z="0.0" />
-                                <controlpoint x="0.0" y="2.0" z="0.0" />
-                                <controlpoint x="0.0" y="4.0" z="0.0" />
+                                <controlpoint x="0.0" y="2.0" z="-2.0" />
+                                <controlpoint x="0.0" y="4.0" z="2.0" />
                                 <controlpoint x="0.0" y="8.0" z="0.0" />
                          
-                                <controlpoint x="2.0" y="0.0" z="1.0" />
-                                <controlpoint x="2.0" y="2.0" z="1.0" />
-                                <controlpoint x="2.0" y="4.0" z="1.0" />
-                                <controlpoint x="2.0" y="8.0" z="1.0" />
-                          
-                                <controlpoint x="4.0" y="0.0" z="0.0" />
-                                <controlpoint x="4.0" y="2.0" z="0.0" />      
-                                <controlpoint x="4.0" y="4.0" z="0.0" />
-                                <controlpoint x="4.0" y="8.0" z="0.0" />
+                                <controlpoint x="2.0" y="0.0" z="0.0" />
+                                <controlpoint x="2.0" y="2.0" z="-2.0" />
+                                <controlpoint x="2.0" y="4.0" z="2.0" />
+                                <controlpoint x="2.0" y="8.0" z="0.0" />
+
 
                       </patch>
                 </vehicle>
@@ -286,6 +282,12 @@
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/> 
                 <controlpoint xx="0.0" yy="0.0" zz="3.0"/>
                 <controlpoint xx="5.0" yy="0.0" zz="3.0"/>
+        </animation>
+
+         <animation id="BalaInv" span="10.0" type="linear">
+                <controlpoint xx="5.0" yy="0.0" zz="3.0"/>
+                <controlpoint xx="0.0" yy="0.0" zz="3.0"/>
+                <controlpoint xx="0.0" yy="0.0" zz="0.0"/>
         </animation>
         
         <animation id="Roda" span="10.0" type="circular" centerx="2.0" centery="3.0" centerz="4.0" radius="3.0" startang= "20.0" rotang="3.0"/>
@@ -303,11 +305,12 @@
                 <material id="retro-synth" />
             </materials>                      
             <texture id="none" />
-            <animation>
-                     <animationref id="Bala"/>
-            </animation>
+                            <animation>
+                        <animationref id="Bala"/>
+                        <animationref id="BalaInv"/>
+                </animation>
             <children>
-                <primitiveref id="rectangle"/>
+                  <primitiveref id="rectangle1"/>
             </children>
         </component>
 
@@ -356,16 +359,14 @@
 
         <component id="all_zepplin">
                 <transformation>
-                        <rotate axis="y" angle="0"/>
+                        <rotate axis="y" angle="-90"/>
                         <translate x="0" y="0" z="0"/>
                 </transformation>
                 <materials>
                         <material id="inherit"/>
                 </materials>
                 <texture id="none"/>
-                <animation>
-                        <animationref id="Bala"/>
-                </animation>
+
                 <children>
                         <componentref id="zeppelin"/>
                         <componentref id="zeppelincabin"/>
