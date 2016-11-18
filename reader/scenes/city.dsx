@@ -308,7 +308,7 @@
     
         <component id="city">
             <transformation>
-                <translate x="0" y="0" z="0"/>
+                <translate x="2" y="2" z="2"/>
             </transformation>
             <materials>
                 <material id="retro-synth" />
@@ -318,6 +318,7 @@
             </animation>
             <children>
                   <componentref id="rectangletest"/>
+                  <componentref id="vehicle"/>
             </children>
         </component>
 
@@ -341,13 +342,12 @@
 
        <component id="vehicle">
                  <transformation>
-                        <translate x="0" y="0" z="-2.5"/>
+                        <translate x="0" y="0" z="0"/>
                 </transformation>
                 <materials>
                         <material id="inherit"/>
                 </materials>
                 <texture id="surface"/>
-
                 <children>
                         <primitiveref id="vehicle"/>
                 </children>

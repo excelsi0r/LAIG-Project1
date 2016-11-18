@@ -501,39 +501,7 @@ XMLscene.prototype.setPrimitivesGraph = function()
 		}
 		else if(type == 'vehicle')
 		{
-			var n_surfaces = this.graph.primitiveslist[i]['surfaces'].length;
-			var surfaces = this.graph.primitiveslist[i]['surfaces'];
-
-			var plane;
-			var patch;
-
-			for(var jh = 0; jh < n_surfaces; jh++)
-			{
-				var type = surfaces[jh]['id'];
-
-				if(type == 'plane')
-				{
-					var dimx = surfaces[jh]['dimX'];
-					var dimy = surfaces[jh]['dimY'];
-					var partsx = surfaces[jh]['partsX'];
-					var partsy = surfaces[jh]['partsY'];
-					
-					plane = new MyPlane(this, dimx, dimy, partsx, partsy);
-
-				}
-				else if(type == 'patch')
-				{
-					var orderu = surfaces[jh]['orderU'];
-					var orderv = surfaces[jh]['orderV'];
-					var partsu = surfaces[jh]['partsU'];
-					var partsv = surfaces[jh]['partsV'];
-					var controlpoints = surfaces[jh]['controlpoints'];
-
-					patch = new MyPatch(this, orderu, orderv, partsu, partsv, controlpoints);				
-				}
-			}
-
-			object = new MyVehicle(this, plane, patch);
+			object = new MyVehicle(this);
 		}
 
 		this.primitives[id] = object;
