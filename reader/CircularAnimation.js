@@ -99,9 +99,6 @@ CircularAnimation.prototype.update=function(currTime)
             this.currX = this.radius * Math.sin(this.currRotAng);
             this.currZ = this.radius * Math.cos(this.currRotAng);
 
-            console.log(this.currX, this.currZ);
-
-
             var transformX = this.currX + this.center['x'];
             var transformY = this.currY + this.center['y'];
             var transformZ = this.currZ + this.center['z'];
@@ -112,8 +109,6 @@ CircularAnimation.prototype.update=function(currTime)
             mat4.translate(this.transMatrix, this.transMatrix,transvec);
 
             this.currPartition += assertPoint;
-
-            //console.log(this.currPartition);
       }
 
       if(this.currPartition >= this.repart)

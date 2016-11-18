@@ -814,8 +814,15 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 		
 
 				materialToApply.apply();	
-						
-				obj.display();			
+					
+				if(obj instanceof MyVehicle)
+				{	
+					obj.display(materialToApply);
+				}
+				else
+				{
+					obj.display();
+				}			
 			this.popMatrix();
 
 			materialToApply.setTexture(null);

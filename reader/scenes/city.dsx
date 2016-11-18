@@ -90,7 +90,8 @@
     <textures>
         <texture id="city_floor" file="../textures/1638.png" length_s="1" length_t="1" />
         <texture id="windows" file="../textures/pixelcity_windows3.png" length_s="1" length_t="1" /> 
-        <texture id="surface" file="../textures/texture.png" length_s="1" length_t="1" />   
+        <texture id="surface" file="../textures/texture.png" length_s="1" length_t="1" />
+        <texture id="ribbon" file="../textures/ribbon.png" length_s="1" length_t="1" /> 
 
     </textures>
 
@@ -258,25 +259,8 @@
               </patch>
          </primitive>
 
-         <primitive id="vehicle">
-                <vehicle>
-                       <plane dimX="3.0" dimY="2.0" partsX="10" partsY="7"/> 
-
-                        <patch orderU="1" orderV="3" partsU="7" partsV="9" >    
-
-                                <controlpoint x="0.0" y="0.0" z="0.0" />
-                                <controlpoint x="0.0" y="2.0" z="-2.0" />
-                                <controlpoint x="0.0" y="4.0" z="2.0" />
-                                <controlpoint x="0.0" y="8.0" z="0.0" />
-                         
-                                <controlpoint x="2.0" y="0.0" z="0.0" />
-                                <controlpoint x="2.0" y="2.0" z="-2.0" />
-                                <controlpoint x="2.0" y="4.0" z="2.0" />
-                                <controlpoint x="2.0" y="8.0" z="0.0" />
-
-
-                      </patch>
-                </vehicle>
+         <primitive id="zeppelin">
+                <vehicle/>
          </primitive>
     </primitives>
 
@@ -308,7 +292,7 @@
     
         <component id="city">
             <transformation>
-                <translate x="2" y="2" z="2"/>
+                <translate x="0" y="0" z="0"/>
             </transformation>
             <materials>
                 <material id="retro-synth" />
@@ -317,8 +301,20 @@
             <animation>
             </animation>
             <children>
-                  <componentref id="rectangletest"/>
-                  <componentref id="vehicle"/>
+                <componentref id="floor" />
+                <componentref id="building1" />
+                <componentref id="building2" />
+                <componentref id="building3" />
+                <componentref id="building4" />
+                <componentref id="building5" />
+                <componentref id="building6" />  
+                <componentref id="building7" />
+                <componentref id="building8" />
+                <componentref id="building9" />
+                <componentref id="ribbon" />
+				<componentref id="circularBuilding" />
+                <componentref id="egypt" />
+                <componentref id="zeppelin"/>
             </children>
         </component>
 
@@ -340,16 +336,26 @@
             </children>
         </component>
 
-       <component id="vehicle">
-                 <transformation>
-                        <translate x="0" y="0" z="0"/>
+        <component id="zeppelin">
+
+                <transformation>
+                        <scale x="0.6" y="0.6" z="0.6"/>
+                        <translate x="3" y="9" z="5"/>
                 </transformation>
+
                 <materials>
-                        <material id="inherit"/>
+                        <material id="blue"/>
                 </materials>
-                <texture id="surface"/>
+
+                <texture id="none"/>
+
+                <animation>
+                        <animationref id="Bala"/>
+                        <animationref id="Roda"/>
+                </animation>
+                 
                 <children>
-                        <primitiveref id="vehicle"/>
+                        <primitiveref id="zeppelin"/>
                 </children>
         </component>
 
@@ -382,26 +388,6 @@
         </component>
 
 
-        <component id="all_zepplin">
-                <transformation>
-                        <rotate axis="y" angle="-90"/>
-                        <translate x="0" y="0" z="0"/>
-                </transformation>
-                <materials>
-                        <material id="inherit"/>
-                </materials>
-                <texture id="none"/>
-
-                <children>
-                        <componentref id="zeppelin"/>
-                        <componentref id="zeppelincabin"/>
-                        <componentref id="zeppelinWingH" />
-                        <componentref id="zeppelinWingV" />
-                </children>
-        </component>
-                        
-
-		
 		<component id="egypt">
             <transformation> 
                 <translate x="3" y="0" z="1"/>
@@ -509,65 +495,6 @@
             <texture id="none" />
             <children>
                 <primitiveref id="cili" />   
-            </children>
-        </component>
-
-
-        <component id="zeppelin">
-            <transformation>
-                <translate x="2" y="5" z ="4"/>
-                <scale x="2.0" y="0.6" z="0.6" />
-            </transformation>
-            <materials>
-                <material id="blue" />
-            </materials>
-            <texture id="none" />
-
-            <children>
-                <primitiveref id="sphereZep" />   
-            </children>
-        </component>
-
-        <component id="zeppelincabin">
-            <transformation>
-                <translate x="2" y="4.3" z ="3.8"/>
-                <scale x="0.5" y="0.2" z="0.2" />
-            </transformation>
-            <materials>
-                <material id="blue" />
-            </materials>
-            <texture id="none" />
-            <children>
-                <componentref id="cube" />   
-            </children>
-        </component>
-
-        <component id="zeppelinWingH">
-            <transformation>
-                <translate x="0.2" y="5" z ="3.5"/>
-                <scale x="0.2" y="0.01" z="0.5" />
-            </transformation>
-            <materials>
-                <material id="blue" />
-            </materials>
-            <texture id="none" />
-            
-            <children>
-                <componentref id="cube" />   
-            </children>
-        </component>
-
-        <component id="zeppelinWingV">
-            <transformation>
-                <translate x="0.2" y="4.5" z ="4"/>
-                <scale x="0.2" y="0.5" z="0.01" />
-            </transformation>
-            <materials>
-                <material id="blue" />
-            </materials>
-            <texture id="none" />
-            <children>
-                <componentref id="cube" />   
             </children>
         </component>
 

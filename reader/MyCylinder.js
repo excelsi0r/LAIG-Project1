@@ -8,7 +8,8 @@
  * @param stacks ammount of stacks the Cylinder will be divided along its height
  * @constructor
  */
-function MyCylinder(scene,base,top,height,slices,stacks) {
+function MyCylinder(scene,base,top,height,slices,stacks) 
+{
     CGFobject.call(this,scene);
 
     this.base = base;
