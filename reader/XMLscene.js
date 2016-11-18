@@ -810,16 +810,14 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 				obj.updateTextureCoords(this.textures[texture]['length_s'], this.textures[texture]['length_t']);
 			}
 
-	
-			//console.log(animations.length)
 				
 			this.pushMatrix();	
 						
 				for(var o = 0; o < animations.length; o++)
 				{	
-										
+									
 					this.multMatrix(this.animations[animations[o]].transMatrix);
-					this.multMatrix(this.animations[animations[o]].rotMatrix);
+					this.multMatrix(this.animations[animations[o]].rotMatrix);						
 				}			
 
 				this.multMatrix(transformation);

@@ -2,7 +2,7 @@
     <scene root="city" axis_length="5.0" />
 
 
-    <views default="4" >
+    <views default="default_view" >
         <perspective id="default_view" near="0.1" far="500" angle="45">
             <from x="15" y="15" z="15" />
             <to x="0" y="0" z="0" />
@@ -284,8 +284,8 @@
     <animations>
         <animation id="Bala" span="10.0" type="linear">
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/> 
-                <controlpoint xx="0.0" yy="0.0" zz="10.0"/>
-                <controlpoint xx="20.0" yy="0.0" zz="10.0"/>
+                <controlpoint xx="0.0" yy="0.0" zz="3.0"/>
+                <controlpoint xx="5.0" yy="0.0" zz="3.0"/>
         </animation>
         
         <animation id="Roda" span="10.0" type="circular" centerx="2.0" centery="3.0" centerz="4.0" radius="3.0" startang= "20.0" rotang="3.0"/>
@@ -297,31 +297,17 @@
     
         <component id="city">
             <transformation>
-                <scale x="5" y="5" z="5" />
+                <translate x="0" y="0" z="-2.5"/>
             </transformation>
             <materials>
                 <material id="retro-synth" />
             </materials>                      
             <texture id="none" />
             <animation>
-                       
+                     <animationref id="Bala"/>
             </animation>
             <children>
-                <componentref id="floor" />
-                <componentref id="all_zepplin"/>
-                <componentref id="building1" />
-                <componentref id="building2" />
-                <componentref id="building3" />
-                <componentref id="building4" />
-                <componentref id="building5" />
-                <componentref id="building6" />  
-                <componentref id="building7" />
-                <componentref id="building8" />
-                <componentref id="building9" />
-                <componentref id="ribbon" />
-				<componentref id="circularBuilding" />
-                <componentref id="egypt" />
-                <componentref id="vehicle"/>
+                <primitiveref id="rectangle"/>
             </children>
         </component>
 
@@ -370,8 +356,8 @@
 
         <component id="all_zepplin">
                 <transformation>
-                        <rotate axis="y" angle="-90"/>
-                        <translate x="0" y="0" z="-5"/>
+                        <rotate axis="y" angle="0"/>
+                        <translate x="0" y="0" z="0"/>
                 </transformation>
                 <materials>
                         <material id="inherit"/>
