@@ -33,7 +33,6 @@ MyPatch.prototype.assertNewControlPointsArray = function()
 
 			newControlPoints.push(uarray);
 		}
-		console.log(newControlPoints);
 		return newControlPoints;
 
 };

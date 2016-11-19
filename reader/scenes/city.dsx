@@ -33,6 +33,12 @@
 
 
     <lights>
+        <omni id="ChessLight 1" enabled="1" >
+            <location x="-8" y="3" z="5" w="1" />
+            <ambient r="0" g="0" b="0" a="0" />
+            <diffuse r="1" g="1" b="1" a="0.5" />
+            <specular r="0.5" g="0.5" b="0.5" a="0.5" />
+        </omni>
         <omni id="Light 1" enabled="0" >
             <location x="1" y="3" z="6" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
@@ -262,6 +268,15 @@
          <primitive id="zeppelin">
                 <vehicle/>
          </primitive>
+
+         <primitive id="gardensofio">
+                <chessboard du="10" dv="10" textureref="surface" su="3" sv="3">
+                        <c1 r="1.0" g="0.0" b="0.0" a="1.0" />
+                        <c2 r="0.0" g="1.0" b="0.0" a="1.0" />
+                        <c3 r="0.0" g="0.0" b="1.0" a="1.0" />
+                </chessboard>
+
+         </primitive>
     </primitives>
 
     <animations>
@@ -315,9 +330,23 @@
 				<componentref id="circularBuilding" />
                 <componentref id="egypt" />
                 <componentref id="zeppelin"/>
+                <componentref id="game"/>
             </children>
         </component>
-
+        
+        <component id="game">
+            <transformation>
+                <translate x="-7" y="0" z="5"/>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+            <materials>
+                <material id="retro-synth" />
+            </materials>                      
+            <texture id="ribbon" />
+            <children>
+                  <primitiveref id="gardensofio"/>
+            </children>
+        </component>
 
         <component id="rectangletest">
             <transformation>

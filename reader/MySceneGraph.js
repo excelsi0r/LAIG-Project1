@@ -1324,6 +1324,135 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 			{
 				this.primitiveslist.push(primitiveitem);
 			}
+			else if(primtype == 'chessboard')
+			{
+				var du = parseInt(primitive[i].children[0].getAttribute('du'));
+				var dv = parseInt(primitive[i].children[0].getAttribute('dv'));
+				var textureref = primitive[i].children[0].getAttribute('textureref');
+				var su = parseInt(primitive[i].children[0].getAttribute('su'));
+				var sv = parseInt(primitive[i].children[0].getAttribute('sv'));
+
+				primitiveitem['du'] = du;
+				primitiveitem['dv'] = dv;
+				primitiveitem['textureref'] = textureref;
+				primitiveitem['su'] = su;
+				primitiveitem['sv'] = sv;
+
+				if(du == null || dv == null || textureref == null || su == null || sv == null || isNaN(du) || isNaN(dv) || isNaN(su) || isNaN(sv))
+				{
+					return "Missing or invalid attribute in chessboard '" + id + "' ";
+				}
+
+				if(su < 0 || sv < 0)
+				{
+					su = -1;
+					sv = -1;
+				}
+
+				if(su > du - 1)
+				{
+					su = du - 1;
+				}
+
+				if(sv > dv - 1)
+				{
+					sv = dv - 1;
+				}
+
+				var colors = primitive[i].children[0].children;
+				var n_colors = colors.length;
+
+				if(n_colors != 3)
+				{
+					return "Wrong amount of colors parsed for chessboard '" + id + "'. Expected 3 colors got:" + n_colors;
+				}
+				
+				var c1 = 0; var c2 = 0; var c3 = 0;
+				var c1R; var c1G; var c1B; var c1A;
+				var c2R; var c2G; var c2B; var c2A;
+				var c3R; var c3G; var c3B; var c3A;
+
+				for(var tg = 0; tg < n_colors; tg++)
+				{
+					var c = colors[tg].tagName;
+					if(c == 'c1')
+					{
+						c1++;
+
+						c1R = colors[tg].getAttribute('r');
+						c1G = colors[tg].getAttribute('g');
+						c1B = colors[tg].getAttribute('b');
+						c1A = colors[tg].getAttribute('a');
+
+					}
+					else if(c == 'c2')
+					{
+						c2++;
+
+						c2R = colors[tg].getAttribute('r');
+						c2G = colors[tg].getAttribute('g');
+						c2B = colors[tg].getAttribute('b');
+						c2A = colors[tg].getAttribute('a');
+					}
+					else if(c == 'c3')
+					{
+						c3++;
+
+						c3R = colors[tg].getAttribute('r');
+						c3G = colors[tg].getAttribute('g');
+						c3B = colors[tg].getAttribute('b');
+						c3A = colors[tg].getAttribute('a');
+					}					
+				}
+
+				primitiveitem['colors'] = [];
+				primitiveitem['colors']['c1'] = [];
+				primitiveitem['colors']['c2'] = [];
+				primitiveitem['colors']['c3'] = [];
+
+				primitiveitem['colors']['c1']['r'] = c1R;
+				primitiveitem['colors']['c1']['g'] = c1G;
+				primitiveitem['colors']['c1']['b'] = c1B;
+				primitiveitem['colors']['c1']['a'] = c1A;
+
+				primitiveitem['colors']['c2']['r'] = c2R;
+				primitiveitem['colors']['c2']['g'] = c2G;
+				primitiveitem['colors']['c2']['b'] = c2B;
+				primitiveitem['colors']['c2']['a'] = c2A;
+
+				primitiveitem['colors']['c3']['r'] = c3R;
+				primitiveitem['colors']['c3']['g'] = c3G;
+				primitiveitem['colors']['c3']['b'] = c3B;
+				primitiveitem['colors']['c3']['a'] = c3A;
+
+				if(c1 != 1 || c2 != 1 || c3 != 1)
+				{
+					return "Missing color in chessboard '" + id + "' ";
+				}
+
+				if(isNaN(c1R) || isNaN(c1G) || isNaN(c1B) || isNaN(c1A) || isNaN(c2R) || isNaN(c2G) || isNaN(c2B) || isNaN(c2A) || isNaN(c3R) || isNaN(c3G) || isNaN(c3B) || isNaN(c3A))
+				{
+					return "Invalid color RGBA elment in chessboard '" + id + "' ";
+				}
+
+				//check if texture exists
+				var n_repeated = 0;
+				for(var ik = 0; ik < this.texturelist.length; ik++)
+				{
+					if(this.texturelist[ik]['id'] == textureref)
+					{
+						n_repeated++;
+						break;
+					}
+				}
+
+				if(n_repeated < 1)
+				{
+					return "Invalid Texture reference: '" + textureref + "' for chessboard: '" + id + "'";
+				}
+				this.primitiveslist.push(primitiveitem);
+				
+			}
 		};
 	}
 
