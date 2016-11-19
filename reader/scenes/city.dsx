@@ -39,12 +39,6 @@
             <diffuse r="1" g="1" b="1" a="0.5" />
             <specular r="0.5" g="0.5" b="0.5" a="0.5" />
         </omni>
-        <omni id="Light 1" enabled="0" >
-            <location x="1" y="3" z="6" w="1" />
-            <ambient r="0" g="0" b="0" a="0" />
-            <diffuse r="1" g="1" b="1" a="0.5" />
-            <specular r="0" g="0" b="0" a="0.5" />
-        </omni>
         <omni id="Light 2" enabled="0" >
             <location x="6" y="3" z="1" w="1" />
             <ambient r="0" g="0" b="0" a="0" />
@@ -328,9 +322,9 @@
                 <componentref id="building9" />
                 <componentref id="ribbon" />
 				<componentref id="circularBuilding" />
-                <componentref id="egypt" />
-                <componentref id="zeppelin"/>
-                <componentref id="game"/>
+                <componentref id="egypt" />              
+                <componentref id="game"/> 
+                <componentref id="zeppelin"/>          
             </children>
         </component>
         

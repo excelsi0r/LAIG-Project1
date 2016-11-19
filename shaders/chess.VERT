@@ -1,14 +1,23 @@
-vec3 aVertexPosition;
-vec3 aVertexNormal;
-vec2 aTextureCoord;
+#ifdef GL_ES
+precision highp float;
+#endif
 
-mat4 uMVMatrix;
-mat4 uPMatrix;
-mat4 uNMatrix;
+attribute vec3 aVertexPosition;
+attribute vec3 aVertexNormal;
+attribute vec2 aTextureCoord;
 
-vec4 uGlobalAmbient;
+uniform mat4 uMVMatrix;
+uniform mat4 uPMatrix;
+uniform mat4 uNMatrix;
+
+varying vec2 vTextureCoord;
+uniform sampler2D uSampler;
 
 void main()
 {
-	gl_Positiion;
+	gl_Position = uPMatrix*uMVMatrix*vec4(aVertexPosition, 1.0);
+
+	vec4(aVertexPosition, 1.0);
+
+	vTextureCoord = aTextureCoord;
 }

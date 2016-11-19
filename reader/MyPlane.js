@@ -11,7 +11,7 @@ function MyPlane(scene, dimX, dimY, partsX, partsY)
 	this.partsX = partsX;
 	this.partsY = partsY;
 
-	this.plane = this.makeSurface(1,1, 
+	return this.plane = this.makeSurface(1,1, 
 										[
 											[
 												[-this.dimX / 2, -this.dimY / 2, 0.0, 1],

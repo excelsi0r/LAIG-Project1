@@ -9,7 +9,7 @@ function MyPatch(scene, orderU, orderV, partsU, partsV, controlpoints)
 
     this.newControlPoints = this.assertNewControlPointsArray();
 
-    this.plane = this.makeSurface(this.orderU, this.orderV, this.newControlPoints);
+    return this.patch = this.makeSurface(this.orderU, this.orderV, this.newControlPoints);
     
 }
 
