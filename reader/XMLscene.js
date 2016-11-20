@@ -506,7 +506,7 @@ XMLscene.prototype.setPrimitivesGraph = function()
 		else if(type == 'chessboard')
 		{
 			var du = this.graph.primitiveslist[i]['du'];
-			var dv = this.graph.primitiveslist[i]['du'];
+			var dv = this.graph.primitiveslist[i]['dv'];
 			var textureref = this.graph.primitiveslist[i]['textureref'];
 			var texture = this.textures[textureref]['texture'];
 			var su = this.graph.primitiveslist[i]['su'];

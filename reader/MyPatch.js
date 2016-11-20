@@ -9,7 +9,7 @@ function MyPatch(scene, orderU, orderV, partsU, partsV, controlpoints)
 
     this.newControlPoints = this.assertNewControlPointsArray();
 
-    return this.patch = this.makeSurface(this.orderU, this.orderV, this.newControlPoints);
+   	this.patch = this.makeSurface(this.orderU, this.orderV, this.newControlPoints);
     
 }
 
@@ -66,7 +66,7 @@ MyPatch.prototype.getKnotsVector = function(degree)
 
 MyPatch.prototype.display = function()
 {
-	this.plane.display();
+	this.patch.display();
 };
 
 MyPatch.prototype.updateTextureCoords=function(s, t) {};

@@ -91,7 +91,9 @@
         <texture id="city_floor" file="../textures/1638.png" length_s="1" length_t="1" />
         <texture id="windows" file="../textures/pixelcity_windows3.png" length_s="1" length_t="1" /> 
         <texture id="surface" file="../textures/texture.png" length_s="1" length_t="1" />
-        <texture id="ribbon" file="../textures/ribbon.png" length_s="1" length_t="1" /> 
+        <texture id="ribbon" file="../textures/ribbon.png" length_s="1" length_t="1" />        
+        <texture id="chess" file="../textures/metal.png" length_s="1" length_t="1" />
+        <texture id="woodboard" file="../textures/wood.png" length_s="1" length_t="1" />
 
     </textures>
 
@@ -264,12 +266,19 @@
          </primitive>
 
          <primitive id="gardensofio">
-                <chessboard du="10" dv="10" textureref="surface" su="3" sv="3">
+                <chessboard du="10" dv="5" textureref="chess" su="2" sv="3">
                         <c1 r="1.0" g="0.0" b="0.0" a="1.0" />
                         <c2 r="0.0" g="1.0" b="0.0" a="1.0" />
                         <c3 r="0.0" g="0.0" b="1.0" a="1.0" />
                 </chessboard>
+         </primitive>
 
+         <primitive id="dames">
+                <chessboard du="10" dv="10" textureref="woodboard" su="3" sv="5">
+                        <c1 r="0.0" g="0.0" b="0.0" a="1.0" />
+                        <c2 r="0.4" g="0.5" b="0.0" a="1.0" />
+                        <c3 r="-1" g="0.3" b="-1" a="1.0" />
+                </chessboard>
          </primitive>
     </primitives>
 
@@ -324,13 +333,14 @@
 				<componentref id="circularBuilding" />
                 <componentref id="egypt" />              
                 <componentref id="game"/> 
+                <componentref id="dames"/> 
                 <componentref id="zeppelin"/>          
             </children>
         </component>
         
         <component id="game">
             <transformation>
-                <translate x="-7" y="0" z="5"/>
+                <translate x="-3" y="0" z="0"/>
                 <rotate axis="x" angle="-90"/>
             </transformation>
             <materials>
@@ -339,6 +349,20 @@
             <texture id="ribbon" />
             <children>
                   <primitiveref id="gardensofio"/>
+            </children>
+        </component>
+
+        <component id="dames">
+            <transformation>
+                <translate x="-1.5" y="0" z="0"/>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+            <materials>
+                <material id="retro-synth" />
+            </materials>                      
+            <texture id="none" />
+            <children>
+                  <primitiveref id="dames"/>
             </children>
         </component>
 

@@ -1332,11 +1332,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				var su = parseInt(primitive[i].children[0].getAttribute('su'));
 				var sv = parseInt(primitive[i].children[0].getAttribute('sv'));
 
-				primitiveitem['du'] = du;
-				primitiveitem['dv'] = dv;
-				primitiveitem['textureref'] = textureref;
-				primitiveitem['su'] = su;
-				primitiveitem['sv'] = sv;
+
 
 				if(du == null || dv == null || textureref == null || su == null || sv == null || isNaN(du) || isNaN(dv) || isNaN(su) || isNaN(sv))
 				{
@@ -1345,19 +1341,25 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 
 				if(su < 0 || sv < 0)
 				{
-					su = -1;
-					sv = -1;
+					su = -2;
+					sv = -2;
 				}
 
-				if(su > du - 1)
+				if(su >= du)
 				{
 					su = du - 1;
 				}
 
-				if(sv > dv - 1)
+				if(sv >= dv)
 				{
 					sv = dv - 1;
 				}
+
+				primitiveitem['du'] = du;
+				primitiveitem['dv'] = dv;
+				primitiveitem['textureref'] = textureref;
+				primitiveitem['su'] = su;
+				primitiveitem['sv'] = sv;
 
 				var colors = primitive[i].children[0].children;
 				var n_colors = colors.length;

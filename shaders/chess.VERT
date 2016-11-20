@@ -13,11 +13,36 @@ uniform mat4 uNMatrix;
 varying vec2 vTextureCoord;
 uniform sampler2D uSampler;
 
+uniform float du;
+uniform float dv;
+uniform float su;
+uniform float sv;
+
+float getX()
+{
+
+	float position = floor(aTextureCoord.s*du);
+	return position;
+}
+
+float getY()
+{
+
+	float position = floor(aTextureCoord.t*dv);
+	return position;
+}
+
 void main()
 {
-	gl_Position = uPMatrix*uMVMatrix*vec4(aVertexPosition, 1.0);
+	float X = getX();
+	float Y = getY();
+	
+	vec3 trans = vec3(0.0, 0.0, 0.0);
+	if(X == su && Y == sv)
+	{
+		trans.z = 0.02;
+	}
 
-	vec4(aVertexPosition, 1.0);
-
+	gl_Position = uPMatrix*uMVMatrix*vec4(aVertexPosition + trans, 1.0);
 	vTextureCoord = aTextureCoord;
 }
