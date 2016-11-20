@@ -109,6 +109,11 @@ XMLscene.prototype.setDefaultAppearance = function ()
  * As loading is asynchronous, 
  * this may be called already after the application has started the run loop
  */
+/**
+ * Documentation refering to the second part of the project
+ * 
+ * Added animations to the graph
+ */
 XMLscene.prototype.onGraphLoaded = function () 
 {
 	//scene root
@@ -411,6 +416,12 @@ XMLscene.prototype.setTransformationsGraph = function()
 /**
  * Creating new Primiteves from DSX file
  */
+/**
+ * Documentation refering to the second part of the project
+ * 
+ * Added suport for Plane, Patch, Vehicle and Chessboard.
+ * Creates MyPlane, MyPatch, MyVehicle and MyChessboard respectively.
+ */
 XMLscene.prototype.setPrimitivesGraph = function()
 {
 	console.info("Creating new Primitives from DSX file");
@@ -522,6 +533,7 @@ XMLscene.prototype.setPrimitivesGraph = function()
 };
 
 /**
+ * Documentation refering to the second part of the project
  * Create new Animations from DSX file
  */
 
@@ -722,6 +734,11 @@ XMLscene.prototype.createGraph = function()
  * - Allows the texture to be applied if "inherit" appens downs the graph and to ingnored
  * if "none" happens.
  */
+/**
+ * Documentation refering to the second part of the project
+ * 
+ * Added suport for animation. Now gets animations from root and gives to children for display
+ */
 XMLscene.prototype.displayGraphElems=function()
 {
 
@@ -770,6 +787,28 @@ XMLscene.prototype.displayGraphElems=function()
  * father material
  * - Passes new texture if children texture is not "inherit", otherwise passes father texture
  * - Passes childrens list and primitives list
+ */
+
+/**
+ * Documentation refering to the second part of the project
+ * 
+ * Added animations suport, and new primitives (Chessboard, plane, patch and vehicle)
+ * 
+ * Cycles the animations array. If state of animation is "end" does not get 
+ * the transformations from it. If state is "waiting" sets to "start" and gets 
+ * the transformations. Same if animation is "start". Breaks cycle when first
+ * "waiting" or "start" is found. If "start" or "waiting" found. Pushes the transformations to
+ * the transformation Matrix.
+ * Also, after the cycle if there were animations declared in this node but they were all "end",
+ * it gets the transformation of the last animation. This simulates a stop position when all animations
+ * are finished. The "waiting", "start" and "end" states are usefull when working alongside with
+ * the update function. The update function only updates the "start" animations.
+ * And the Animation itseft sets it's own state to "end" if it finished.
+ * If Primitive, first applies all the transformations from different nodes, then applies the 
+ * corresponding translation and rotation next
+ * If Node, multiplies translation to the matrix to date, and next the rotation.
+ * Implemented different display for Vehicle and Chessboard. Their display as a  CGFappearence 
+ * attribute. This is used because both use internal textures.
  */
 XMLscene.prototype.displayNodes=function(id, transformation, material, texture, children, primitive, animations)
 {
@@ -1024,11 +1063,13 @@ XMLscene.prototype.updateLights=function()
 };
 
 /**
+ * Documentation refering to the second part of the project
+ * 
  * Overriding Update
+ * Only updates Animations with the state "start"
  */
 XMLscene.prototype.update=function(currTime)
 {
-	//console.log(this.getMatrix());
 	if(this.animations != null && this.graph.animationslist != null)
 	{
 		for(var i = 0; i < this.graph.animationslist.length; i++)

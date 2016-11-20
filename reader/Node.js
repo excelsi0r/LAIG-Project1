@@ -16,6 +16,12 @@
  * defaultMaterial stores the current material of the Node
  * defaultMaterialInsdex stores the actual Index of the current material
  */
+
+/**
+ * Documentation refering to the second part of the project
+ * 
+ * Added animations empty array
+ */
 function Node(id)
 {
 	this.id = id;
@@ -70,6 +76,8 @@ Node.prototype.setPrimitive=function(pr)
 };
 
 /**
+ * Documentation refering to the second part of the project
+ * 
  * Sets new animations list
  */
 Node.prototype.setAnimation=function(pr)

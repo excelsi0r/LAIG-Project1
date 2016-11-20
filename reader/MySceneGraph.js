@@ -28,6 +28,11 @@ function MySceneGraph(filename, scene)
  * Order of functions called have to be maintained
  * Checks for DSX name tag firts
  */
+/**
+ * Documentation refering the second part of the project
+ * 
+ * Added parseAnimations
+ */
 MySceneGraph.prototype.onXMLReady=function() 
 {
 	console.info("XML Loading finished.");
@@ -1126,6 +1131,46 @@ MySceneGraph.prototype.parseTransformations = function(rootElement)
  * 
  * Finally checks for repeated ID's and retursn error if positive
  */
+
+/**
+ * Documentation referencing only to the second part of the Project
+ * Parsing 3 new Primitives. Plane, Patch, Vehicle and Chessboard
+ * 
+ * PLANE: The plane parsing will parse the components: dimX, dimY, partsX and parstsY
+ * returns error if any of the components are equal or bellow 0
+ * saves in ['dimX'], ['dimY'], ['partsX'], ['partsY'].		
+ * 	
+ * PATCH: The patch parsing will parse orderU, orderV, partsU, partsV and contropoints components.
+ * If orderU and orderV are not between 1 and 3 returns error.
+ * If partsu and parstsv are bellow 1 returns error.
+ * Counts how many controlpoints were given and if the number does not correspond what 
+ * it was expected returns error (calculates the suposed amount with orderU and orderV).
+ * Parses all the points.
+ * Saves ['orderU'], ['orderV'], ['partsU'], ['partsV'], ['controlpoints']
+ * The component ['controlpoints'] has the controlpoints saved in subArrays like ['point']
+ * were each point as a ['x'], ['y'], ['z'] component.
+ * 
+ * VEHICLE: Parses only the id of vehicle 
+ * 
+ * CHESSBOARD: The chessboard parsing parses du, dv, textureref, su, sv and colors components.
+ * If dv, ds, su or sv is null or NaN returns error.
+ * If textureref is null returns error.
+ * If su or sv components are bellow 0, sets both to -1.
+ * If su is bigger or equal than du, sets su to du - 1. This sets out of range index to
+ * the last available index of the board in that axis.
+ * If sv is bigger or equal than dv, sets sv to dv - 1. This sets out of range index to
+ * the last available index of the board in that axis.
+ * Counts the number of colors given. If different than 3, returns error
+ * Parses the colors and does not fail only if it was parsed exactly one c1, one c2 and one c3
+ * colors. Veryfies if RGBA values for each color component is NaN. returns error if true.
+ * Checks if the reference given for the texture is already loaded in the Graph Scene.
+ * If false returns error, this means the texture must always be loaded previously.
+ * Saves: ['du'], ['dv'], ['textureref'], ['su'], ['sv'], ['colors']['c1'], ['colors']['c2'],
+ * ['colors']['c3']. 
+ * For each color component (['c1'], ['c2'], ['c3']) there is a ['r'], ['g'], ['b'], ['a'] component.	
+ * 
+ * Finally checks for repeated ID's and retursn error if positive
+ */
 MySceneGraph.prototype.parsePrimitives = function(rootElement)
 {
     var elems = rootElement.getElementsByTagName('primitives');
@@ -1341,8 +1386,8 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 
 				if(su < 0 || sv < 0)
 				{
-					su = -2;
-					sv = -2;
+					su = -1;
+					sv = -1;
 				}
 
 				if(su >= du)
@@ -1485,7 +1530,35 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 };
 
 /**
- * Function to parse Animations.... finish doc later
+ * Documentation refering to the second part of the project
+ * Function to parse Animations
+ * 
+ * Check if animations tag exist, returns error if not
+ * Checks if there is 0 or more than one animations tag
+ * 
+ * Warns user if no animations declared
+ * 
+ * For each animation declared:
+ * 
+ * Checks if declaration starts with tag 'animation' warns if false.
+ * Checks if id is null or empty string. Returns error if true.
+ * Checks if span is null or NaN. If true warns user and gives default span 10.0 seconds
+ * Checks if type is either linear or circular. Returns error if none.
+ * 
+ * LINEAR: For linear type parses id, span, and controlpoints with xx, yy and zz.
+ * If number of controlpoints given is bellow 2 (minimum control points for linear animation) gives 2
+ * default points: (0,0,0) and (1,1,1). For each controlpoint checks if tag starts with 'controlpoint'
+ * if true warns user. Parses xx, yy and zz. If any value is null or NaN gives default value 1.0
+ * Saves: ['id'], ['span'], ['type'], ['controlpoints'] were each controlpoint is a ['point'] and has
+ * ['x'], ['y'] and ['z'] component.
+ * 
+ * CIRCULAR: Parses centerx, centery, centerz, radius, startang, rotang
+ * Checks if any is null or NaN and can give default 0 to centerx, centery, centerz and startang, 
+ * gives default 1 to radius and Half radian to rotang.
+ * Saves: ['id'], ['span'], ['type'], ['centerx'], ['centery'], ['centerz'], ['radius'], ['startang'] and
+ * ['rotang']
+ * 
+ * Finally checks for repeated id's and returns error if true.
  */
 MySceneGraph.prototype.parseAnimations = function(rootElement)
 {
@@ -1646,7 +1719,7 @@ MySceneGraph.prototype.parseAnimations = function(rootElement)
 			if(rotang == null || isNaN(rotang))
 			{
 				console.warn("WARNING: Animation + '" + id + "' has no valid rotation angle, setting 1.0 as default");
-				rotang = 1.0;
+				rotang = Math.PI / 2;
 			}
 			rotang = rotang*Math.PI/180;
 
@@ -1743,6 +1816,16 @@ MySceneGraph.prototype.parseAnimations = function(rootElement)
  * If not valid returns error.
  * 
  * Finally checks if the graph is valid, if not returns error.
+ */
+
+/**
+ * Documentation refering to the second part of the project
+ * 
+ * ANIMATIONS: Creates an empty array for animations.
+ * For each animation declared
+ * Checks if the tag starts with 'animationref'. Warns user if true.
+ * Parses the id and pushes to animations array.
+ * Checks if the animations given are valid, returns error if invalid.
  */
 MySceneGraph.prototype.parseComponents = function(rootElement)
 {
@@ -1948,27 +2031,15 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			{
 				return resultCheckTexture;
 			}
+			
 			//Animations
-
 			var animations  = component[i].getElementsByTagName('animation');
 
 			componentelem['animations'] = [];
-						
-			if(animations.length > 1)
-			{
-				console.warn("Component '" + componentelem['id'] + "' has more than one Animation block defined, using the first one found");
-			}
 
-			if(animations == null || animations.length == 0)
-			{
-				console.warn("WARNING: No animations for Component: '" + componentelem['id'] + "'");
-			}
 			else
 			{
 				var animationsref = animations[0].children;
-
-
-
 				for(var ij = 0; ij < animationsref.length; ij++)
 				{
 					
@@ -1987,9 +2058,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 				}
 			}
-
-			//console.log(componentelem['id'],componentelem['animations'])
-
+			
 			var error = this.checkIfAnimationValid(componentelem['id'], componentelem['animations'])
 			if(error != null)
 			{
@@ -2239,6 +2308,8 @@ MySceneGraph.prototype.checkIfTransformationValid=function(idComponent, transfor
 	}
 };
 /**
+ * Documentation refering to the second part of the project
+ * 
  * Function to check if the Animations referenced exist in the list of loaded Animations 
  */
 MySceneGraph.prototype.checkIfAnimationValid=function(idComponent, animations)
