@@ -1,8 +1,19 @@
 /**
+ * Documentation refering to the second part of the project
  * My Plane class
- * Based on Demo Sample
+ * Based on Demo Sample from Theorical classes
+ * 
+ * @param scene
+ * @param dimX
+ * @param dimY
+ * @param partsX
+ * @param partsY
+ * 
+ * MyPlane Consctructor
+ * Sets dimX, dimY, parstsX and partsY
+ * Creates surface with order orderU and orderV as 1 and 1, and according to the dimx and dimY 
+ * creates the controlpoints
  */
-
 function MyPlane(scene, dimX, dimY, partsX, partsY)
 {
 	this.scene = scene;
@@ -31,6 +42,14 @@ function MyPlane(scene, dimX, dimY, partsX, partsY)
 MyPlane.prototype = Object.create(CGFobject.prototype);
 MyPlane.prototype.constructor=MyPlane;
 
+/**
+ * Funtion to create a surface
+ * 
+ * @param degree1
+ * @param degree2
+ * @param controlvertexes
+ * @returns {CGFnurbsObject}
+ */
 MyPlane.prototype.makeSurface = function (degree1, degree2, controlvertexes) {
 		
 	var knots1 = this.getKnotsVector(degree1); 
@@ -45,6 +64,11 @@ MyPlane.prototype.makeSurface = function (degree1, degree2, controlvertexes) {
 	return obj;		
 };
 
+/**
+ * Get Knots vector
+ * @param degree
+ * @returns {Array}
+ */
 MyPlane.prototype.getKnotsVector = function(degree) 
 { 
 	
@@ -58,11 +82,17 @@ MyPlane.prototype.getKnotsVector = function(degree)
 	return v;
 };
 
+/**
+ * Display plane function
+ */
 MyPlane.prototype.display = function()
 {
 	this.plane.display();
 };
 
+/**
+ * Function to update texture coords in case is called
+ * @param s
+ * @param t
+ */
 MyPlane.prototype.updateTextureCoords=function(s, t) {};
-
-

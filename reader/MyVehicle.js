@@ -1,3 +1,17 @@
+/**
+ * Documentation refering to the second part of the project
+ * MyVehicle Class consisting on a zepplin
+ * 
+ * @param scene
+ * 
+ * My Vehicle constructor. Creates a new CGFappearence called ribbon
+ * with a defined texture and texture Wrap
+ * Creates a MyPatch with well defined parameters
+ * Creates a MyCube from CGRA project
+ * Creates a MySphere
+ * Creates a MyCylinder
+ * 
+ */
 function MyVehicle(scene)
 {
     this.scene = scene;
@@ -6,8 +20,6 @@ function MyVehicle(scene)
  	this.ribbon.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
  	this.ribbon.loadTexture("../textures/ribbon.png");
  	this.ribbon.loadTexture("../textures/ribbon.png");
-
- 	this.default = new CGFappearance(this.scene);
 
 	this.publicity = new MyPatch(this.scene, 1,3,7,9,[
 														[ 0.0,  0.0,  0.0],
@@ -28,10 +40,20 @@ function MyVehicle(scene)
 
 MyVehicle.prototype.constructor=MyVehicle;
 
+/**
+ * Function to display the vehicle
+ * 
+ * @param appearence
+ * 
+ * Receives an appearence because the patch will use an internal loaded texture
+ * Puts the ribbon (MyPatch) in place (doublesided for texture) and sets the ribbon appearence
+ * Restores the appearence received for the other elements 
+ * Only the ribbon (MyPatch) will use a more internal appearence despite what is parsed in the
+ * display.
+ * The other componetns are put in place.
+ */
 MyVehicle.prototype.display = function(appearence)
-{
-
-	
+{	
 	//PUT RIBBON IN PLACE
 	this.scene.pushMatrix();
 			
@@ -41,19 +63,20 @@ MyVehicle.prototype.display = function(appearence)
 		this.scene.rotate(Math.PI/2,1,0,0);
 
 		this.scene.pushMatrix();
-			this.ribbon.apply();
+			this.ribbon.apply(); //puts the appearence of this vehicle
 			this.publicity.display();
 		this.scene.popMatrix();
 
 		this.scene.pushMatrix();
-			this.ribbon.apply();
+			this.ribbon.apply(); //puts the appearence of this vehicle
 			this.scene.translate(0,8,0);
 			this.scene.rotate(Math.PI, 1,0,0); 
 			this.publicity.display();
 		this.scene.popMatrix();
 	
 	this.scene.popMatrix();
-
+	
+	//restore the appearence desired
 	appearence.apply();
 
 	
@@ -102,4 +125,9 @@ MyVehicle.prototype.display = function(appearence)
 
 };
 
+/**
+ * update Texture Coords in case is called
+ * @param s
+ * @param t
+ */
 MyVehicle.prototype.updateTextureCoords=function(s, t) {};

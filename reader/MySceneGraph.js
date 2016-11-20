@@ -28,7 +28,7 @@ function MySceneGraph(filename, scene)
  * Order of functions called have to be maintained
  * Checks for DSX name tag firts
  */
-/**
+ /**
  * Documentation refering the second part of the project
  * 
  * Added parseAnimations
@@ -1132,7 +1132,7 @@ MySceneGraph.prototype.parseTransformations = function(rootElement)
  * Finally checks for repeated ID's and retursn error if positive
  */
 
-/**
+ /**
  * Documentation referencing only to the second part of the Project
  * Parsing 3 new Primitives. Plane, Patch, Vehicle and Chessboard
  * 
@@ -1386,8 +1386,8 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 
 				if(su < 0 || sv < 0)
 				{
-					su = -1;
-					sv = -1;
+					su = -2;
+					sv = -2;
 				}
 
 				if(su >= du)
@@ -1719,7 +1719,7 @@ MySceneGraph.prototype.parseAnimations = function(rootElement)
 			if(rotang == null || isNaN(rotang))
 			{
 				console.warn("WARNING: Animation + '" + id + "' has no valid rotation angle, setting 1.0 as default");
-				rotang = Math.PI / 2;
+				rotang = 1.0;
 			}
 			rotang = rotang*Math.PI/180;
 
@@ -1817,8 +1817,7 @@ MySceneGraph.prototype.parseAnimations = function(rootElement)
  * 
  * Finally checks if the graph is valid, if not returns error.
  */
-
-/**
+ /**
  * Documentation refering to the second part of the project
  * 
  * ANIMATIONS: Creates an empty array for animations.
@@ -2031,15 +2030,27 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 			{
 				return resultCheckTexture;
 			}
-			
 			//Animations
+
 			var animations  = component[i].getElementsByTagName('animation');
 
 			componentelem['animations'] = [];
+						
+			if(animations.length > 1)
+			{
+				console.warn("Component '" + componentelem['id'] + "' has more than one Animation block defined, using the first one found");
+			}
 
+			if(animations == null || animations.length == 0)
+			{
+				console.warn("WARNING: No animations for Component: '" + componentelem['id'] + "'");
+			}
 			else
 			{
 				var animationsref = animations[0].children;
+
+
+
 				for(var ij = 0; ij < animationsref.length; ij++)
 				{
 					
@@ -2058,7 +2069,9 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 				}
 			}
-			
+
+			//console.log(componentelem['id'],componentelem['animations'])
+
 			var error = this.checkIfAnimationValid(componentelem['id'], componentelem['animations'])
 			if(error != null)
 			{

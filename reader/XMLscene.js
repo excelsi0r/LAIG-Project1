@@ -109,7 +109,7 @@ XMLscene.prototype.setDefaultAppearance = function ()
  * As loading is asynchronous, 
  * this may be called already after the application has started the run loop
  */
-/**
+ /**
  * Documentation refering to the second part of the project
  * 
  * Added animations to the graph
@@ -416,7 +416,7 @@ XMLscene.prototype.setTransformationsGraph = function()
 /**
  * Creating new Primiteves from DSX file
  */
-/**
+ /**
  * Documentation refering to the second part of the project
  * 
  * Added suport for Plane, Patch, Vehicle and Chessboard.
@@ -533,9 +533,14 @@ XMLscene.prototype.setPrimitivesGraph = function()
 };
 
 /**
+ * Create new Animations from DSX file
+ */
+
+ /**
  * Documentation refering to the second part of the project
  * Create new Animations from DSX file
  */
+
 
 XMLscene.prototype.setAnimationsGraph=function()
 {
@@ -734,7 +739,8 @@ XMLscene.prototype.createGraph = function()
  * - Allows the texture to be applied if "inherit" appens downs the graph and to ingnored
  * if "none" happens.
  */
-/**
+
+ /**
  * Documentation refering to the second part of the project
  * 
  * Added suport for animation. Now gets animations from root and gives to children for display
@@ -788,8 +794,8 @@ XMLscene.prototype.displayGraphElems=function()
  * - Passes new texture if children texture is not "inherit", otherwise passes father texture
  * - Passes childrens list and primitives list
  */
-
-/**
+ 
+ /**
  * Documentation refering to the second part of the project
  * 
  * Added animations suport, and new primitives (Chessboard, plane, patch and vehicle)
@@ -1070,6 +1076,7 @@ XMLscene.prototype.updateLights=function()
  */
 XMLscene.prototype.update=function(currTime)
 {
+	//console.log(this.getMatrix());
 	if(this.animations != null && this.graph.animationslist != null)
 	{
 		for(var i = 0; i < this.graph.animationslist.length; i++)

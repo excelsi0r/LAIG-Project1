@@ -1,3 +1,27 @@
+/**
+ * Documentation refering to the second part of the project
+ * 
+ * @param scene
+ * @param du
+ * @param dv
+ * @param texture
+ * @param su
+ * @param sv
+ * @param colors
+ * @returns
+ * 
+ * MyChessboard constructor
+ * du number of u divisions
+ * dv number of s divisions
+ * su selected u index
+ * sv selected v index
+ * texture a CGFtexture
+ * colors for c1, c2, c3
+ * Creates a board whhic is a MyPlane with dimX and dimY 1.0 and 1.0 and the number of partitions
+ * du * 10 and dv * 10
+ * Creates a shader from chess.vert and chess.frag
+ * Sets shader uniform values du, dv, su, sv and colors
+ */
 function MyChessboard(scene, du, dv, texture, su, sv, colors) 
 {
     this.scene = scene;
@@ -30,13 +54,23 @@ function MyChessboard(scene, du, dv, texture, su, sv, colors)
     this.chess.setUniformsValues({c3G: this.colors['c3']['g']});
     this.chess.setUniformsValues({c3B: this.colors['c3']['b']});
     this.chess.setUniformsValues({c3A: this.colors['c3']['a']});    
-
-    console.log(this);
 };
 
 MyChessboard.prototype = Object.create(CGFobject.prototype);
 MyChessboard.prototype.constructor=MyChessboard;
 
+/**
+ * Chessboard Display
+ * 
+ * @param material
+ *  
+ * Receives a CGFappearence to use if shader does not set new values
+ * sets the texture to the material parameter passed as argument
+ * Applies the material
+ * sets the active shader to use for the board
+ * displays the board
+ * sets the default shader for the other displays not being influencied.
+ */
 MyChessboard.prototype.display=function(material)
 {
 
@@ -51,5 +85,10 @@ MyChessboard.prototype.display=function(material)
 
     this.scene.popMatrix();
 }
-
+/**
+ * Update Texture function 
+ * In case update texture is called
+ * @param s
+ * @param t
+ */
 MyChessboard.prototype.updateTextureCoords=function(s,t){};

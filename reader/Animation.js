@@ -1,4 +1,5 @@
 /**
+ * Documentation refering to the second part of the project
  * 
  * @param id
  * @param span
