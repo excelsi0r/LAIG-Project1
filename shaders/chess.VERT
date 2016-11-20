@@ -1,5 +1,5 @@
 #ifdef GL_ES
-precision highp float;
+precision highp float; //set precision
 #endif
 
 attribute vec3 aVertexPosition;
@@ -18,6 +18,7 @@ uniform float dv;
 uniform float su;
 uniform float sv;
 
+//get X index
 float getX()
 {
 
@@ -25,6 +26,7 @@ float getX()
 	return position;
 }
 
+//get Y index
 float getY()
 {
 
@@ -38,6 +40,7 @@ void main()
 	float Y = getY();
 	
 	vec3 trans = vec3(0.0, 0.0, 0.0);
+	//X and Y are su and sv it is the selected position
 	if(X == su && Y == sv)
 	{
 		trans.z = 0.02;
