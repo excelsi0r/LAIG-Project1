@@ -266,7 +266,7 @@
          </primitive>
 
          <primitive id="gardensofio">
-                <chessboard du="10" dv="5" textureref="chess" su="2" sv="3">
+                <chessboard du="3" dv="7" textureref="chess" su="2" sv="6">
                         <c1 r="1.0" g="0.0" b="0.0" a="1.0" />
                         <c2 r="0.0" g="1.0" b="0.0" a="1.0" />
                         <c3 r="0.0" g="0.0" b="1.0" a="1.0" />
@@ -284,24 +284,24 @@
 
     <animations>
 
-        <animation id="Up" span="10.0" type="linear">
+        <animation id="Up" span="5.0" type="linear">
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/> 
                 <controlpoint xx="0.0" yy="5.0" zz="0.0"/>
         </animation>
 
-        <animation id="Bala" span="10.0" type="linear">
+        <animation id="Bala" span="5.0" type="linear">
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/> 
                 <controlpoint xx="0.0" yy="0.0" zz="3.0"/>
                 <controlpoint xx="5.0" yy="0.0" zz="3.0"/>
         </animation>
 
-         <animation id="BalaInv" span="10.0" type="linear">
+         <animation id="BalaInv" span="5.0" type="linear">
                 <controlpoint xx="5.0" yy="0.0" zz="3.0"/>
                 <controlpoint xx="0.0" yy="0.0" zz="3.0"/>
                 <controlpoint xx="0.0" yy="0.0" zz="0.0"/>
         </animation>
         
-        <animation id="Roda" span="5.0" type="circular" centerx="5.0" centery="0.0" centerz="0.0" radius="3.0" startang="-90" rotang="90"/>
+        <animation id="Roda" span="2.5" type="circular" centerx="5.0" centery="0.0" centerz="0.0" radius="3.0" startang="-90" rotang="90"/>
                   
     </animations>
 

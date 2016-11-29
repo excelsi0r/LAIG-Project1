@@ -836,6 +836,10 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 
 				
 			this.pushMatrix();	
+
+					//temp testing 	
+				var flower = new MyFlower(this);
+				flower.display();
 						
 
 				this.multMatrix(transformation);
@@ -878,7 +882,9 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 				else
 				{
 					obj.display();
-				}			
+				}	
+
+
 			this.popMatrix();
 
 			materialToApply.setTexture(null);
