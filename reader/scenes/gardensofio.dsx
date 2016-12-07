@@ -1,5 +1,5 @@
 <dsx>
-    <scene root="city" axis_length="5.0" />
+    <scene root="city" axis_length="0.0" />
 
 
     <views default="default_view" >

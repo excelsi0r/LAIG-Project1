@@ -25,50 +25,29 @@ uniform float c3G;
 uniform float c3B;
 uniform float c3A;
 
-//get X index
-float getX()
-{
-	float position = floor(vTextureCoord.s*du);
-	return position;
-}
-
-//get Y index
-float getY()
-{
-	float position = floor(vTextureCoord.t*dv);
-	return position;
-}
-
-
 void main()
 {
 	vec4 color = texture2D(uSampler, vTextureCoord);
 	
-	float X = getX();
-	float Y = getY();
+	float duparts = du * 10.0;
+	float dvparts = dv * 10.0;
 
-	//if odd sets c1, if even sets c2, this method intercalates board
-	float sum = X + Y;
-	float remain = mod(sum, 2.0);
-	
-	if(X == su && Y == sv)
+	float actualdu = vTextureCoord.s * duparts;
+	float actualdv = vTextureCoord.t * dvparts;
+
+	float sumiddle = su * 10.0 + 5.0;
+	float svmiddle = sv * 10.0 + 5.0;
+
+	float distText = sqrt((sumiddle-actualdu)*(sumiddle-actualdu) + (svmiddle-actualdv)*(svmiddle-actualdv));
+
+	if(distText <= 5.0)
 	{
 		color.r += c3R*0.4;
 		color.g += c3G*0.4;
 		color.b += c3B*0.4;
 	}
-	else if(remain == 0.0)
-	{
-		color.r += c1R*0.4;
-		color.g += c1G*0.4;
-		color.b += c1B*0.4;
-	}
-	else if(remain == 1.0)
-	{
-		color.r += c2R*0.4;
-		color.g += c2G*0.4;
-		color.b += c2B*0.4;
-	}
+
+
 
 	gl_FragColor = color;
 }

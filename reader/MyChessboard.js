@@ -33,7 +33,7 @@ function MyChessboard(scene, du, dv, texture, su, sv, colors)
 
     this.texture = texture;
     this.board = new MyPlane(this.scene, 1, 1, this.du * 10, this.dv * 10);
-    this.chess = new CGFshader(this.scene.gl, "../shaders/chess.vert", "../shaders/chess.frag");
+    this.chess = new CGFshader(this.scene.gl, "../shaders/round.vert", "../shaders/round.frag");
     
     this.chess.setUniformsValues({du: this.du});
     this.chess.setUniformsValues({dv: this.dv});
