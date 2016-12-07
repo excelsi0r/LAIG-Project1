@@ -1077,7 +1077,6 @@ XMLscene.prototype.updateLights=function()
  */
 XMLscene.prototype.update=function(currTime)
 {
-	//console.log(this.getMatrix());
 	if(this.animations != null && this.graph.animationslist != null)
 	{
 		for(var i = 0; i < this.graph.animationslist.length; i++)
@@ -1090,6 +1089,19 @@ XMLscene.prototype.update=function(currTime)
 			}	
 		}
 	} 
+
+	if(this.primitives != null && this.graph.primitiveslist != null)
+	{
+		for(var j = 0; j < this.graph.primitiveslist.length; j++)
+		{
+			var idprim = this.graph.primitiveslist[j]['id'];
+
+			if(this.primitives[idprim] instanceof MyChessboard)
+			{
+				this.primitives[idprim].updateShader(currTime);
+			}
+		}
+	}
 
 	
 };

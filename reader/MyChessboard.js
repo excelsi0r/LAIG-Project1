@@ -31,6 +31,8 @@ function MyChessboard(scene, du, dv, texture, su, sv, colors)
     this.sv = sv;
     this.colors = colors;
 
+    this.update = 0.0;
+
     this.texture = texture;
     this.board = new MyPlane(this.scene, 1, 1, this.du * 10, this.dv * 10);
     this.chess = new CGFshader(this.scene.gl, "../shaders/round.vert", "../shaders/round.frag");
@@ -92,3 +94,15 @@ MyChessboard.prototype.display=function(material)
  * @param t
  */
 MyChessboard.prototype.updateTextureCoords=function(s,t){};
+
+MyChessboard.prototype.updateShader=function()
+{
+    this.update++;
+
+    if(this.update >= 60.0)
+    {
+        this.update = 0.0;
+    }
+
+    this.chess.setUniformsValues({update: this.update});
+};

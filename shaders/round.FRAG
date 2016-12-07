@@ -25,6 +25,8 @@ uniform float c3G;
 uniform float c3B;
 uniform float c3A;
 
+uniform float update;
+
 void main()
 {
 	vec4 color = texture2D(uSampler, vTextureCoord);
@@ -40,11 +42,23 @@ void main()
 
 	float distText = sqrt((sumiddle-actualdu)*(sumiddle-actualdu) + (svmiddle-actualdv)*(svmiddle-actualdv));
 
+	float scale;
+
+	if(update >= 0.0 && update < 30.0)
+	{
+		scale = update / 30.0;
+	}
+	else
+	{
+		scale = (60.0 - update) / 30.0;
+	}
+	
+
 	if(distText <= 5.0)
 	{
-		color.r += c3R*0.4;
-		color.g += c3G*0.4;
-		color.b += c3B*0.4;
+		color.r += c3R*scale;
+		color.g += c3G*scale;
+		color.b += c3B*scale;
 	}
 
 
