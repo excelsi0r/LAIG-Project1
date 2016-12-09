@@ -526,6 +526,19 @@ XMLscene.prototype.setPrimitivesGraph = function()
 
 			object = new MyChessboard(this, du, dv, texture, su, sv, colors);
 		}
+		else if(type == 'board')
+		{
+			var du = this.graph.primitiveslist[i]['du'];
+			var dv = this.graph.primitiveslist[i]['dv'];
+			var textureref = this.graph.primitiveslist[i]['textureref'];
+			var texture = this.textures[textureref]['texture'];
+			var sr = this.graph.primitiveslist[i]['sr'];
+			var sg = this.graph.primitiveslist[i]['sg'];
+			var sb = this.graph.primitiveslist[i]['sb'];
+			var sa = this.graph.primitiveslist[i]['sa'];
+
+			object = new MyBoard(this, du, dv, texture, sr, sg, sb, sa, this.RPS);
+		}
 		this.primitives[id] = object;
 	}
 
@@ -870,7 +883,7 @@ XMLscene.prototype.displayNodes=function(id, transformation, material, texture, 
 
 				materialToApply.apply();	
 					
-				if(obj instanceof MyVehicle || obj instanceof MyChessboard)
+				if(obj instanceof MyVehicle || obj instanceof MyChessboard || obj instanceof MyBoard)
 				{	
 					obj.display(materialToApply);
 				}
@@ -1096,7 +1109,7 @@ XMLscene.prototype.update=function(currTime)
 		{
 			var idprim = this.graph.primitiveslist[j]['id'];
 
-			if(this.primitives[idprim] instanceof MyChessboard)
+			if(this.primitives[idprim] instanceof MyBoard)
 			{
 				this.primitives[idprim].updateShader(currTime);
 			}

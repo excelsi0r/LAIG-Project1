@@ -1500,6 +1500,48 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				this.primitiveslist.push(primitiveitem);
 				
 			}
+			else if(primtype = 'board')
+			{
+				var du = parseInt(primitive[i].children[0].getAttribute('du'));
+				var dv = parseInt(primitive[i].children[0].getAttribute('dv'));
+				var textureref = primitive[i].children[0].getAttribute('textureref');
+				var sr =  parseFloat(primitive[i].children[0].getAttribute('sr'));
+				var sb =  parseFloat(primitive[i].children[0].getAttribute('sg'));
+				var sg =  parseFloat(primitive[i].children[0].getAttribute('sb'));
+				var sa =  parseFloat(primitive[i].children[0].getAttribute('sa'));
+
+				if(du == null || dv == null || sr == null || sg == null || sb == null || sa == null || textureref == null || isNaN(du) || isNaN(dv) || isNaN(sr) || isNaN(sg) || isNaN(sb) || isNaN(sa))
+				{
+					return "Missing or invalid attribute in board '" + id + "' ";
+				}
+
+
+				primitiveitem['du'] = du;
+				primitiveitem['dv'] = dv;
+				primitiveitem['textureref'] = textureref;
+				primitiveitem['sr'] = sr;
+				primitiveitem['sb'] = sb;
+				primitiveitem['sg'] = sg;
+				primitiveitem['sa'] = sa;
+
+				//check if texture exists
+				var n_repeated = 0;
+				for(var ik = 0; ik < this.texturelist.length; ik++)
+				{
+					if(this.texturelist[ik]['id'] == textureref)
+					{
+						n_repeated++;
+						break;
+					}
+				}
+
+				if(n_repeated < 1)
+				{
+					return "Invalid Texture reference: '" + textureref + "' for board: '" + id + "'";
+				}
+				this.primitiveslist.push(primitiveitem);
+
+			}
 		};
 	}
 

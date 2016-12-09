@@ -13,11 +13,6 @@ uniform mat4 uNMatrix;
 varying vec2 vTextureCoord;
 uniform sampler2D uSampler;
 
-uniform float du;
-uniform float dv;
-uniform float su;
-uniform float sv;
-
 void main()
 {
 	vec3 trans = vec3(0.0, 0.0, 0.0);
