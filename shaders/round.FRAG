@@ -44,7 +44,7 @@ void main()
 	}
 	
 
-	if(distText <= ((parts / 2.0) + 0.1))
+	if(distText <= ((parts / 2.0) + 0.0))
 	{
 		color.r += sr*scale;
 		color.g += sg*scale;

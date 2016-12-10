@@ -25,7 +25,11 @@ function MyBoard(scene, div, texture, texture2, sr, sg, sb, sa, rps)
     this.texture2 = texture2;     
     this.board = new MyPlane(this.scene, 1, 1, this.div * this.parts, this.div * this.parts);
     this.chess = new CGFshader(this.scene.gl, "../shaders/round.vert", "../shaders/round.frag");
+
+    //temp objects
     this.flower = new MyFlower(this.scene, "green",this.div, this.MapInc);
+    this.tree = new MyTree(this.scene,this.div, this.MapInc);
+    this.alien = new MyAlien(this.scene, "white", this.div, this.MapInc);
     
     this.chess.setUniformsValues({div: this.div});
     this.chess.setUniformsValues({su: this.su});
@@ -79,7 +83,14 @@ MyBoard.prototype.display=function(material)
     //flower
     this.flower.translate(1,1);
     this.flower.display();
-    
+
+    //tree
+    this.tree.translate(2,2);
+    this.tree.display();
+
+    //alien
+    this.alien.translate(10,0);
+    this.alien.display();
 
 }
 MyBoard.prototype.updateTextureCoords=function(s,t){};
