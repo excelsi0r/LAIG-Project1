@@ -5,8 +5,7 @@ precision highp float; //set precision
 varying vec2 vTextureCoord;
 uniform sampler2D uSampler;
 
-uniform float du;
-uniform float dv;
+uniform float div;
 uniform float su;
 uniform float sv;
 
@@ -23,11 +22,10 @@ void main()
 {
 	vec4 color = texture2D(uSampler, vTextureCoord);
 	
-	float duparts = du * parts;
-	float dvparts = dv * parts;
+	float divparts = div * parts;
 
-	float actualdu = vTextureCoord.s * duparts;
-	float actualdv = vTextureCoord.t * dvparts;
+	float actualdu = vTextureCoord.s * divparts;
+	float actualdv = vTextureCoord.t * divparts;
 
 	float sumiddle = (su * parts) + (parts/2.0);
 	float svmiddle = (sv * parts) + (parts/2.0);

@@ -1502,23 +1502,23 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 			}
 			else if(primtype = 'board')
 			{
-				var du = parseInt(primitive[i].children[0].getAttribute('du'));
-				var dv = parseInt(primitive[i].children[0].getAttribute('dv'));
+				var div = parseInt(primitive[i].children[0].getAttribute('div'));
 				var textureref = primitive[i].children[0].getAttribute('textureref');
+				var textureref2 = primitive[i].children[0].getAttribute('textureref2');
 				var sr =  parseFloat(primitive[i].children[0].getAttribute('sr'));
 				var sb =  parseFloat(primitive[i].children[0].getAttribute('sg'));
 				var sg =  parseFloat(primitive[i].children[0].getAttribute('sb'));
 				var sa =  parseFloat(primitive[i].children[0].getAttribute('sa'));
 
-				if(du == null || dv == null || sr == null || sg == null || sb == null || sa == null || textureref == null || isNaN(du) || isNaN(dv) || isNaN(sr) || isNaN(sg) || isNaN(sb) || isNaN(sa))
+				if(du == null || dv == null || sr == null || sg == null || sb == null || sa == null || textureref == null || textureref2 == null || isNaN(du) || isNaN(dv) || isNaN(sr) || isNaN(sg) || isNaN(sb) || isNaN(sa))
 				{
 					return "Missing or invalid attribute in board '" + id + "' ";
 				}
 
 
-				primitiveitem['du'] = du;
-				primitiveitem['dv'] = dv;
+				primitiveitem['div'] = div;
 				primitiveitem['textureref'] = textureref;
+				primitiveitem['textureref2'] = textureref2;
 				primitiveitem['sr'] = sr;
 				primitiveitem['sb'] = sb;
 				primitiveitem['sg'] = sg;
@@ -1539,8 +1539,25 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				{
 					return "Invalid Texture reference: '" + textureref + "' for board: '" + id + "'";
 				}
-				this.primitiveslist.push(primitiveitem);
 
+
+				//check if texture 2 exists
+				n_repeated = 0;
+				for(var ik = 0; ik < this.texturelist.length; ik++)
+				{
+					if(this.texturelist[ik]['id'] == textureref2)
+					{
+						n_repeated++;
+						break;
+					}
+				}
+
+				if(n_repeated < 1)
+				{
+					return "Invalid Texture reference: '" + textureref2 + "' for board: '" + id + "'";
+				}
+				
+				this.primitiveslist.push(primitiveitem);
 			}
 		};
 	}

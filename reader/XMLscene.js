@@ -264,7 +264,7 @@ XMLscene.prototype.setLightsGraph = function()
 		{
 			console.log("ERROR - Missing OMNI or SPOT lights.");
 		}
-		this.lights[i].setVisible(true);
+		this.lights[i].setVisible(false);
 		if(lightBox[i].enabled)
 		{
 			this.lights[i].enable();
@@ -528,16 +528,17 @@ XMLscene.prototype.setPrimitivesGraph = function()
 		}
 		else if(type == 'board')
 		{
-			var du = this.graph.primitiveslist[i]['du'];
-			var dv = this.graph.primitiveslist[i]['dv'];
+			var div = this.graph.primitiveslist[i]['div'];
 			var textureref = this.graph.primitiveslist[i]['textureref'];
 			var texture = this.textures[textureref]['texture'];
+			var textureref2 = this.graph.primitiveslist[i]['textureref2'];
+			var texture2 = this.textures[textureref2]['texture'];
 			var sr = this.graph.primitiveslist[i]['sr'];
 			var sg = this.graph.primitiveslist[i]['sg'];
 			var sb = this.graph.primitiveslist[i]['sb'];
 			var sa = this.graph.primitiveslist[i]['sa'];
 
-			object = new MyBoard(this, du, dv, texture, sr, sg, sb, sa, this.RPS);
+			object = new MyBoard(this, div, texture, texture2, sr, sg, sb, sa, this.RPS);
 		}
 		this.primitives[id] = object;
 	}

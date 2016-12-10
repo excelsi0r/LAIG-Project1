@@ -27,7 +27,7 @@
 
 
     <illumination doublesided="tt" local="tt" >
-        <ambient r="0" g="0" b="0" a="1.0" />
+        <ambient r="0.5" g="0.5" b="0.5" a="1.0" />
         <background r="1.0" g="0.6" b="0.4" a="1" />
     </illumination>
 
@@ -40,31 +40,26 @@
             <specular r="0" g="0" b="0" a="0.5" />
         </omni>
         <omni id="Light 3" enabled="1" >
-            <location x="6" y="3" z="6" w="1" />
-            <ambient r="0" g="0" b="0" a="0" />
-            <diffuse r="1" g="1" b="1" a="0.5" />
-            <specular r="0" g="0" b="0" a="0.5" />
-        </omni>
-        <omni id="Light 4" enabled="1" >
-            <location x="1" y="3" z="0" w="1" />
-            <ambient r="0" g="0" b="0" a="0" />
-            <diffuse r="1" g="1" b="1" a="0.5" />
-            <specular r="0" g="0" b="0" a="0.5" />
+            <location x="6" y="3" z="1" w="1" />
+            <ambient r="0" g="0" b="0" a="1" />
+            <diffuse r="1" g="1" b="1" a="1" />
+            <specular r="0" g="0" b="0" a="1" />
         </omni>
     </lights>
 
 
     <textures>
 		<texture id="gardensofio" file="../textures/gardensofio.png" length_s="1" length_t="1" />
+		<texture id="wood" file="../textures/wood.png" length_s="1" length_t="1" />
     </textures>
 
 
     <materials>
-		<material id="blue" >
+		<material id="white" >
             <emission r="0" g="0" b="0" a="1" />
-            <ambient r="0" g="0" b="1" a="1" />
-            <diffuse r="0" g="0" b="1" a="1" />
-            <specular r="0" g="0" b="1" a="1" />
+            <ambient r="0" g="0" b="0" a="1" />
+            <diffuse r="1" g="1" b="1" a="1" />
+            <specular r="1" g="1" b="1" a="1" />
             <shininess value="30" />
         </material>
     </materials>
@@ -85,7 +80,7 @@
          </primitive>
 
          <primitive id="gardensofio">
-                <board du="11" dv="11" textureref="gardensofio" sr="1.0" sg="0.0" sb="0.0" sa="1.0"/>
+                <board div="11" textureref="gardensofio" textureref2="wood" sr="1.0" sg="0.0" sb="0.0" sa="1.0"/>
          </primitive>
 
          	
@@ -100,15 +95,10 @@
     
         <component id="city">
             <transformation>
-
-				<translate x="5" y="0" z="5"/>
-				<rotate axis="x" angle="-90"/>
-				<scale x="10" y="10" z="1"/>
-				
-							
+				<translate x="0" y="0" z="0"/>								
             </transformation>
             <materials>
-                <material id="blue"/>
+                <material id="white"/>
             </materials>                      
             <texture id="none" />
             <animation>

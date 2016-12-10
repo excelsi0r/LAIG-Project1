@@ -1,9 +1,8 @@
-function MyBoard(scene, du, dv, texture, sr, sg, sb, sa, rps) 
+function MyBoard(scene, div, texture, texture2, sr, sg, sb, sa, rps) 
 {
     this.scene = scene;
 
-    this.du = du;
-    this.dv = dv; 
+    this.div = div;
      
     this.su = 2;
     this.sv = 6;  
@@ -14,19 +13,21 @@ function MyBoard(scene, du, dv, texture, sr, sg, sb, sa, rps)
     this.sa = sa;
 
     //estes valores sao gerais e nao hardcoded,a shader esta pronta para quaisquer valores, faz o mesmo caso variem 
-    this.parts = 10.0; //comprimento de cada divisao
+    this.parts = 10.0; //comprimento de cada divisao em texture
     this.RPS = rps;    //Refresh por segundo, setado no inicio do Xml, pode ser mudado e por isso muda aqui tb
     this.update = 0.0; //Estado currente da animaçao
     this.currTime;     //tempo atual da chamada updateshader
     this.firstUpdate = 0; //se o primeira chamada ao updateshader ja esta 
     this.animdur = 60.0; // duraçao da animaçao de piscar
+    this.MapInc = 10;
 
     this.texture = texture;
-    this.board = new MyPlane(this.scene, 1, 1, this.du * this.parts, this.dv * this.parts);
+    this.texture2 = texture2;     
+    this.board = new MyPlane(this.scene, 1, 1, this.div * this.parts, this.div * this.parts);
     this.chess = new CGFshader(this.scene.gl, "../shaders/round.vert", "../shaders/round.frag");
+    this.flower = new MyFlower(this.scene, "green",this.div, this.MapInc);
     
-    this.chess.setUniformsValues({du: this.du});
-    this.chess.setUniformsValues({dv: this.dv});
+    this.chess.setUniformsValues({div: this.div});
     this.chess.setUniformsValues({su: this.su});
     this.chess.setUniformsValues({sv: this.sv});
 
@@ -44,15 +45,42 @@ MyBoard.prototype.constructor=MyBoard;
 
 MyBoard.prototype.display=function(material)
 {  
+    //Board display
     material.setTexture(this.texture);
     this.scene.pushMatrix();
         
-        material.apply();           
-        this.scene.setActiveShader(this.chess);            
-        this.board.display();
+        material.apply();
+        this.scene.setActiveShader(this.chess);    
+        
+        this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
+        this.scene.rotate(Math.PI/2, -1,0,0);
+        this.scene.scale(this.MapInc,this.MapInc,1); 
+                       
+        this.board.display();        
+        
         this.scene.setActiveShader(this.scene.defaultShader);
 
     this.scene.popMatrix();
+    
+    //Inverted Board
+    material.setTexture(this.texture2);
+    this.scene.pushMatrix();
+        
+        material.apply();
+
+        this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
+        this.scene.rotate(Math.PI/2, 1,0,0);
+        this.scene.scale(this.MapInc,this.MapInc,1);  
+                     
+        this.board.display();
+
+    this.scene.popMatrix();
+
+    //flower
+    this.flower.translate(1,1);
+    this.flower.display();
+    
+
 }
 MyBoard.prototype.updateTextureCoords=function(s,t){};
 
