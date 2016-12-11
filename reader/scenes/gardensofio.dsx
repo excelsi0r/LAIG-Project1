@@ -4,25 +4,14 @@
 
     <views default="default_view" >
         <perspective id="default_view" near="0.1" far="500" angle="45">
-            <from x="20" y="15" z="20" />
-            <to x="0" y="0" z="0" />
+            <from x="5" y="20" z="5" />
+            <to x="4.99" y="1" z="5" />
         </perspective>
-        <perspective id="2" near="0.1" far="500" angle="45">
-            <from x="20" y="15" z="20" />
-            <to x="0" y="0" z="0" />
+        <perspective id="second" near="0.1" far="500" angle="45">
+            <from x="5" y="20" z="5" />
+            <to x="5" y="1" z="5" />
         </perspective>
-        <perspective id="3" near="0.1" far="500" angle="45">
-            <from x="20" y="15" z="15" />
-            <to x="0" y="0" z="0" />
-        </perspective>
-        <perspective id="4" near="0.1" far="500" angle="45">
-            <from x="100" y="100" z="100" />
-            <to x="0" y="0" z="0" />
-        </perspective>
-        <perspective id="5" near="0.1" far="500" angle="45">
-            <from x="10" y="15" z="15" />
-            <to x="0" y="0" z="0" />
-        </perspective>
+
     </views>
 
 

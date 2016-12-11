@@ -207,6 +207,8 @@ XMLscene.prototype.setViewsGraph = function()
 			this.camera = this.cameras[id];
 			this.cameraIndex = i;
 		}
+
+		console.log(cm);
 	}
 };
 
