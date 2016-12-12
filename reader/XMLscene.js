@@ -573,12 +573,14 @@ XMLscene.prototype.setPrimitivesGraph = function()
 			var texture = this.textures[textureref]['texture'];
 			var textureref2 = this.graph.primitiveslist[i]['textureref2'];
 			var texture2 = this.textures[textureref2]['texture'];
+			var texturerefaux = this.graph.primitiveslist[i]['auxtextureref'];
+			var auxtexture = this.textures[texturerefaux]['texture'];
 			var sr = this.graph.primitiveslist[i]['sr'];
 			var sg = this.graph.primitiveslist[i]['sg'];
 			var sb = this.graph.primitiveslist[i]['sb'];
 			var sa = this.graph.primitiveslist[i]['sa'];
 
-			object = new MyBoard(this, div, texture, texture2, sr, sg, sb, sa, this.RPS);
+			object = new MyBoard(this, div, texture, texture2, auxtexture, sr, sg, sb, sa, this.RPS);
 		}
 		this.primitives[id] = object;
 	}

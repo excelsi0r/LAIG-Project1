@@ -1,4 +1,4 @@
-function MyBoard(scene, div, texture, texture2, sr, sg, sb, sa, rps) 
+function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps) 
 {
     this.scene = scene;
 
@@ -20,12 +20,13 @@ function MyBoard(scene, div, texture, texture2, sr, sg, sb, sa, rps)
     this.firstUpdate = 0; //se o primeira chamada ao updateshader ja esta 
     this.animdur = 60.0; // duraçao da animaçao de piscar
     this.MapInc = 10; //comprimento do board
+    this.inc = (this.MapInc / this.div) / 2;
 
-    this.texture = texture;
-    this.texture2 = texture2;     
-    this.board = new MyPlane(this.scene, 1, 1, this.div * this.parts, this.div * this.parts);
+    this.texture = texture;//textura da parte de cima   
+    this.texture2 = texture2;//textura da parte de baixo do board
+    this.auxtexture = auxtexture;
+    this.board = new MyPlane(this.scene, 1, 1, this.div * this.parts, this.div * this.parts);//board
     this.chess = new CGFshader(this.scene.gl, "../shaders/round.vert", "../shaders/round.frag");
-    this.shader = new CGFshader(this.scene.gl, "../shaders/tile.vert", "../shaders/tile.frag");
 
 
     //temp objects
@@ -36,6 +37,15 @@ function MyBoard(scene, div, texture, texture2, sr, sg, sb, sa, rps)
     this.tileid = 1;
     this.matrixPic = [];
     this.createBoardPicking();
+
+    //create case1
+    this.tileidp1 = 101;
+    this.p1case = new MyCase(this.scene, 3,9, this.div, this.MapInc,this.parts,this.auxtexture, this.texture2, this.tileidp1, -3, 5);    
+
+
+    //create case2
+    this.tileidp2 = 201;
+    this.p2case = new MyCase(this.scene, 3,9, this.div, this.MapInc,this.parts,this.auxtexture, this.texture2, this.tileidp2, 13, 5);
     
     
     this.chess.setUniformsValues({div: this.div});
@@ -56,36 +66,15 @@ MyBoard.prototype.constructor=MyBoard;
 
 MyBoard.prototype.display=function(material)
 {       
-    //Board display
-    material.setTexture(this.texture);
-    this.scene.pushMatrix();
-        
-        material.apply();
-        this.scene.setActiveShader(this.chess);    
-        
-        this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
-        this.scene.rotate(Math.PI/2, -1,0,0);
-        this.scene.scale(this.MapInc,this.MapInc,1); 
-                       
-        this.board.display();        
-        
-        this.scene.setActiveShader(this.scene.defaultShader);
+    //display internal board
+    this.displayInternalBoard(material);    
 
-    this.scene.popMatrix();
+    //display player 1 case
+    this.p1case.display(material);
+
+    //display player 2 case
+    this.p2case.display(material);
     
-    //Inverted Board
-    material.setTexture(this.texture2);
-    this.scene.pushMatrix();
-        
-        material.apply();
-
-        this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
-        this.scene.rotate(Math.PI/2, 1,0,0);
-        this.scene.scale(this.MapInc,this.MapInc,1);                  
-        this.board.display();
-
-    this.scene.popMatrix();
-
     //flower
     this.flower.translate(1,1);
     this.flower.display();
@@ -98,8 +87,14 @@ MyBoard.prototype.display=function(material)
     this.alien.translate(10,0);
     this.alien.display(); 
 
-    //tiles
-    this.displayTiles();
+    //board tiles display
+    this.displayBoardTiles();
+
+    //display p1 case tiles
+    this.p1case.displayBoardTiles();
+
+    //display p2 case tiles
+    this.p2case.displayBoardTiles();
 }
 MyBoard.prototype.updateTextureCoords=function(s,t){};
 
@@ -141,13 +136,46 @@ MyBoard.prototype.createBoardPicking=function()
 
         for(var j = 0; j < this.div - 2; j++)
         {
-            this.matrixPic[i][j] = new MyTile(this.scene, this.tileid, this.div, this.MapInc, j,i);
+            this.matrixPic[i][j] = new MyTile(this.scene, this.tileid, this.div, this.MapInc, j, i, this.inc, this.inc);
             this.tileid++;
         }
     }
 };
 
-MyBoard.prototype.displayTiles=function()
+MyBoard.prototype.displayInternalBoard=function(material)
+{ 
+    //Board display
+    material.setTexture(this.texture);
+    this.scene.pushMatrix();
+        
+        material.apply();
+        this.scene.setActiveShader(this.chess);    
+        
+        this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
+        this.scene.rotate(Math.PI/2, -1,0,0);
+        this.scene.scale(this.MapInc,this.MapInc,1); 
+                       
+        this.board.display();        
+        
+        this.scene.setActiveShader(this.scene.defaultShader);
+
+    this.scene.popMatrix();
+    
+    //Inverted Board
+    material.setTexture(this.texture2);
+    this.scene.pushMatrix();
+        
+        material.apply();
+
+        this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
+        this.scene.rotate(Math.PI/2, 1,0,0);
+        this.scene.scale(this.MapInc,this.MapInc,1);                  
+        this.board.display();
+
+    this.scene.popMatrix();  
+};
+
+MyBoard.prototype.displayBoardTiles=function()
 {  
     var tileid = 0;
     for(var i = 0; i < this.div - 2; i++)
@@ -158,3 +186,5 @@ MyBoard.prototype.displayTiles=function()
         }
     }
 };
+
+ 

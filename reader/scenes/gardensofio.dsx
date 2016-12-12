@@ -39,6 +39,7 @@
 
     <textures>
 		<texture id="gardensofio" file="../textures/gardensofio.png" length_s="1" length_t="1" />
+		<texture id="case" file="../textures/case.png" length_s="1" length_t="1" />
 		<texture id="wood" file="../textures/wood.png" length_s="1" length_t="1" />
     </textures>
 
@@ -46,7 +47,7 @@
     <materials>
 		<material id="white" >
             <emission r="0" g="0" b="0" a="1" />
-            <ambient r="0" g="0" b="0" a="1" />
+            <ambient r="1" g="1" b="1" a="1" />
             <diffuse r="1" g="1" b="1" a="1" />
             <specular r="1" g="1" b="1" a="1" />
             <shininess value="30" />
@@ -69,7 +70,7 @@
          </primitive>
 
          <primitive id="gardensofio">
-                <board div="11" textureref="gardensofio" textureref2="wood" sr="1.0" sg="0.0" sb="0.0" sa="1.0"/>
+                <board div="11" textureref="gardensofio" auxtextureref="case" textureref2="wood" sr="1.0" sg="0.0" sb="0.0" sa="1.0"/>
          </primitive>
 
          	

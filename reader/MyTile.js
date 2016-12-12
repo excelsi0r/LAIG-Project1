@@ -1,9 +1,11 @@
-function MyTile(scene, id, div, mapLength, x, y)
+function MyTile(scene, id, div, mapLength, x, y, incx, incy)
 {
     this.scene = scene;
 
 	this.x = x + 1;
 	this.y = y + 1;
+	this.incx = incx;
+	this.incy = incy;
 	this.id = id;
 	this.mapDiv = mapLength / div;
 	this.mapInc = (mapLength / div) / 2;
@@ -21,7 +23,7 @@ MyTile.prototype.constructor=MyTile;
 MyTile.prototype.display = function(appearence)
 {	
 	if(this.scene.pickMode)
-	{
+ 	{
 		this.scene.pushMatrix();
 			this.scene.multMatrix(this.transMatrix);
 			this.scene.scale(this.mapDiv,1,this.mapDiv);
@@ -35,10 +37,10 @@ MyTile.prototype.display = function(appearence)
 
 MyTile.prototype.translate = function()
 {
-	var xx = this.x*this.mapDiv + this.mapInc;
-	var yy = this.y*this.mapDiv + this.mapInc;
+	var xx = this.x*this.mapDiv + this.incx;
+	var yy = this.y*this.mapDiv + this.incy;
 
-	var temp = vec3.fromValues(xx,0,yy);
+	var temp = vec3.fromValues(xx,0.01,yy);
 
 	var matTemp = mat4.create();
 	mat4.translate(matTemp, matTemp, temp);
