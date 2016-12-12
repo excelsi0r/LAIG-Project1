@@ -19,17 +19,24 @@ function MyBoard(scene, div, texture, texture2, sr, sg, sb, sa, rps)
     this.currTime;     //tempo atual da chamada updateshader
     this.firstUpdate = 0; //se o primeira chamada ao updateshader ja esta 
     this.animdur = 60.0; // duraçao da animaçao de piscar
-    this.MapInc = 10;
+    this.MapInc = 10; //comprimento do board
 
     this.texture = texture;
     this.texture2 = texture2;     
     this.board = new MyPlane(this.scene, 1, 1, this.div * this.parts, this.div * this.parts);
     this.chess = new CGFshader(this.scene.gl, "../shaders/round.vert", "../shaders/round.frag");
+    this.shader = new CGFshader(this.scene.gl, "../shaders/tile.vert", "../shaders/tile.frag");
+
 
     //temp objects
-    this.flower = new MyFlower(this.scene, "green",this.div, this.MapInc);
+    this.flower = new MyFlower(this.scene, "red",this.div, this.MapInc);
     this.tree = new MyTree(this.scene,this.div, this.MapInc);
     this.alien = new MyAlien(this.scene, "white", this.div, this.MapInc);
+
+    this.tileid = 1;
+    this.matrixPic = [];
+    this.createBoardPicking();
+    
     
     this.chess.setUniformsValues({div: this.div});
     this.chess.setUniformsValues({su: this.su});
@@ -48,7 +55,7 @@ MyBoard.prototype = Object.create(CGFobject.prototype);
 MyBoard.prototype.constructor=MyBoard;
 
 MyBoard.prototype.display=function(material)
-{  
+{       
     //Board display
     material.setTexture(this.texture);
     this.scene.pushMatrix();
@@ -74,8 +81,7 @@ MyBoard.prototype.display=function(material)
 
         this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
         this.scene.rotate(Math.PI/2, 1,0,0);
-        this.scene.scale(this.MapInc,this.MapInc,1);  
-                     
+        this.scene.scale(this.MapInc,this.MapInc,1);                  
         this.board.display();
 
     this.scene.popMatrix();
@@ -90,8 +96,10 @@ MyBoard.prototype.display=function(material)
 
     //alien
     this.alien.translate(10,0);
-    this.alien.display();
+    this.alien.display(); 
 
+    //tiles
+    this.displayTiles();
 }
 MyBoard.prototype.updateTextureCoords=function(s,t){};
 
@@ -121,5 +129,32 @@ MyBoard.prototype.updateShader=function(currTime)
 
         this.chess.setUniformsValues({update: this.update});
 
+    }
+};
+
+MyBoard.prototype.createBoardPicking=function()
+{
+    for(var i = 0; i < this.div - 2; i++)
+    {
+        
+        this.matrixPic[i] = [];
+
+        for(var j = 0; j < this.div - 2; j++)
+        {
+            this.matrixPic[i][j] = new MyTile(this.scene, this.tileid, this.div, this.MapInc, j,i);
+            this.tileid++;
+        }
+    }
+};
+
+MyBoard.prototype.displayTiles=function()
+{  
+    var tileid = 0;
+    for(var i = 0; i < this.div - 2; i++)
+    {
+        for(var j = 0; j < this.div - 2; j++)
+        {        
+                 this.matrixPic[i][j].display();
+        }
     }
 };

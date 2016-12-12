@@ -15,6 +15,11 @@ MyInterface.prototype.init = function(application)
     this.gui= new dat.GUI();
     this.lightsgroup= this.gui.addFolder("Lights");
     this.lightsgroup.open();
+
+    //adding game states box
+    this.gamemode = this.gui.addFolder("Game Mode");
+    this.gamemode.open();
+    this.gamemode.add(this.scene, "GameMode", this.scene.GameModelist);
 };
 /**
  * Pushes all the lights to the Lights folder.

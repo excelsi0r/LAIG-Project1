@@ -30,6 +30,42 @@ XMLscene.prototype.init = function (application)
 	this.setUpdatePeriod(1 / this.RPS * 1000);
 
 	this.seconds = 0;
+
+	this.GameMode = 0;
+	this.previousGameMode = this.GameMode;
+	this.GameModelist = {};
+
+	this.GameModelist[''] = 0;
+	this.GameModelist['Player vs. Player'] = 1;
+	this.GameModelist['Greedy Computer'] = 2;
+	this.GameModelist['Easy Computer'] = 3;
+	this.GameModelist['PC vs. PC'] = 4;
+
+	this.setPickEnabled(true);
+
+};
+
+XMLscene.prototype.logPicking = function()
+{
+	if (this.pickMode == false) 
+	{
+		if (this.pickResults != null && this.pickResults.length > 0) 
+		{
+			for (var i=0; i< this.pickResults.length; i++) 
+			{
+				var obj = this.pickResults[i][0];
+
+
+				if (obj)
+				{
+					var customId = this.pickResults[i][1];				
+					console.log("Picked object: " + obj + ", with pick id " + customId);
+				}
+				
+			}
+			this.pickResults.splice(0,this.pickResults.length);
+		}		
+	}
 };
 
 /**
@@ -37,6 +73,10 @@ XMLscene.prototype.init = function (application)
  */
 XMLscene.prototype.display = function () 
 {
+	this.clearPickRegistration();
+	this.logPicking();
+
+	
 	// ---- BEGIN Background, camera and axis setup
 	
 	// Clear image and depth buffer everytime we update the scene
@@ -207,8 +247,6 @@ XMLscene.prototype.setViewsGraph = function()
 			this.camera = this.cameras[id];
 			this.cameraIndex = i;
 		}
-
-		console.log(cm);
 	}
 };
 
@@ -1093,6 +1131,7 @@ XMLscene.prototype.updateLights=function()
  */
 XMLscene.prototype.update=function(currTime)
 {
+	//common animations
 	if(this.animations != null && this.graph.animationslist != null)
 	{
 		for(var i = 0; i < this.graph.animationslist.length; i++)
@@ -1106,6 +1145,7 @@ XMLscene.prototype.update=function(currTime)
 		}
 	} 
 
+	//update board shaders
 	if(this.primitives != null && this.graph.primitiveslist != null)
 	{
 		for(var j = 0; j < this.graph.primitiveslist.length; j++)
@@ -1119,6 +1159,13 @@ XMLscene.prototype.update=function(currTime)
 		}
 	}
 
+	//
+	if(this.GameMode != this.previousGameMode)
+	{
+		console.log("New Game");
+	}
+
+	this.previousGameMode = this.GameMode;
 	
 };
 
