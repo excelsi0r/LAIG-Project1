@@ -104,8 +104,7 @@ print_header_line(_).
 
 % Require your Prolog Files here
 
-parse_input(pp, Board):-	initialize(_), board(Board).
-parse_input(test(C,N), Res) :- test(C,Res,N).
+parse_input(new, Board):-	initialize(_), board(Board).
 parse_input(quit, goodbye).
 
 test(_,[],N) :- N =< 0.

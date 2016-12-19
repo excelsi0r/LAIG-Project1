@@ -2,6 +2,7 @@ function MyCase(scene, divX, divY, NdiV, MapLength, textdiv, texture, texture2, 
 {
     this.scene = scene;
 
+	//elems
 	this.x = x;
 	this.y = y;
 	this.divX = divX;
@@ -15,11 +16,14 @@ function MyCase(scene, divX, divY, NdiV, MapLength, textdiv, texture, texture2, 
 	this.texture2 = texture2;
 	this.border = 0.05;
 
+	//case and shader
 	this.case = new MyPlane(this.scene, 1, 1, this.divX * this.textureDiv, this.divY * this.textureDiv);	
     this.chess = new CGFshader(this.scene.gl, "../shaders/normal.vert", "../shaders/normal.frag");
 
+	//matrixes
 	this.tileid = tileid;
 	this.matrixPic = [];
+	this.matrixBoard = [];
 	this.createBoardPicking();
 
 
@@ -110,8 +114,11 @@ MyCase.prototype.createBoardPicking=function()
             this.tileid++;
         }
     }
-
-    console.log(this.matrixPic);
 };
+
+MyCase.prototype.resetMatrix=function()
+{
+	this.matrixBoard = [];
+}
 
 MyCase.prototype.updateTextureCoords=function(s, t) {};

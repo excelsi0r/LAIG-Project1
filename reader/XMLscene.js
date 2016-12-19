@@ -31,7 +31,7 @@ XMLscene.prototype.init = function (application)
 
 	this.seconds = 0;
 
-	this.GameMode = 0;
+	this.GameMode = 0; //(0 - MENU),(1 - Player vs Player), (2 - Greedy), (3 - Easy), (4 - Computer vs Computer)
 	this.previousGameMode = this.GameMode;
 	this.GameModelist = {};
 
@@ -45,37 +45,12 @@ XMLscene.prototype.init = function (application)
 
 };
 
-XMLscene.prototype.logPicking = function()
-{
-	if (this.pickMode == false) 
-	{
-		if (this.pickResults != null && this.pickResults.length > 0) 
-		{
-			for (var i=0; i< this.pickResults.length; i++) 
-			{
-				var obj = this.pickResults[i][0];
-
-
-				if (obj)
-				{
-					var customId = this.pickResults[i][1];				
-					console.log("Picked object: " + obj + ", with pick id " + customId);
-				}
-				
-			}
-			this.pickResults.splice(0,this.pickResults.length);
-		}		
-	}
-};
-
 /**
  * Display Function. Called constantly before and after Graph Loaded
  */
 XMLscene.prototype.display = function () 
 {
 	this.clearPickRegistration();
-	this.logPicking();
-
 	
 	// ---- BEGIN Background, camera and axis setup
 	
@@ -1156,18 +1131,10 @@ XMLscene.prototype.update=function(currTime)
 
 			if(this.primitives[idprim] instanceof MyBoard)
 			{
-				this.primitives[idprim].updateShader(currTime);
+				this.primitives[idprim].updateBoard(currTime);
 			}
 		}
-	}
-
-	//
-	if(this.GameMode != this.previousGameMode)
-	{
-		console.log("New Game");
-	}
-
-	this.previousGameMode = this.GameMode;
+	}	
 	
 };
 
