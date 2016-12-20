@@ -16,6 +16,8 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps)
     this.tileidp1 = 101;
     this.tileidp2 = 201;
 
+	this.selectedFlower = null;
+	this.listOfNextPlays = [];
     this.matrixPic = [];
     this.matrixBoard = null;
     this.state = "menu";
@@ -71,8 +73,10 @@ MyBoard.prototype.display=function(material)
 
 	//log picking
 	this.logPicking();
+
 	
 	//DISPLAY BOARD
+
     	//display internal board
 		this.displayInternalBoard(material);    
 
@@ -82,7 +86,9 @@ MyBoard.prototype.display=function(material)
 		//display player 2 case
 		this.p2case.display(material);
 
+
 	//PICKING
+
 		//board tiles display
 		this.displayBoardTiles();
 
@@ -91,6 +97,7 @@ MyBoard.prototype.display=function(material)
 
 		//display p2 case tiles
 		this.p2case.displayBoardTiles();
+
 }
 MyBoard.prototype.updateTextureCoords=function(s,t){};
 
@@ -126,17 +133,15 @@ MyBoard.prototype.updateBoard=function(currTime)
 	{
 		if(this.scene.GameMode == 0)
 		{
-			this.resetMatrix();
-			this.p1case.resetMatrix();		
-			this.p2case.resetMatrix();
-			this.state = "menu";
+			this.resetBoard();
 		}
 		else
 		{
 			this.makeRequest("new");
-			//this.makeRequest("p1");
-			//this.makeRequest("p2");
-			//this.makeRequest("state");
+			this.makeRequest("p1");
+			this.makeRequest("p2");
+			this.makeRequest("state");
+			this.makeRequest("listPlays");
 		}
 	}
 
@@ -156,6 +161,30 @@ MyBoard.prototype.createBoardPicking=function()
             this.tileid++;
         }
     }
+};
+
+MyBoard.prototype.changeState=function(response)
+{
+	this.state = response;
+};
+
+MyBoard.prototype.updatePlaysList=function(listPlays)
+{
+	var r = /\d+/g;
+	var list = [];
+	var m;
+
+	while ((m = r.exec(listPlays)) != null) 
+	{
+		list.push(m[0]);
+	}
+
+	this.listOfNextPlays = [];
+
+	for(var i = 0; i < list.length; i+=2)
+	{
+		this.listOfNextPlays.push([list[i], list[i+1]]);
+	}
 };
 
 
@@ -246,49 +275,52 @@ MyBoard.prototype.createBoardElems=function(board)
 MyBoard.prototype.displayInternalBoard=function(material)
 { 
     //Board display
-    material.setTexture(this.texture);
-    this.scene.pushMatrix();
-        
-        material.apply();
-        this.scene.setActiveShader(this.chess);    
-        
-        this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
-        this.scene.rotate(Math.PI/2, -1,0,0);
-        this.scene.scale(this.MapInc,this.MapInc,1); 
-                       
-        this.board.display();        
-        
-        this.scene.setActiveShader(this.scene.defaultShader);
+	if(this.scene.pickMode == false)
+ 	{
+		material.setTexture(this.texture);
+		this.scene.pushMatrix();
 
-    this.scene.popMatrix();
-    
-    //Inverted Board
-    material.setTexture(this.texture2);
-    this.scene.pushMatrix();
-        
-        material.apply();
+			material.apply();
+			this.scene.setActiveShader(this.chess);    
 
-        this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
-        this.scene.rotate(Math.PI/2, 1,0,0);
-        this.scene.scale(this.MapInc,this.MapInc,1);                  
-        this.board.display();
+			this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
+			this.scene.rotate(Math.PI/2, -1,0,0);
+			this.scene.scale(this.MapInc,this.MapInc,1); 
 
-    this.scene.popMatrix();  
+			this.board.display();        
 
-	//elems
-	if(this.matrixBoard != null)
-	{
-		for(var i = 0; i < this.div; i++)
+			this.scene.setActiveShader(this.scene.defaultShader);
+
+		this.scene.popMatrix();
+
+		//Inverted Board
+		material.setTexture(this.texture2);
+		this.scene.pushMatrix();
+
+			material.apply();
+
+			this.scene.translate(this.MapInc/2,0,this.MapInc/2); 
+			this.scene.rotate(Math.PI/2, 1,0,0);
+			this.scene.scale(this.MapInc,this.MapInc,1);                  
+			this.board.display();
+
+		this.scene.popMatrix();  
+
+		//elems
+		if(this.matrixBoard != null)
 		{
-			for(var j = 0; j < this.div; j++)
+			for(var i = 0; i < this.div; i++)
 			{
-				if(this.matrixBoard[i][j] != null)
+				for(var j = 0; j < this.div; j++)
 				{
-					this.matrixBoard[i][j].display();
+					if(this.matrixBoard[i][j] != null)
+					{
+						this.matrixBoard[i][j].display();
+					}
 				}
 			}
 		}
-	}
+ 	}
 };
 
 MyBoard.prototype.displayBoardTiles=function()
@@ -317,7 +349,9 @@ MyBoard.prototype.logPicking = function()
 				if (obj)
 				{
 					var customId = this.scene.pickResults[i][1];				
-					console.log("Picked object: " + obj + ", with pick id " + customId);
+					//console.log("Picked object: " + obj + ", with pick id " + customId);
+
+					this.hadleObjectPicked(customId);
 				}
 				
 			}
@@ -329,4 +363,77 @@ MyBoard.prototype.logPicking = function()
 MyBoard.prototype.resetMatrix=function()
 {
 	this.matrixBoard = null;
+};
+
+MyBoard.prototype.resetBoard=function()
+{
+			this.resetMatrix();
+			this.p1case.resetMatrix();		
+			this.p2case.resetMatrix();
+			this.state = "menu";
+};
+
+MyBoard.prototype.playExists=function(x, y)
+{
+	var exists = false;
+
+	for(var i = 0; i < this.listOfNextPlays.length; i++)
+	{
+		var tempX = this.listOfNextPlays[i][0];
+		var tempY = this.listOfNextPlays[i][1];
+
+		if(x == tempX && y == tempY)
+		{
+			exists = true;
+			break;
+		}
+	}	
+
+	return exists;
+};
+
+MyBoard.prototype.hadleObjectPicked=function(id)
+{
+	if(id > 100 && this.state == "p1")
+	{	
+		var x = (id - 100 - 1) % (this.p1case.divX);
+		var y = Math.floor((id - 100 - 1) / (this.p1case.divX));
+
+		var flower = this.p1case.matrixBoard[y][x];
+
+		if(flower != null)
+		{
+			this.selectedFlower = [x,y];
+		}
+
+	}
+	else if(id > 200 && this.state == "p2")
+	{	
+		var x = (id - 200 - 1) % (this.p2case.divX);
+		var y = Math.floor((id - 200 - 1) / (this.p2case.divX));
+
+		var flower = this.p2case.matrixBoard[y][x];
+
+		if(flower != null)
+		{
+			this.selectedFlower = [x,y];
+		}
+	}
+	else if(id < 100 && this.selectedFlower != null)
+	{
+		var x = (id - 1) % (this.div - 2) + 2;
+		var y = Math.floor((id - 1) / (this.div - 2)) + 2;
+
+		var exists = this.playExists(x,y);
+
+		if(exists)
+		{
+			//PLAY
+			this.selectedFlower = null;
+			console.log("play");
+		}
+
+		
+	}
+
 };

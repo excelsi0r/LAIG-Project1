@@ -1,4 +1,4 @@
-function MyCase(scene, divX, divY, NdiV, MapLength, textdiv, texture, texture2, tileid, x, y)
+function MyCase(scene, divX, divY, NumdiV, MapLength, textdiv, texture, texture2, tileid, x, y)
 {
     this.scene = scene;
 
@@ -7,9 +7,9 @@ function MyCase(scene, divX, divY, NdiV, MapLength, textdiv, texture, texture2, 
 	this.y = y;
 	this.divX = divX;
 	this.divY = divY;
-	this.NdiV = NdiV;
-	this.mapInc = MapLength;
-	this.mapDiv = (MapLength / NdiV);
+	this.NumdiV = parseInt(NumdiV);
+	this.mapInc = parseFloat(MapLength);
+	this.mapDiv = (MapLength / NumdiV);
 	this.inc = this.mapDiv / 2;
 	this.textureDiv = textdiv;
 	this.texture = texture;
@@ -23,9 +23,8 @@ function MyCase(scene, divX, divY, NdiV, MapLength, textdiv, texture, texture2, 
 	//matrixes
 	this.tileid = tileid;
 	this.matrixPic = [];
-	this.matrixBoard = [];
+	this.matrixBoard = null;
 	this.createBoardPicking();
-
 
 }
 
@@ -33,61 +32,134 @@ MyCase.prototype.constructor=MyCase;
 
 MyCase.prototype.display = function(appearence)
 {	
-	//display board elems
 	this.displayCaseElems(appearence);
+};
+
+MyCase.prototype.createCaseElems = function(caseBoard)
+{
+	var r = /\d+/g;
+	var list = [];
+	var m;
+
+	while ((m = r.exec(caseBoard)) != null) 
+	{
+		list.push(m[0]);
+	}
+
+	this.matrixBoard = [];
+
+	for(var i = 0; i < this.divY; i++)
+	{
+		this.matrixBoard[i] = [];
+
+		for(var j = 0; j < this.divX; j++)
+		{
+			var index = i * this.divX + j;
+			var elem = list[index];
+			var flower;
+
+			if(elem == 1) //White Flower
+			{
+				flower = new MyFlower(this.scene, "white", this.NumdiV, this.mapInc);			
+			}
+			else if(elem == 2) //Yellow Flower
+			{
+				flower = new MyFlower(this.scene, "yellow", this.NumdiV, this.mapInc);	
+			}
+			else if(elem == 3) //Green Flower
+			{
+				flower = new MyFlower(this.scene, "green", this.NumdiV, this.mapInc);	
+			}
+			else if(elem == 4) //Blue Flower
+			{
+				flower = new MyFlower(this.scene, "blue", this.NumdiV, this.mapInc);	
+			}
+			else if(elem == 5) //Purple Flower
+			{
+				flower = new MyFlower(this.scene, "purple", this.NumdiV, this.mapInc);	
+			}
+			else if(elem == 6) //Red Flower
+			{
+				flower = new MyFlower(this.scene, "red", this.NumdiV, this.mapInc);	
+			}
+			
+			flower.translate(j, i);
+			this.matrixBoard[i][j] = flower;
+		}
+	}
+	
 };
 
 MyCase.prototype.displayCaseElems=function(appearence)
 {
+	if(this.scene.pickMode == false)
+ 	{
+		this.scene.setActiveShader(this.chess);   
 
-	this.scene.setActiveShader(this.chess);   
-	
-	appearence.setTexture(this.texture);
-	this.scene.pushMatrix();
-		
-		appearence.apply();
-		this.scene.translate(this.x, 0, this.y);
-		this.scene.scale(this.mapDiv * this.divX,1,this.mapDiv * this.divY);
-		this.scene.rotate(Math.PI/2, -1,0,0);
-		this.case.display();
-		
-	this.scene.popMatrix();
+		appearence.setTexture(this.texture);
+		this.scene.pushMatrix();
 
-	this.scene.setActiveShader(this.scene.defaultShader);
+			appearence.apply();
 
-	appearence.setTexture(this.texture2);
-	this.scene.pushMatrix();
-		
-		appearence.apply();
-		this.scene.translate(this.x, 0, this.y);
-		this.scene.scale(this.mapDiv * this.divX,1,this.mapDiv * this.divY);
-		this.scene.rotate(Math.PI/2, 1,0,0);
-		this.case.display();
-		
-	this.scene.popMatrix();
+			this.scene.translate(this.x, 0, this.y);
+			this.scene.scale(this.mapDiv * this.divX,1,this.mapDiv * this.divY);	
+			this.scene.rotate(Math.PI/2, -1,0,0);
+			this.case.display();
 
+		this.scene.popMatrix();
 
-	appearence.setTexture(null);	
-	this.scene.pushMatrix();
-		
-		appearence.apply();
-		this.scene.translate(this.x, -0.01, this.y);
-		this.scene.scale(this.mapDiv * this.divX + this.border, 1 ,this.mapDiv * this.divY + this.border);
-		this.scene.rotate(Math.PI/2, -1,0,0);
-		this.case.display();
-		
-	this.scene.popMatrix();
-	this.scene.pushMatrix();
-		
-		appearence.apply();
-		this.scene.translate(this.x, 0.01, this.y);
-		this.scene.scale(this.mapDiv * this.divX + this.border,1,this.mapDiv * this.divY + this.border);
-		this.scene.rotate(Math.PI/2, 1,0,0);
-		this.case.display();
-		
-	this.scene.popMatrix();
+		this.scene.setActiveShader(this.scene.defaultShader);
+
+		appearence.setTexture(this.texture2);
+		this.scene.pushMatrix();
+
+			appearence.apply();
+			this.scene.translate(this.x, 0, this.y);
+			this.scene.scale(this.mapDiv * this.divX,1,this.mapDiv * this.divY);
+			this.scene.rotate(Math.PI/2, 1,0,0);
+			this.case.display();
+
+		this.scene.popMatrix();
 
 
+		appearence.setTexture(null);	
+		this.scene.pushMatrix();
+
+			appearence.apply();
+			this.scene.translate(this.x, -0.01, this.y);
+			this.scene.scale(this.mapDiv * this.divX + this.border, 1 ,this.mapDiv * this.divY + this.border);
+			this.scene.rotate(Math.PI/2, -1,0,0);
+			this.case.display();
+
+		this.scene.popMatrix();
+		this.scene.pushMatrix();
+
+			appearence.apply();
+			this.scene.translate(this.x, 0.01, this.y);
+			this.scene.scale(this.mapDiv * this.divX + this.border,1,this.mapDiv * this.divY + this.border);
+			this.scene.rotate(Math.PI/2, 1,0,0);
+			this.case.display();
+
+		this.scene.popMatrix();
+
+		//elems 
+		if(this.matrixBoard != null)
+		{
+			for(var i = 0; i < this.divY; i++)
+			{
+				for(var j = 0; j < this.divX; j++)
+				{
+					if(this.matrixBoard[i][j] != null)
+					{
+						this.scene.pushMatrix();
+							this.scene.translate(this.x - 0.9 - this.inc, 0, this.y - 3.65 - this.inc);
+							this.matrixBoard[i][j].display();
+						this.scene.popMatrix();
+					}
+				}
+			}
+		}
+ 	}
 };
 
 MyCase.prototype.displayBoardTiles=function()
@@ -110,7 +182,7 @@ MyCase.prototype.createBoardPicking=function()
 
         for(var j = 0; j < this.divX; j++)
         {
-            this.matrixPic[i][j] = new MyTile(this.scene, this.tileid, this.NdiV, this.mapInc, j, i, this.x - 1.82, this.y-4.54) ;
+            this.matrixPic[i][j] = new MyTile(this.scene, this.tileid, this.NumdiV, this.mapInc, j, i, this.x - 1.82, this.y-4.54) ;
             this.tileid++;
         }
     }
@@ -118,7 +190,7 @@ MyCase.prototype.createBoardPicking=function()
 
 MyCase.prototype.resetMatrix=function()
 {
-	this.matrixBoard = [];
+	this.matrixBoard = null;
 }
 
 MyCase.prototype.updateTextureCoords=function(s, t) {};

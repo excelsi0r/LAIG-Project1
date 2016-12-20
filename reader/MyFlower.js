@@ -68,7 +68,7 @@ MyFlower.prototype.display = function(appearence)
 				//transformations
 				this.scene.translate(this.mapInc,0.2,this.mapInc); //map translate
 
-				this.scene.rotate(Math.PI/2, 0,1,0);
+				this.scene.rotate((Math.PI * 2 / this.numpedals) / 2, 0,1,0);
 				this.scene.rotate(tempAngInc*i, 0,1,0);
 
 				this.scene.scale(0.5,0.15,1); //scale to fit

@@ -29,4 +29,20 @@ MyBoard.prototype.handleReply=function(response, requestString)
     {
         this.createBoardElems(response);
     }
+    else if(requestString == "p1")
+    {
+        this.p1case.createCaseElems(response);
+    }
+    else if(requestString == "p2")
+    {
+        this.p2case.createCaseElems(response);
+    }
+    else if(requestString == "state")
+    {
+        this.changeState(response);
+    }
+    else if(requestString == "listPlays")
+    {
+        this.updatePlaysList(response);
+    }
 };

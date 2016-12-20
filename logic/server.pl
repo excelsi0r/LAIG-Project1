@@ -105,7 +105,30 @@ print_header_line(_).
 % Require your Prolog Files here
 
 parse_input(new, Board):-	initialize(_), board(Board).
+parse_input(p1, P1):-	case_p1(P1).
+parse_input(p2, P2):-	case_p2(P2).
+parse_input(state, State):-	state(State).
+parse_input(listPlays, List):-	get_list_of_next_plays(List).
 parse_input(quit, goodbye).
+
+get_list_of_next_plays(L):-	
+
+		state(State),
+		eval_next_list(State,L).
+		
+eval_next_list(State,List):-	
+
+		State == 'p1',
+		get_player1(X, Y, _),						
+		get_list_of_plays(X,Y, List).
+	
+eval_next_list(State,List):-	
+
+		State == 'p2',
+		get_player2(X, Y, _),						
+		get_list_of_plays(X,Y, List).
+		
+
 
 test(_,[],N) :- N =< 0.
 test(A,[A|Bs],N) :- N1 is N-1, test(A,Bs,N1).
