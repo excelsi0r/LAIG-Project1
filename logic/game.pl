@@ -24,7 +24,7 @@ start(_):-
 %============================================================================
 %start game of type pp, greedy, easy, cc and error.
 start_game(TYPE):- 
-					TYPE == 'pp',					
+					TYPE == 'pp',	
 					initialize(_),
 					display_game(_),
 					cycle_pp(_).

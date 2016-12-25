@@ -12,7 +12,9 @@ function MyFlower(scene, color, div, mapLength)
 	this.bar = new MyCylinder(this.scene, 0.05,0.05,0.199,10,10);
 	this.pedal = new MySphere(this.scene, 0.2, 10, 10);
 
+	this.colorCode;
 	this.color = this.createColor(color);
+
 
 	this.transMatrix = mat4.create();
 }
@@ -85,28 +87,42 @@ MyFlower.prototype.display = function(appearence)
 
 MyFlower.prototype.createColor = function(color)
 {	
+	/*int_elem(Cell):- Cell == 1, print('w').
+	print_elem(Cell):- Cell == 2, print('y').
+	print_elem(Cell):- Cell == 3, print('g').
+	print_elem(Cell):- Cell == 4, print('b').
+	print_elem(Cell):- Cell == 5, print('p').
+	print_elem(Cell):- Cell == 6, print('r').
+	*/
+
 	if(color == "yellow")
 	{
+		this.colorCode = 2;
 		return this.createAppearence(this.scene, 102,102,0,1);		
 	}
 	else if(color == "red")
 	{
+		this.colorCode = 6;
 		return this.createAppearence(this.scene, 80,10,10,1);
 	}
 	else if(color == "purple")
 	{
+		this.colorCode = 5;
 		return this.createAppearence(this.scene, 51,0,102,1);
 	}
 	else if(color == "white")
 	{
+		this.colorCode = 1;
 		return this.createAppearence(this.scene, 150,150,150,1);
 	}
 	else if(color == "blue")
-	{
+	{	
+		this.colorCode = 4;
 		return this.createAppearence(this.scene, 0,51,102,1);
 	}
 	else if(color == "green")
 	{
+		this.colorCode = 3;
 		return this.createAppearence(this.scene, 0,50,0,1);
 	}
 

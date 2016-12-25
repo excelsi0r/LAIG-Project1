@@ -730,9 +730,32 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 
 		if(exists)
 		{
+			
+			var xS = this.selectedFlower[0];
+			var yS = this.selectedFlower[1];
+
 			//PLAY
+			if(this.state == "p1")
+			{
+				var color = this.p1case.matrixBoard[yS][xS].colorCode;
+				var request = "[" + x + "-" + y + "-" + color + "]";
+				this.makeRequest(request);
+				this.p1case.matrixBoard[yS][xS] = null;
+			}
+			else if(this.state == "p2")
+			{
+				var color = this.p2case.matrixBoard[yS][xS].colorCode;
+				var request = "[" + x + "-" + y + "-" + color + "]";			
+				this.makeRequest(request);				
+				this.p2case.matrixBoard[yS][xS] = null;
+			}
+
+			//Resests		
+			this.resetBlink();
+			this.p1case.selectFlowerShader(-1,-1);			
+			this.p2case.selectFlowerShader(-1,-1);
 			this.selectedFlower = null;
-			console.log("play");
+			
 		}
 
 		

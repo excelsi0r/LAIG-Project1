@@ -109,8 +109,10 @@ parse_input(p1, P1):-	case_p1(P1).
 parse_input(p2, P2):-	case_p2(P2).
 parse_input(state, State):-	state(State).
 parse_input(listPlays, List):-	get_list_of_next_plays(List).
+parse_input([X-Y-Color], 'Ok'):-	state(State), eval_and_play(State, X, Y, Color).
 parse_input(quit, goodbye).
 
+%====================================================
 get_list_of_next_plays(L):-	
 
 		state(State),
@@ -127,6 +129,19 @@ eval_next_list(State,List):-
 		State == 'p2',
 		get_player2(X, Y, _),						
 		get_list_of_plays(X,Y, List).
+%====================================================
+eval_and_play(State, X, Y, Color):-	
+
+		State == 'p1',
+		play_p1(X,Y, Color).
+		
+eval_and_play(State, X, Y, Color):-	
+
+		State == 'p2',
+		play_p2(X,Y, Color).
+		
+eval_and_play(_,_,_,_).
+		
 		
 
 

@@ -24,7 +24,7 @@ reset_players(_):-
 					asserta(case_p1(DEFCASEPLAYER)),
 					asserta(case_p2(DEFCASEPLAYER)),
 					score_player_default(DEFSCOREPLAYER),
-					asserta(score_p1(60)),
+					asserta(score_p1(DEFSCOREPLAYER)),
 					asserta(score_p2(DEFSCOREPLAYER)).
 
 
