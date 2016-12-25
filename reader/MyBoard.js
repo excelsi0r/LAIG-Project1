@@ -470,6 +470,199 @@ MyBoard.prototype.resetBoard=function()
 		this.state = "menu";
 		this.p2case.selectFlowerShader(-1,-1);
 		this.p1case.selectFlowerShader(-1,-1);
+		this.resetBlink();
+};
+
+MyBoard.prototype.resetBlink=function()
+{
+    this.chess.setUniformsValues({s11: false});
+    this.chess.setUniformsValues({s12: false});
+    this.chess.setUniformsValues({s13: false});
+    this.chess.setUniformsValues({s14: false});
+    this.chess.setUniformsValues({s15: false});
+    this.chess.setUniformsValues({s16: false});
+    this.chess.setUniformsValues({s17: false});
+    this.chess.setUniformsValues({s18: false});
+    this.chess.setUniformsValues({s19: false});
+
+    this.chess.setUniformsValues({s21: false});
+    this.chess.setUniformsValues({s22: false});
+    this.chess.setUniformsValues({s23: false});
+    this.chess.setUniformsValues({s24: false});
+    this.chess.setUniformsValues({s25: false});
+    this.chess.setUniformsValues({s26: false});
+    this.chess.setUniformsValues({s27: false});
+    this.chess.setUniformsValues({s28: false});
+    this.chess.setUniformsValues({s29: false});
+  
+    this.chess.setUniformsValues({s31: false});
+    this.chess.setUniformsValues({s32: false});
+    this.chess.setUniformsValues({s33: false});
+    this.chess.setUniformsValues({s34: false});
+    this.chess.setUniformsValues({s35: false});
+    this.chess.setUniformsValues({s36: false});
+    this.chess.setUniformsValues({s37: false});
+    this.chess.setUniformsValues({s38: false});
+    this.chess.setUniformsValues({s39: false});
+
+    this.chess.setUniformsValues({s41: false});
+    this.chess.setUniformsValues({s42: false});
+    this.chess.setUniformsValues({s43: false});
+    this.chess.setUniformsValues({s44: false});
+    this.chess.setUniformsValues({s45: false});
+    this.chess.setUniformsValues({s46: false});
+    this.chess.setUniformsValues({s47: false});
+    this.chess.setUniformsValues({s48: false});
+    this.chess.setUniformsValues({s49: false});
+
+    this.chess.setUniformsValues({s51: false});
+    this.chess.setUniformsValues({s52: false});
+    this.chess.setUniformsValues({s53: false});
+    this.chess.setUniformsValues({s54: false});
+    this.chess.setUniformsValues({s55: false});
+    this.chess.setUniformsValues({s56: false});
+    this.chess.setUniformsValues({s57: false});
+    this.chess.setUniformsValues({s58: false});
+    this.chess.setUniformsValues({s59: false});
+
+    this.chess.setUniformsValues({s61: false});
+    this.chess.setUniformsValues({s62: false});
+    this.chess.setUniformsValues({s63: false});
+    this.chess.setUniformsValues({s64: false});
+    this.chess.setUniformsValues({s65: false});
+    this.chess.setUniformsValues({s66: false});
+    this.chess.setUniformsValues({s67: false});
+    this.chess.setUniformsValues({s68: false});
+    this.chess.setUniformsValues({s69: false});
+
+    this.chess.setUniformsValues({s71: false});
+    this.chess.setUniformsValues({s72: false});
+    this.chess.setUniformsValues({s73: false});
+    this.chess.setUniformsValues({s74: false});
+    this.chess.setUniformsValues({s75: false});
+    this.chess.setUniformsValues({s76: false});
+    this.chess.setUniformsValues({s77: false});
+    this.chess.setUniformsValues({s78: false});
+    this.chess.setUniformsValues({s79: false});
+
+    this.chess.setUniformsValues({s81: false});
+    this.chess.setUniformsValues({s82: false});
+    this.chess.setUniformsValues({s83: false});
+    this.chess.setUniformsValues({s84: false});
+    this.chess.setUniformsValues({s85: false});
+    this.chess.setUniformsValues({s86: false});
+    this.chess.setUniformsValues({s87: false});
+    this.chess.setUniformsValues({s88: false});
+    this.chess.setUniformsValues({s89: false});
+
+    this.chess.setUniformsValues({s91: false});
+    this.chess.setUniformsValues({s92: false});
+    this.chess.setUniformsValues({s93: false});
+    this.chess.setUniformsValues({s94: false});
+    this.chess.setUniformsValues({s95: false});
+    this.chess.setUniformsValues({s96: false});
+    this.chess.setUniformsValues({s97: false});
+    this.chess.setUniformsValues({s98: false});
+    this.chess.setUniformsValues({s99: false});		
+};
+
+MyBoard.prototype.setBlink=function(listOfNextPlays)
+{
+	for(var i = 0; i < listOfNextPlays.length; i++)
+	{
+		var X = listOfNextPlays[i][0] - 1;
+		var Y = 9 -listOfNextPlays[i][1]  + 2;
+		
+		if(Y == 1 && X == 1)	this.chess.setUniformsValues({s11: true});
+		else if(Y == 1 && X == 2)	this.chess.setUniformsValues({s12: true});
+		else if(Y == 1 && X == 3)	this.chess.setUniformsValues({s13: true});
+		else if(Y == 1 && X == 4)	this.chess.setUniformsValues({s14: true});
+		else if(Y == 1 && X == 5)	this.chess.setUniformsValues({s15: true});
+		else if(Y == 1 && X == 6)	this.chess.setUniformsValues({s16: true});
+		else if(Y == 1 && X == 7)	this.chess.setUniformsValues({s17: true});
+		else if(Y == 1 && X == 8)	this.chess.setUniformsValues({s18: true});
+		else if(Y == 1 && X == 9)	this.chess.setUniformsValues({s19: true});
+
+		else if(Y == 2 && X == 1)	this.chess.setUniformsValues({s21: true});
+		else if(Y == 2 && X == 2)	this.chess.setUniformsValues({s22: true});
+		else if(Y == 2 && X == 3)	this.chess.setUniformsValues({s23: true});
+		else if(Y == 2 && X == 4)	this.chess.setUniformsValues({s24: true});
+		else if(Y == 2 && X == 5)	this.chess.setUniformsValues({s25: true});
+		else if(Y == 2 && X == 6)	this.chess.setUniformsValues({s26: true});
+		else if(Y == 2 && X == 7)	this.chess.setUniformsValues({s27: true});
+		else if(Y == 2 && X == 8)	this.chess.setUniformsValues({s28: true});
+		else if(Y == 2 && X == 9)	this.chess.setUniformsValues({s29: true});
+
+		else if(Y == 3 && X == 1)	this.chess.setUniformsValues({s31: true});
+		else if(Y == 3 && X == 2)	this.chess.setUniformsValues({s32: true});
+		else if(Y == 3 && X == 3)	this.chess.setUniformsValues({s33: true});
+		else if(Y == 3 && X == 4)	this.chess.setUniformsValues({s34: true});
+		else if(Y == 3 && X == 5)	this.chess.setUniformsValues({s35: true});
+		else if(Y == 3 && X == 6)	this.chess.setUniformsValues({s36: true});
+		else if(Y == 3 && X == 7)	this.chess.setUniformsValues({s37: true});
+		else if(Y == 3 && X == 8)	this.chess.setUniformsValues({s38: true});
+		else if(Y == 3 && X == 9)	this.chess.setUniformsValues({s39: true});
+
+		else if(Y == 4 && X == 1)	this.chess.setUniformsValues({s41: true});
+		else if(Y == 4 && X == 2)	this.chess.setUniformsValues({s42: true});
+		else if(Y == 4 && X == 3)	this.chess.setUniformsValues({s43: true});
+		else if(Y == 4 && X == 4)	this.chess.setUniformsValues({s44: true});
+		else if(Y == 4 && X == 5)	this.chess.setUniformsValues({s45: true});
+		else if(Y == 4 && X == 6)	this.chess.setUniformsValues({s46: true});
+		else if(Y == 4 && X == 7)	this.chess.setUniformsValues({s47: true});
+		else if(Y == 4 && X == 8)	this.chess.setUniformsValues({s48: true});
+		else if(Y == 4 && X == 9)	this.chess.setUniformsValues({s49: true});
+
+		else if(Y == 5 && X == 1)	this.chess.setUniformsValues({s51: true});
+		else if(Y == 5 && X == 2)	this.chess.setUniformsValues({s52: true});
+		else if(Y == 5 && X == 3)	this.chess.setUniformsValues({s53: true});
+		else if(Y == 5 && X == 4)	this.chess.setUniformsValues({s54: true});
+		else if(Y == 5 && X == 5)	this.chess.setUniformsValues({s55: true});
+		else if(Y == 5 && X == 6)	this.chess.setUniformsValues({s56: true});
+		else if(Y == 5 && X == 7)	this.chess.setUniformsValues({s57: true});
+		else if(Y == 5 && X == 8)	this.chess.setUniformsValues({s58: true});
+		else if(Y == 5 && X == 9)	this.chess.setUniformsValues({s59: true});
+
+		else if(Y == 6 && X == 1)	this.chess.setUniformsValues({s61: true});
+		else if(Y == 6 && X == 2)	this.chess.setUniformsValues({s62: true});
+		else if(Y == 6 && X == 3)	this.chess.setUniformsValues({s63: true});
+		else if(Y == 6 && X == 4)	this.chess.setUniformsValues({s64: true});
+		else if(Y == 6 && X == 5)	this.chess.setUniformsValues({s65: true});
+		else if(Y == 6 && X == 6)	this.chess.setUniformsValues({s66: true});
+		else if(Y == 6 && X == 7)	this.chess.setUniformsValues({s67: true});
+		else if(Y == 6 && X == 8)	this.chess.setUniformsValues({s68: true});
+		else if(Y == 6 && X == 9)	this.chess.setUniformsValues({s69: true});
+
+		else if(Y == 7 && X == 1)	this.chess.setUniformsValues({s71: true});
+		else if(Y == 7 && X == 2)	this.chess.setUniformsValues({s72: true});
+		else if(Y == 7 && X == 3)	this.chess.setUniformsValues({s73: true});
+		else if(Y == 7 && X == 4)	this.chess.setUniformsValues({s74: true});
+		else if(Y == 7 && X == 5)	this.chess.setUniformsValues({s75: true});
+		else if(Y == 7 && X == 6)	this.chess.setUniformsValues({s76: true});
+		else if(Y == 7 && X == 7)	this.chess.setUniformsValues({s77: true});
+		else if(Y == 7 && X == 8)	this.chess.setUniformsValues({s78: true});
+		else if(Y == 7 && X == 9)	this.chess.setUniformsValues({s79: true});
+
+		else if(Y == 8 && X == 1)	this.chess.setUniformsValues({s81: true});
+		else if(Y == 8 && X == 2)	this.chess.setUniformsValues({s82: true});
+		else if(Y == 8 && X == 3)	this.chess.setUniformsValues({s83: true});
+		else if(Y == 8 && X == 4)	this.chess.setUniformsValues({s84: true});
+		else if(Y == 8 && X == 5)	this.chess.setUniformsValues({s85: true});
+		else if(Y == 8 && X == 6)	this.chess.setUniformsValues({s86: true});
+		else if(Y == 8 && X == 7)	this.chess.setUniformsValues({s87: true});
+		else if(Y == 8 && X == 8)	this.chess.setUniformsValues({s88: true});
+		else if(Y == 8 && X == 9)	this.chess.setUniformsValues({s89: true});
+
+		else if(Y == 9 && X == 1)	this.chess.setUniformsValues({s91: true});
+		else if(Y == 9 && X == 2)	this.chess.setUniformsValues({s92: true});
+		else if(Y == 9 && X == 3)	this.chess.setUniformsValues({s93: true});
+		else if(Y == 9 && X == 4)	this.chess.setUniformsValues({s94: true});
+		else if(Y == 9 && X == 5)	this.chess.setUniformsValues({s95: true});
+		else if(Y == 9 && X == 6)	this.chess.setUniformsValues({s96: true});
+		else if(Y == 9 && X == 7)	this.chess.setUniformsValues({s97: true});
+		else if(Y == 9 && X == 8)	this.chess.setUniformsValues({s98: true});
+		else if(Y == 9 && X == 9)	this.chess.setUniformsValues({s99: true});
+	}
 };
 
 MyBoard.prototype.playExists=function(x, y)
@@ -506,6 +699,8 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 			var yshader = this.p1case.divY - y -1;
 			this.p1case.selectFlowerShader(x,yshader);
 			this.p2case.selectFlowerShader(-1,-1);
+			this.resetBlink();
+			this.setBlink(this.listOfNextPlays);
 		}
 
 	}
@@ -522,6 +717,8 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 			var yshader = this.p1case.divY - y -1;
 			this.p1case.selectFlowerShader(-1,-1);
 			this.p2case.selectFlowerShader(x,yshader);
+			this.resetBlink();
+			this.setBlink(this.listOfNextPlays);
 		}
 	}
 	else if(id < 100 && this.selectedFlower != null)
