@@ -1,4 +1,4 @@
-function MyCase(scene, divX, divY, NumdiV, MapLength, textdiv, texture, texture2, tileid, x, y)
+function MyCase(scene, divX, divY, NumdiV, MapLength, textdiv, texture, texture2, tileid, x, y,animdur,sr,sg,sb,sa)
 {
     this.scene = scene;
 
@@ -15,10 +15,19 @@ function MyCase(scene, divX, divY, NumdiV, MapLength, textdiv, texture, texture2
 	this.texture = texture;
 	this.texture2 = texture2;
 	this.border = 0.05;
+	this.animdur = animdur;
+	this.sr = sr;
+	this.sg = sg;
+	this.sb = sb;
+	this.sa = sa;
+	this.su = -1;
+	this.sv = -1;
+
 
 	//case and shader
 	this.case = new MyPlane(this.scene, 1, 1, this.divX * this.textureDiv, this.divY * this.textureDiv);	
-    this.chess = new CGFshader(this.scene.gl, "../shaders/normal.vert", "../shaders/normal.frag");
+    this.chess = new CGFshader(this.scene.gl, "../shaders/round.vert", "../shaders/round.frag");
+    this.shaderInit();
 
 	//matrixes
 	this.tileid = tileid;
@@ -27,6 +36,23 @@ function MyCase(scene, divX, divY, NumdiV, MapLength, textdiv, texture, texture2
 	this.createBoardPicking();
 
 }
+
+MyCase.prototype.shaderInit=function()
+{
+	this.chess.setUniformsValues({divX: this.divX});
+	this.chess.setUniformsValues({divY: this.divY});
+
+    this.chess.setUniformsValues({su: this.su});
+    this.chess.setUniformsValues({sv: this.sv});
+
+    this.chess.setUniformsValues({parts: this.textureDiv});
+    this.chess.setUniformsValues({animdur: this.animdur});
+ 
+    this.chess.setUniformsValues({sr: this.sr});
+    this.chess.setUniformsValues({sg: this.sg});
+    this.chess.setUniformsValues({sb: this.sb});
+    this.chess.setUniformsValues({sa: this.sa});
+};
 
 MyCase.prototype.constructor=MyCase;
 
@@ -191,6 +217,19 @@ MyCase.prototype.createBoardPicking=function()
 MyCase.prototype.resetMatrix=function()
 {
 	this.matrixBoard = null;
+}
+
+MyCase.prototype.selectFlowerShader=function(x,y)
+{
+	this.su = x;
+	this.sv = y;
+    this.chess.setUniformsValues({su: this.su});
+    this.chess.setUniformsValues({sv: this.sv});
+}
+
+MyCase.prototype.updateCase=function(update)
+{
+	this.chess.setUniformsValues({update: update});
 }
 
 MyCase.prototype.updateTextureCoords=function(s, t) {};

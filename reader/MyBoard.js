@@ -2,10 +2,9 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps)
 {
     this.scene = scene;
 
-    this.div = div;
-     
-    this.su = 2;
-    this.sv = 6;  
+	this.div = div;
+    this.divX = div;
+    this.divY = div;
  
     this.sr = sr;
     this.sg = sg;
@@ -39,15 +38,15 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps)
 
     //Board and shader
     this.board = new MyPlane(this.scene, 1, 1, this.div * this.parts, this.div * this.parts);//board
-    this.chess = new CGFshader(this.scene.gl, "../shaders/round.vert", "../shaders/round.frag");
+    this.chess = new CGFshader(this.scene.gl, "../shaders/round2.vert", "../shaders/round2.frag");
     this.shaderInit();
     this.createBoardPicking();
 
     //create case1  
-    this.p1case = new MyCase(this.scene, 3,9, this.div, this.MapInc,this.parts,this.auxtexture, this.texture2, this.tileidp1, -3, 5);    
+    this.p1case = new MyCase(this.scene, 3,9, this.div, this.MapInc,this.parts,this.auxtexture, this.texture2, this.tileidp1, -3, 5, this.animdur, this.sr, this.sg, this.sb, this.sa);    
 
     //create case2    
-    this.p2case = new MyCase(this.scene, 3,9, this.div, this.MapInc,this.parts,this.auxtexture, this.texture2, this.tileidp2, 13, 5);    
+    this.p2case = new MyCase(this.scene, 3,9, this.div, this.MapInc,this.parts,this.auxtexture, this.texture2, this.tileidp2, 13, 5, this.animdur, this.sr, this.sg, this.sb, this.sa);    
 };
 
 MyBoard.prototype = Object.create(CGFobject.prototype);
@@ -55,7 +54,9 @@ MyBoard.prototype.constructor=MyBoard;
 
 MyBoard.prototype.shaderInit=function()
 {
-	this.chess.setUniformsValues({div: this.div});
+	this.chess.setUniformsValues({divX: this.div});
+	this.chess.setUniformsValues({divY: this.div});
+	
     this.chess.setUniformsValues({su: this.su});
     this.chess.setUniformsValues({sv: this.sv});
 
@@ -66,6 +67,98 @@ MyBoard.prototype.shaderInit=function()
     this.chess.setUniformsValues({sg: this.sg});
     this.chess.setUniformsValues({sb: this.sb});
     this.chess.setUniformsValues({sa: this.sa});
+
+    this.chess.setUniformsValues({s11: false});
+    this.chess.setUniformsValues({s12: false});
+    this.chess.setUniformsValues({s13: false});
+    this.chess.setUniformsValues({s14: false});
+    this.chess.setUniformsValues({s15: false});
+    this.chess.setUniformsValues({s16: false});
+    this.chess.setUniformsValues({s17: false});
+    this.chess.setUniformsValues({s18: false});
+    this.chess.setUniformsValues({s19: false});
+
+    this.chess.setUniformsValues({s21: false});
+    this.chess.setUniformsValues({s22: false});
+    this.chess.setUniformsValues({s23: false});
+    this.chess.setUniformsValues({s24: false});
+    this.chess.setUniformsValues({s25: false});
+    this.chess.setUniformsValues({s26: false});
+    this.chess.setUniformsValues({s27: false});
+    this.chess.setUniformsValues({s28: false});
+    this.chess.setUniformsValues({s29: false});
+  
+    this.chess.setUniformsValues({s31: false});
+    this.chess.setUniformsValues({s32: false});
+    this.chess.setUniformsValues({s33: false});
+    this.chess.setUniformsValues({s34: false});
+    this.chess.setUniformsValues({s35: false});
+    this.chess.setUniformsValues({s36: false});
+    this.chess.setUniformsValues({s37: false});
+    this.chess.setUniformsValues({s38: false});
+    this.chess.setUniformsValues({s39: false});
+
+    this.chess.setUniformsValues({s41: false});
+    this.chess.setUniformsValues({s42: false});
+    this.chess.setUniformsValues({s43: false});
+    this.chess.setUniformsValues({s44: false});
+    this.chess.setUniformsValues({s45: false});
+    this.chess.setUniformsValues({s46: false});
+    this.chess.setUniformsValues({s47: false});
+    this.chess.setUniformsValues({s48: false});
+    this.chess.setUniformsValues({s49: false});
+
+    this.chess.setUniformsValues({s51: false});
+    this.chess.setUniformsValues({s52: false});
+    this.chess.setUniformsValues({s53: false});
+    this.chess.setUniformsValues({s54: false});
+    this.chess.setUniformsValues({s55: false});
+    this.chess.setUniformsValues({s56: false});
+    this.chess.setUniformsValues({s57: false});
+    this.chess.setUniformsValues({s58: false});
+    this.chess.setUniformsValues({s59: false});
+
+    this.chess.setUniformsValues({s61: false});
+    this.chess.setUniformsValues({s62: false});
+    this.chess.setUniformsValues({s63: false});
+    this.chess.setUniformsValues({s64: false});
+    this.chess.setUniformsValues({s65: false});
+    this.chess.setUniformsValues({s66: false});
+    this.chess.setUniformsValues({s67: false});
+    this.chess.setUniformsValues({s68: false});
+    this.chess.setUniformsValues({s69: false});
+
+    this.chess.setUniformsValues({s71: false});
+    this.chess.setUniformsValues({s72: false});
+    this.chess.setUniformsValues({s73: false});
+    this.chess.setUniformsValues({s74: false});
+    this.chess.setUniformsValues({s75: false});
+    this.chess.setUniformsValues({s76: false});
+    this.chess.setUniformsValues({s77: false});
+    this.chess.setUniformsValues({s78: false});
+    this.chess.setUniformsValues({s79: false});
+
+    this.chess.setUniformsValues({s81: false});
+    this.chess.setUniformsValues({s82: false});
+    this.chess.setUniformsValues({s83: false});
+    this.chess.setUniformsValues({s84: false});
+    this.chess.setUniformsValues({s85: false});
+    this.chess.setUniformsValues({s86: false});
+    this.chess.setUniformsValues({s87: false});
+    this.chess.setUniformsValues({s88: false});
+    this.chess.setUniformsValues({s89: false});
+
+    this.chess.setUniformsValues({s91: false});
+    this.chess.setUniformsValues({s92: false});
+    this.chess.setUniformsValues({s93: false});
+    this.chess.setUniformsValues({s94: false});
+    this.chess.setUniformsValues({s95: false});
+    this.chess.setUniformsValues({s96: false});
+    this.chess.setUniformsValues({s97: false});
+    this.chess.setUniformsValues({s98: false});
+    this.chess.setUniformsValues({s99: false});
+    
+
 };
 
 MyBoard.prototype.display=function(material)
@@ -80,7 +173,7 @@ MyBoard.prototype.display=function(material)
     	//display internal board
 		this.displayInternalBoard(material);    
 
-		//display player 1 case
+		//display player 4 case
 		this.p1case.display(material);
 
 		//display player 2 case
@@ -107,6 +200,8 @@ MyBoard.prototype.updateBoard=function(currTime)
     {
         this.currTime = currTime;
         this.chess.setUniformsValues({update: this.update});
+        this.p1case.updateCase(this.update);
+        this.p2case.updateCase(this.update);
         this.update++; this.firstUpdate = 1;
     }
     else
@@ -126,6 +221,8 @@ MyBoard.prototype.updateBoard=function(currTime)
         }
 
         this.chess.setUniformsValues({update: this.update});
+        this.p1case.updateCase(this.update);
+        this.p2case.updateCase(this.update);
 
     }
 
@@ -367,10 +464,12 @@ MyBoard.prototype.resetMatrix=function()
 
 MyBoard.prototype.resetBoard=function()
 {
-			this.resetMatrix();
-			this.p1case.resetMatrix();		
-			this.p2case.resetMatrix();
-			this.state = "menu";
+		this.resetMatrix();
+		this.p1case.resetMatrix();		
+		this.p2case.resetMatrix();
+		this.state = "menu";
+		this.p2case.selectFlowerShader(-1,-1);
+		this.p1case.selectFlowerShader(-1,-1);
 };
 
 MyBoard.prototype.playExists=function(x, y)
@@ -394,7 +493,7 @@ MyBoard.prototype.playExists=function(x, y)
 
 MyBoard.prototype.hadleObjectPicked=function(id)
 {
-	if(id > 100 && this.state == "p1")
+	if(id > 100 && id < 200 && this.state == "p1")
 	{	
 		var x = (id - 100 - 1) % (this.p1case.divX);
 		var y = Math.floor((id - 100 - 1) / (this.p1case.divX));
@@ -404,6 +503,9 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 		if(flower != null)
 		{
 			this.selectedFlower = [x,y];
+			var yshader = this.p1case.divY - y -1;
+			this.p1case.selectFlowerShader(x,yshader);
+			this.p2case.selectFlowerShader(-1,-1);
 		}
 
 	}
@@ -416,7 +518,10 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 
 		if(flower != null)
 		{
-			this.selectedFlower = [x,y];
+			this.selectedFlower = [x,y];		
+			var yshader = this.p1case.divY - y -1;
+			this.p1case.selectFlowerShader(-1,-1);
+			this.p2case.selectFlowerShader(x,yshader);
 		}
 	}
 	else if(id < 100 && this.selectedFlower != null)
