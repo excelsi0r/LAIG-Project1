@@ -284,6 +284,58 @@ MyBoard.prototype.updatePlaysList=function(listPlays)
 	}
 };
 
+MyBoard.prototype.updateP1Alien=function(position)
+{
+	var r = /\d+/g;
+	var list = [];
+	var m;
+
+	while ((m = r.exec(position)) != null) 
+	{
+		list.push(m[0]);
+	}
+
+	for(var i = 0; i < this.div; i++)
+	{
+	
+		for(var j = 0; j < this.div; j++)
+		{
+			if(this.matrixBoard[i][j] instanceof MyAlien)
+			{
+				if(this.matrixBoard[i][j].colorString == "black")
+					this.matrixBoard[i][j].translate(list[0]-1, list[1]-1);
+			}
+		}
+	}
+
+	
+}
+
+MyBoard.prototype.updateP2Alien=function(position)
+{
+	var r = /\d+/g;
+	var list = [];
+	var m;
+
+	while ((m = r.exec(position)) != null) 
+	{
+		list.push(m[0]);
+	}
+
+	for(var i = 0; i < this.div; i++)
+	{
+	
+		for(var j = 0; j < this.div; j++)
+		{
+			if(this.matrixBoard[i][j] instanceof MyAlien)
+			{
+				if(this.matrixBoard[i][j].colorString == "white")
+					this.matrixBoard[i][j].translate(list[0]-1, list[1]-1);
+			}
+		}
+	}
+}
+
 
 MyBoard.prototype.createBoardElems=function(board)
 {
@@ -353,13 +405,13 @@ MyBoard.prototype.createBoardElems=function(board)
 				flower.translate(j, i);
 				this.matrixBoard[i][j] = flower;
 			}
-			else if(elem >= 110 && elem <= 149) //Red Flower
+			else if(elem >= 110 && elem <= 149) //Alien Black P1
 			{
 				var alien = new MyAlien(this.scene, "black", this.div, this.MapInc);  
 				alien.translate(j, i);
 				this.matrixBoard[i][j] = alien;
 			}
-			else if(elem >= 210 && elem <= 249) //Red Flower
+			else if(elem >= 210 && elem <= 249) //Alien White P2
 			{
 				var alien = new MyAlien(this.scene, "white", this.div, this.MapInc);  
 				alien.translate(j, i);
@@ -721,8 +773,9 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 			this.setBlink(this.listOfNextPlays);
 		}
 	}
-	else if(id < 100 && this.selectedFlower != null)
+	else if(id < 100 && this.selectedFlower != null && this.state != "end")
 	{
+		//check if xy is possible
 		var x = (id - 1) % (this.div - 2) + 2;
 		var y = Math.floor((id - 1) / (this.div - 2)) + 2;
 
@@ -730,24 +783,42 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 
 		if(exists)
 		{
-			
+			//selected flower xS and Ys
 			var xS = this.selectedFlower[0];
 			var yS = this.selectedFlower[1];
 
 			//PLAY
 			if(this.state == "p1")
 			{
+				//color and request
 				var color = this.p1case.matrixBoard[yS][xS].colorCode;
 				var request = "[" + x + "-" + y + "-" + color + "]";
 				this.makeRequest(request);
+
+				//move flower
+				var flower = this.p1case.matrixBoard[yS][xS];
+				flower.translate(x-1, y-1);
+				this.matrixBoard[y-1][x-1] = flower;
+
+				//kill flower from case
 				this.p1case.matrixBoard[yS][xS] = null;
+
+				//update alien, state and list of Plays
+				this.prepareNextAndOrPlay();
 			}
 			else if(this.state == "p2")
 			{
 				var color = this.p2case.matrixBoard[yS][xS].colorCode;
 				var request = "[" + x + "-" + y + "-" + color + "]";			
-				this.makeRequest(request);				
+				this.makeRequest(request);	
+
+				var flower = this.p2case.matrixBoard[yS][xS];
+				flower.translate(x-1, y-1);
+				this.matrixBoard[y-1][x-1] = flower;
+					
 				this.p2case.matrixBoard[yS][xS] = null;
+
+				this.prepareNextAndOrPlay();
 			}
 
 			//Resests		
@@ -761,4 +832,31 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 		
 	}
 
+};
+
+MyBoard.prototype.prepareNextAndOrPlay=function()
+{
+	if(this.state == "p1")
+	{
+		if(this.scene.GameMode == 1)
+		{
+			this.makeRequest("listPlays");
+			this.makeRequest("state");
+			this.makeRequest("p1alien");
+		}
+		else if(this.scene.GameMode == 2)
+		{
+
+		}
+		else if(this.scene.GameMode == 3)
+		{
+
+		}
+	}
+	else if(this.state == "p2")
+	{
+			this.makeRequest("listPlays");
+			this.makeRequest("state");
+			this.makeRequest("p2alien");
+	}
 };

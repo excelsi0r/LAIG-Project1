@@ -100,6 +100,7 @@ get_list_of_plays_rigth(X, Y, List):-
 										get_list_inc(X, Y, -1, 0, Listtemp, List1), Listtemp = [],
 										get_list_inc(X, Y, -1, -1, Listtemp, List2),Listtemp = [],
 										get_list_inc(X, Y, -1, 1, Listtemp, List3),
+									
 										
 										append(List1, List2, Listtemp1),
 										append(Listtemp1, List3, List).	
@@ -118,6 +119,11 @@ get_list_inc(X, Y, Xinc, Yinc, Listtemp, List):-
 										
 %while getting the list of plays, the process_new_coords will be invoked to process valid coords. 
 %case if finds a Tree, is not empty or if is out of the board limits.
+process_new_coords(_, _, _, _, Val, _, List):-	
+																	Val == 'null',
+																	List = [].
+																	
+																		
 process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):-
 																	NewX > 1, NewX < 11,
 																	NewY > 1, NewY < 11,
@@ -134,7 +140,7 @@ process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):-
 																	get_list_inc(NewX, NewY, Xinc, Yinc, Listtemp, List).
 															
 process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):- 	Val == 7,
-																	List = [],
+																	List = Listtemp,
 																	NewX = NewX, NewY = NewY, 
 																	Xinc = Xinc, Yinc = Yinc, 
 																	Listtemp = Listtemp.

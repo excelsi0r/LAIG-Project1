@@ -45,4 +45,12 @@ MyBoard.prototype.handleReply=function(response, requestString)
     {
         this.updatePlaysList(response);
     }
+    else if(requestString == "p1alien")
+    {
+        this.updateP1Alien(response);
+    }
+    else if(requestString == "p2alien")
+    {
+        this.updateP2Alien(response);
+    }
 };

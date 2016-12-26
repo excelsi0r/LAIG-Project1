@@ -14,6 +14,7 @@ function MyAlien(scene, color, div, mapLength)
 	this.antena = new MyCylinder(this.scene, 0.01,0.01,0.2,10,10);
 
 	this.color = this.createColor(color);
+	this.colorString = color;
 
 	this.transMatrix = mat4.create();
 }
