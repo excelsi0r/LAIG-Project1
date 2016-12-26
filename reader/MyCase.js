@@ -217,7 +217,7 @@ MyCase.prototype.createBoardPicking=function()
 MyCase.prototype.resetMatrix=function()
 {
 	this.matrixBoard = null;
-}
+};
 
 MyCase.prototype.selectFlowerShader=function(x,y)
 {
@@ -225,11 +225,31 @@ MyCase.prototype.selectFlowerShader=function(x,y)
 	this.sv = y;
     this.chess.setUniformsValues({su: this.su});
     this.chess.setUniformsValues({sv: this.sv});
-}
+};
 
 MyCase.prototype.updateCase=function(update)
 {
 	this.chess.setUniformsValues({update: update});
+};
+
+
+MyCase.prototype.findFlowerAndNull=function(color)
+{
+	for(var i = 0; i < this.divY; i++)
+	{
+		for(var j = 0; j < this.divX; j++)
+		{
+				if(this.matrixBoard[i][j] != null)
+				{
+					if(this.matrixBoard[i][j].colorCode == color)
+					{
+						var flower = this.matrixBoard[i][j];
+						this.matrixBoard[i][j] = null;
+						return flower; 
+					}
+				}
+		}		
+	}
 }
 
 MyCase.prototype.updateTextureCoords=function(s, t) {};

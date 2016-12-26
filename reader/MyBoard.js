@@ -303,13 +303,14 @@ MyBoard.prototype.updateP1Alien=function(position)
 			if(this.matrixBoard[i][j] instanceof MyAlien)
 			{
 				if(this.matrixBoard[i][j].colorString == "black")
+				{
 					this.matrixBoard[i][j].translate(list[0]-1, list[1]-1);
+					break;
+				}
 			}
 		}
-	}
-
-	
-}
+	}	
+};
 
 MyBoard.prototype.updateP2Alien=function(position)
 {
@@ -330,11 +331,38 @@ MyBoard.prototype.updateP2Alien=function(position)
 			if(this.matrixBoard[i][j] instanceof MyAlien)
 			{
 				if(this.matrixBoard[i][j].colorString == "white")
+				{
 					this.matrixBoard[i][j].translate(list[0]-1, list[1]-1);
+					break;
+				}
 			}
 		}
 	}
-}
+};
+
+MyBoard.prototype.computerPlayP2=function(play)
+{
+	var r = /\d+/g;
+	var list = [];
+	var m;
+
+	while ((m = r.exec(play)) != null) 
+	{
+		list.push(m[0]);
+	}	
+
+	var x = list[0];	
+	var y = list[1];
+	var flowerCode = list[2];
+	
+	if(x != 100 && y != 100 && flowerCode != 100)
+	{
+		var flower = this.p2case.findFlowerAndNull(flowerCode);
+
+		flower.translate(x-1, y-1);
+		this.matrixBoard[y-1][x-1] = flower;
+	}
+};
 
 
 MyBoard.prototype.createBoardElems=function(board)
@@ -825,13 +853,9 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 			this.resetBlink();
 			this.p1case.selectFlowerShader(-1,-1);			
 			this.p2case.selectFlowerShader(-1,-1);
-			this.selectedFlower = null;
-			
-		}
-
-		
+			this.selectedFlower = null;			
+		}		
 	}
-
 };
 
 MyBoard.prototype.prepareNextAndOrPlay=function()
@@ -840,16 +864,30 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 	{
 		if(this.scene.GameMode == 1)
 		{
-			this.makeRequest("listPlays");
 			this.makeRequest("state");
+			this.makeRequest("listPlays");
 			this.makeRequest("p1alien");
 		}
 		else if(this.scene.GameMode == 2)
 		{
+			this.makeRequest("p1alien");
+			
+			this.makeRequest("greedy");
 
+			this.makeRequest("listPlays");
+			this.makeRequest("state");
+			this.makeRequest("p2alien");
+	
 		}
 		else if(this.scene.GameMode == 3)
 		{
+			this.makeRequest("p1alien");
+					
+			this.makeRequest("easy");
+
+			this.makeRequest("listPlays");
+			this.makeRequest("state");
+			this.makeRequest("p2alien");
 
 		}
 	}

@@ -112,6 +112,8 @@ parse_input(listPlays, List):-	get_list_of_next_plays(List).
 parse_input([X-Y-Color], 'Ok'):-	state(State), eval_and_play(State, X, Y, Color).
 parse_input(p1alien, [X-Y]):-	get_player1(X, Y,_).
 parse_input(p2alien, [X-Y]):-	get_player2(X, Y,_).
+parse_input(greedy, [X-Y-F]):-	state(State), get_greedy_and_play(State,X,Y,F).
+parse_input(easy, [X-Y-F]):-	state(State), get_easy_and_play(State,X,Y,F).
 parse_input(quit, goodbye).
 
 %====================================================
@@ -131,6 +133,8 @@ eval_next_list(State,List):-
 		State == 'p2',
 		get_player2(X, Y, _),						
 		get_list_of_plays(X,Y, List).
+		
+eval_and_play(State, List):-	State == 'end', List = [].
 %====================================================
 eval_and_play(State, X, Y, Color):-	
 

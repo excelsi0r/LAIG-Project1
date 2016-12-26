@@ -195,10 +195,12 @@ eval_greedy(_).
 %give any key to let the computer play
 greedy_play(_):-	write('Greedy computer turn, press any key to compute play: '), read(_),
 					get_state(STATE),
-					get_greedy_and_play(STATE).
+					get_greedy_and_play(STATE,_,_,_).
 
 %Creates a greedy play and simulates as if it was the player2 playing.
-get_greedy_and_play(STATE):-	STATE == 'p2',
+get_greedy_and_play(STATE, XPlay, YPlay, Flower):-	
+
+								STATE == 'p2',
 								get_player2(X, Y, P2),
 								get_player1(_,_,P1),
 								get_list_of_plays(X,Y, List),
@@ -217,7 +219,10 @@ get_greedy_and_play(STATE):-	STATE == 'p2',
 								check_scores_and_set_state(Flower),
 								display_game(_)).						
 							
-get_greedy_and_play(_):- 	write('Computer should not play Here'), nl.
+get_greedy_and_play(_,XPlay, YPlay, Flower):- 	write('Computer should not play Here'), nl,
+												XPlay is 100,
+												YPlay is 100,
+												Flower is 100.
 
 %creates a list with all the possible plays, combining all X,Y coordenates possible to play with each flower type available 
 %in the case of player 2. simulates the score of every play, gets the one with the biggest simulated score and returns that play
@@ -259,11 +264,12 @@ eval_easy(_).
 %any input to let the computer play as if it was player 2
 easy_play(_):-		write('Easy Computer turn, press any key to compute play: '), read(_),
 					get_state(STATE),
-					get_easy_and_play(STATE).
+					get_easy_and_play(STATE,_,_,_).
 
 %random gives an available play and plays as if it was player 2 turn					
-get_easy_and_play(STATE):-		STATE == 'p2',
+get_easy_and_play(STATE, XPlay, YPlay, Flower):-		
 
+								STATE == 'p2',
 								get_player2(X, Y, P2),
 								get_player1(_,_,P1),
 								get_list_of_plays(X,Y, List),
@@ -280,7 +286,10 @@ get_easy_and_play(STATE):-		STATE == 'p2',
 								check_scores_and_set_state(Flower),
 								display_game(_)).						
 							
-get_easy_and_play(_):- 	write('Computer should not play Here'), nl.
+get_easy_and_play(_,XPlay, YPlay, Flower):- 	write('Computer should not play Here'), nl,
+												XPlay is 100,
+												YPlay is 100,
+												Flower is 100.
 
 %creates a list with all the possible plays, combining all X,Y coordenates possible to play with each flower type available type
 %in the case of player 2. returns a rndom play from that list

@@ -53,4 +53,12 @@ MyBoard.prototype.handleReply=function(response, requestString)
     {
         this.updateP2Alien(response);
     }
+    else if(requestString == "easy")
+    {
+        this.computerPlayP2(response);
+    }
+    else if(requestString == "greedy")
+    {
+        this.computerPlayP2(response);
+    }
 };
