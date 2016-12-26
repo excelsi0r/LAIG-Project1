@@ -26,6 +26,9 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps)
     this.RPS = rps;    //Refresh por segundo, setado no inicio do Xml, pode ser mudado e por isso muda aqui tb
     this.update = 0.0; //Estado currente da animaçao
     this.currTime;     //tempo atual da chamada updateshader
+    this.timePcPlay;	//tempo para o PC vs PC
+    this.firstPCcall = 0;	//primeira execuçao do PC vs PC
+    this.pcPlayDelay = 2000 //tempo entre jogadas do PC
     this.firstUpdate = 0; //se o primeira chamada ao updateshader ja esta 
     this.animdur = 60.0; // duraçao da animaçao de piscar
     this.MapInc = 10; //comprimento do board
@@ -226,6 +229,28 @@ MyBoard.prototype.updateBoard=function(currTime)
 
     }
 
+    if(this.scene.GameMode == 4)
+    {
+    	if(this.firstPCcall <= 0)
+    	{
+    		this.firstPCcall = 1;
+    		this.timePcPlay = currTime;
+    	}
+    	else if(currTime - this.timePcPlay >= this.pcPlayDelay)
+    	{
+			this.timePcPlay = currTime;
+
+			if(this.state == "p1")
+			{
+				this.play_PCvPC_P1();
+			}
+			else if(this.state == "p2")
+			{
+				this.play_PCvPC_P2();
+			}
+    	}
+    }
+
     if(this.scene.GameMode != this.scene.previousGameMode)
 	{
 		if(this.scene.GameMode == 0)
@@ -239,6 +264,11 @@ MyBoard.prototype.updateBoard=function(currTime)
 			this.makeRequest("p2");
 			this.makeRequest("state");
 			this.makeRequest("listPlays");
+
+			if(this.scene.GameMode == 4)
+			{
+				this.play_PCvPC_P1();
+			}
 		}
 	}
 
@@ -358,6 +388,30 @@ MyBoard.prototype.computerPlayP2=function(play)
 	if(x != 100 && y != 100 && flowerCode != 100)
 	{
 		var flower = this.p2case.findFlowerAndNull(flowerCode);
+
+		flower.translate(x-1, y-1);
+		this.matrixBoard[y-1][x-1] = flower;
+	}
+};
+
+MyBoard.prototype.computerPlayP1=function(play)
+{
+	var r = /\d+/g;
+	var list = [];
+	var m;
+
+	while ((m = r.exec(play)) != null) 
+	{
+		list.push(m[0]);
+	}	
+
+	var x = list[0];	
+	var y = list[1];
+	var flowerCode = list[2];
+	
+	if(x != 100 && y != 100 && flowerCode != 100)
+	{
+		var flower = this.p1case.findFlowerAndNull(flowerCode);
 
 		flower.translate(x-1, y-1);
 		this.matrixBoard[y-1][x-1] = flower;
@@ -766,7 +820,7 @@ MyBoard.prototype.playExists=function(x, y)
 
 MyBoard.prototype.hadleObjectPicked=function(id)
 {
-	if(id > 100 && id < 200 && this.state == "p1")
+	if(id > 100 && id < 200 && this.state == "p1" && this.scene.GameMode != 4)
 	{	
 		var x = (id - 100 - 1) % (this.p1case.divX);
 		var y = Math.floor((id - 100 - 1) / (this.p1case.divX));
@@ -784,7 +838,7 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 		}
 
 	}
-	else if(id > 200 && this.state == "p2")
+	else if(id > 200 && this.state == "p2" && this.scene.GameMode != 4)
 	{	
 		var x = (id - 200 - 1) % (this.p2case.divX);
 		var y = Math.floor((id - 200 - 1) / (this.p2case.divX));
@@ -801,7 +855,7 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 			this.setBlink(this.listOfNextPlays);
 		}
 	}
-	else if(id < 100 && this.selectedFlower != null && this.state != "end")
+	else if(id < 100 && this.selectedFlower != null && this.state != "end" && this.scene.GameMode != 4)
 	{
 		//check if xy is possible
 		var x = (id - 1) % (this.div - 2) + 2;
@@ -898,3 +952,33 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("p2alien");
 	}
 };
+
+
+MyBoard.prototype.play_PCvPC_P1=function()
+{
+	if(this.state != "end")
+	{
+		this.makeRequest("playP1greedy");
+
+		this.makeRequest("p1alien");
+
+		this.makeRequest("state");
+		
+	}
+};
+
+MyBoard.prototype.play_PCvPC_P2=function()
+{
+	if(this.state != "end")
+	{
+		this.makeRequest("greedy");
+
+		this.makeRequest("p2alien");
+
+		this.makeRequest("state");
+		
+	}
+};
+
+
+

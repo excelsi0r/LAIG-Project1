@@ -61,4 +61,8 @@ MyBoard.prototype.handleReply=function(response, requestString)
     {
         this.computerPlayP2(response);
     }
+    else if(requestString == "playP1greedy")
+    {
+        this.computerPlayP1(response);
+    }
 };

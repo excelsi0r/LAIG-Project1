@@ -327,9 +327,10 @@ eval_cc(STATE):-		STATE == 'p2',
 %Creates a greedy play and simulates as if it was the player1 playing.					
 greedy_c1(_):-		write('Greed Computer 1 turn, press any key to compute play: '), read(_),
 					get_state(STATE),
-					get_greedy_and_play_c1(STATE).
+					get_greedy_and_play_c1(STATE,_,_,_).
 					
-get_greedy_and_play_c1(STATE):-	
+get_greedy_and_play_c1(STATE,XPlay, YPlay, Flower):-
+	
 								STATE == 'p1',
 								get_player1(X, Y, P1),
 								get_player2(_,_,P2),
@@ -349,7 +350,10 @@ get_greedy_and_play_c1(STATE):-
 								check_scores_and_set_state(Flower),
 								display_game(_)).						
 							
-get_greedy_and_play_c1(_):- 	write('Computer should not play Here'), nl.
+get_greedy_and_play_c1(_,XPlay, YPlay, Flower):- 	write('Computer should not play Here'), nl,
+								XPlay is 100,
+								YPlay is 100,
+								Flower is 100.
 
 %creates a list with all the possible plays, combining all X,Y coordenates possible to play with each flower type available type
 %in the case of player 1. simulates the score of every play, gets the one with the biggest simulated score and returns that play
