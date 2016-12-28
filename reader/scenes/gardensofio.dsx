@@ -80,6 +80,13 @@
         
     </animations>
 
+    <skyboxes>
+    	<skybox id="Red" folder="red"/>
+		<skybox id="Orbital" folder="orbital"/>
+		<skybox id="Space" folder="space"/>
+    </skyboxes>
+
+
 
     <components>
     

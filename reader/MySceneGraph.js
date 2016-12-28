@@ -116,6 +116,13 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
+	var error = this.parseAmbients(rootElement);
+	if(error != null)
+	{
+		this.onXMLError(error);
+		return;
+	}
+
 	this.scene.onGraphLoaded();
 	this.loadedOk=true;
 	
@@ -2220,6 +2227,41 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 		return;
 	}
 
+};
+
+MySceneGraph.prototype.parseAmbients = function(rootElement)
+{
+	var elems = rootElement.getElementsByTagName('skyboxes');
+
+	console.log(elems);
+
+	if(elems == null)
+    {
+		console.warn("No skyboxes component declared. No skyboxes");
+	}
+	if(elems.length != 1)
+	{
+		return "Either zero or more than one 'skyboxes' element found.";
+	}
+	
+	var nskyboxes = elems[0].children.length;
+    var skyboxes = elems[0].children;
+    this.skyboxes = [];
+
+    if(nskyboxes < 1)
+    {
+		console.warn("No skyboxes component declared");
+    }
+    else
+    {
+    	for(var i = 0; i < nskyboxes; i++)
+    	{
+    		var id = skyboxes[i].getAttribute('id');
+			var folder = skyboxes[i].getAttribute('folder');
+
+			this.skyboxes.push([id, folder]);  	
+    	}
+    }
 };
 
 /**

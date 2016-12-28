@@ -11,7 +11,7 @@ function getUrlVars() {
     return vars;
 }	 
 
-serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', 'MyTriangle.js', 'MyRectangle.js', 'MySphere.js','MyCylinder.js', 'MyTorus.js','Node.js','MyInterface.js', 'Animation.js', 'LinearAnimation.js', 'CircularAnimation.js','MyPlane.js','MyPatch.js','MyVehicle.js','MyCube.js','MyQuad.js','MyChessboard.js','MyFlower.js','MyBoard.js','MyTree.js','MyAlien.js','MyTile.js','MyCase.js','server.js','KeyAnimation.js',
+serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', 'MyTriangle.js', 'MyRectangle.js', 'MySphere.js','MyCylinder.js', 'MyTorus.js','Node.js','MyInterface.js', 'Animation.js', 'LinearAnimation.js', 'CircularAnimation.js','MyPlane.js','MyPatch.js','MyVehicle.js','MyCube.js','MyQuad.js','MyChessboard.js','MyFlower.js','MyBoard.js','MyTree.js','MyAlien.js','MyTile.js','MyCase.js','server.js','KeyAnimation.js','MySkybox.js',
 
 main=function()
 {

@@ -16,10 +16,15 @@ MyInterface.prototype.init = function(application)
     this.lightsgroup= this.gui.addFolder("Lights");
     this.lightsgroup.open();
 
+    //adding scenes 
+    this.skyboxes = this.gui.addFolder("Scenes");
+    this.skyboxes.open();
+
     //adding game states box
     this.gamemode = this.gui.addFolder("Game Mode");
     this.gamemode.open();
     this.gamemode.add(this.scene, "GameMode", this.scene.GameModelist);
+
 };
 /**
  * Pushes all the lights to the Lights folder.
@@ -37,6 +42,13 @@ MyInterface.prototype.addLights=function(lights)
         this.lightsgroup.add(this.scene.lightstates,lights[i].id);
     }
 }; 
+
+
+MyInterface.prototype.addSkyboxes=function()
+{
+	 
+	this.skyboxes.add(this.scene, "Skybox", this.scene.SkyboxesList);
+};
 /**
  * Overload the process Keyboard fucntion.
  * When M/m is pressed changes materials of every Node in the graph
@@ -45,8 +57,10 @@ MyInterface.prototype.addLights=function(lights)
 MyInterface.prototype.processKeyboard = function(event) 
 {
 	CGFinterface.prototype.processKeyboard.call(this,event);
+
 	switch (event.keyCode)
 	{
+		
 		case(86): //V
             this.scene.updateCamera();
             break;

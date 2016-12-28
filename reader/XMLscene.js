@@ -41,7 +41,14 @@ XMLscene.prototype.init = function (application)
 	this.GameModelist['Easy Computer'] = 3;
 	this.GameModelist['PC vs. PC'] = 4;
 
+	this.SkyboxesList = {};
+	this.SkyboxesList[''] = 0;
+	this.skyboxes = null;
+	this.Skybox = null;
+
 	this.setPickEnabled(true);
+
+
 
 };
 
@@ -163,6 +170,9 @@ XMLscene.prototype.onGraphLoaded = function ()
 
 	//creating graph
 	this.createGraph();
+
+	//create skyboxes
+	this.createSkyboxes();
 };
 
 /**
@@ -754,6 +764,36 @@ XMLscene.prototype.createGraph = function()
 	
 };
 
+XMLscene.prototype.createSkyboxes=function()
+{
+	console.info("Creating new Skyboxes");
+
+	var skyboxes = this.graph.skyboxes;
+
+	this.skyboxes = []; 
+
+	var val = 1;
+
+	for(var i = 0; i < skyboxes.length; i++)
+	{
+		var skybox = new MySkybox(this, skyboxes[i][0], skyboxes[i][1]);
+
+		this.skyboxes.push(skybox);
+
+		this.SkyboxesList[skyboxes[i][0]] = i+1;
+	}
+
+	if(this.skyboxes.length > 0)
+	{
+		this.Skybox = 0;
+		this.interface.addSkyboxes();
+	}
+	else
+	{
+		this.Skybox = null;
+	}
+}
+
 /**
  * DISPLAY GRAPH SECTION
  * Funtion to prepare everything for the display cycle starting from the root.
@@ -800,6 +840,11 @@ XMLscene.prototype.displayGraphElems=function()
 	var primitive = this.nodes[id].primitive;
 
 	var animations = this.nodes[id].animations;
+
+	if(this.Skybox != null && this.Skybox >= 1)
+	{
+		this.skyboxes[this.Skybox-1].display();
+	}
 
 	this.displayNodes(id, transformation, materialst, texture, children, primitive, animations);
 	
