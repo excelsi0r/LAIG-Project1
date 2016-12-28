@@ -21,6 +21,8 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps)
     this.matrixBoard = null;
     this.state = "menu";
 
+    this.transitionView = null;
+
     //estes valores sao gerais e nao hardcoded,a shader esta pronta para quaisquer valores, faz o mesmo caso variem 
     this.parts = 10.0; //comprimento de cada divisao em texture
     this.RPS = rps;    //Refresh por segundo, setado no inicio do Xml, pode ser mudado e por isso muda aqui tb
@@ -50,6 +52,13 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps)
 
     //create case2    
     this.p2case = new MyCase(this.scene, 3,9, this.div, this.MapInc,this.parts,this.auxtexture, this.texture2, this.tileidp2, 13, 5, this.animdur, this.sr, this.sg, this.sb, this.sa);    
+	
+	//crate default camera
+	this.defaultCamera = new CGFcamera(Math.PI*45/180, 0.1, 500, vec3.fromValues(5, 20, 5), vec3.fromValues(5, 0, 4.99));
+	this.scene.interface.setActiveCamera(this.defaultCamera);
+
+
+
 };
 
 MyBoard.prototype = Object.create(CGFobject.prototype);
@@ -260,6 +269,7 @@ MyBoard.prototype.updateBoard=function(currTime)
 		if(this.scene.GameMode == 0)
 		{
 			this.resetBoard();
+			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
 		}
 		else
 		{
@@ -268,6 +278,14 @@ MyBoard.prototype.updateBoard=function(currTime)
 			this.makeRequest("p2");
 			this.makeRequest("state");
 			this.makeRequest("listPlays");
+			if(this.scene.GameMode == 1)
+			{
+				this.transitionView = new MyViewTransition(this.scene, "p1",this.currTime, 4);
+			}
+			else
+			{
+				this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
+			}
 
 			if(this.scene.GameMode == 4)
 			{
@@ -292,6 +310,9 @@ MyBoard.prototype.updateBoard=function(currTime)
 			}
 		}
 	}
+
+	//update View
+	this.updateView(currTime);
 };
 
 MyBoard.prototype.createBoardPicking=function()
@@ -945,6 +966,9 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("state");
 			this.makeRequest("listPlays");
 			this.makeRequest("p1alien");
+
+			//put camera to move
+			this.transitionView = new MyViewTransition(this.scene, "p2", this.currTime, 4);
 		}
 		else if(this.scene.GameMode == 2)
 		{
@@ -955,6 +979,7 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("listPlays");
 			this.makeRequest("state");
 			this.makeRequest("p2alien");
+			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
 	
 		}
 		else if(this.scene.GameMode == 3)
@@ -966,6 +991,7 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("listPlays");
 			this.makeRequest("state");
 			this.makeRequest("p2alien");
+			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
 
 		}
 	}
@@ -974,6 +1000,9 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("listPlays");
 			this.makeRequest("state");
 			this.makeRequest("p2alien");
+
+			//put camera to move
+			this.transitionView = new MyViewTransition(this.scene, "p1", this.currTime, 4);
 	}
 };
 
@@ -987,6 +1016,7 @@ MyBoard.prototype.play_PCvPC_P1=function()
 		this.makeRequest("p1alien");
 
 		this.makeRequest("state");
+		this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
 		
 	}
 };
@@ -1001,6 +1031,24 @@ MyBoard.prototype.play_PCvPC_P2=function()
 
 		this.makeRequest("state");
 		
+	}
+};
+
+MyBoard.prototype.updateView=function(currTime)
+{
+
+	if(this.transitionView !=  null)
+	{
+		
+		if(this.transitionView.lastTime > currTime)
+		{
+			var camera = this.transitionView.getCameraUpdated(currTime);
+			if(this.scene.Animated == true)
+			{
+				this.scene.camera = camera;
+				this.scene.interface.setActiveCamera(camera);
+			}
+		}
 	}
 };
 

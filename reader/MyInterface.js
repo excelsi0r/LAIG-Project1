@@ -16,6 +16,12 @@ MyInterface.prototype.init = function(application)
     this.lightsgroup= this.gui.addFolder("Lights");
     this.lightsgroup.open();
 
+	//adding animated cameras
+	this.cameraAnimated = this.gui.addFolder("Animated Cameras")
+	this.cameraAnimated.open();
+	this.cameraAnimated.add(this.scene, 'Animated');
+	
+	
     //adding scenes 
     this.skyboxes = this.gui.addFolder("Scenes");
     this.skyboxes.open();

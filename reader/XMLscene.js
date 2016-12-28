@@ -48,8 +48,8 @@ XMLscene.prototype.init = function (application)
 
 	this.setPickEnabled(true);
 
-
-
+	//adding Animated option
+	this.Animated = true; 
 };
 
 /**
