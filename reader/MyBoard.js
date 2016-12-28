@@ -199,6 +199,7 @@ MyBoard.prototype.updateTextureCoords=function(s,t){};
 
 MyBoard.prototype.updateBoard=function(currTime)
 {
+	//time updating and shaders
     if(this.firstUpdate <= 0)
     {
         this.currTime = currTime;
@@ -229,6 +230,7 @@ MyBoard.prototype.updateBoard=function(currTime)
 
     }
 
+	//Pc plays in case of PC vs PC
     if(this.scene.GameMode == 4)
     {
     	if(this.firstPCcall <= 0)
@@ -250,6 +252,8 @@ MyBoard.prototype.updateBoard=function(currTime)
 			}
     	}
     }
+
+    //In case of new GameMode
 
     if(this.scene.GameMode != this.scene.previousGameMode)
 	{
@@ -273,6 +277,21 @@ MyBoard.prototype.updateBoard=function(currTime)
 	}
 
 	this.scene.previousGameMode = this.scene.GameMode;
+
+	//update elems
+	if(this.matrixBoard != null)
+	{
+		for(var i = 0; i < this.divY; i++)
+		{
+			for(var j = 0; j < this.divX; j++)
+			{
+				if(this.matrixBoard[i][j] != null)
+				{
+					this.matrixBoard[i][j].update(currTime);
+				}
+			}
+		}
+	}
 };
 
 MyBoard.prototype.createBoardPicking=function()
@@ -334,7 +353,8 @@ MyBoard.prototype.updateP1Alien=function(position)
 			{
 				if(this.matrixBoard[i][j].colorString == "black")
 				{
-					this.matrixBoard[i][j].translate(list[0]-1, list[1]-1);
+					//id, span, lastX, lastY, firstTime
+					this.matrixBoard[i][j].animate(null, 2, list[0]-1, list[1]-1, this.currTime);
 					break;
 				}
 			}
@@ -362,7 +382,7 @@ MyBoard.prototype.updateP2Alien=function(position)
 			{
 				if(this.matrixBoard[i][j].colorString == "white")
 				{
-					this.matrixBoard[i][j].translate(list[0]-1, list[1]-1);
+					this.matrixBoard[i][j].animate(null, 2, list[0]-1, list[1]-1, this.currTime);
 					break;
 				}
 			}
@@ -388,8 +408,7 @@ MyBoard.prototype.computerPlayP2=function(play)
 	if(x != 100 && y != 100 && flowerCode != 100)
 	{
 		var flower = this.p2case.findFlowerAndNull(flowerCode);
-
-		flower.translate(x-1, y-1);
+		flower.animate(null, 2 ,flower.x +1, flower.y+1, x-1, y-1, 10.4,-0.05 ,this.currTime);
 		this.matrixBoard[y-1][x-1] = flower;
 	}
 };
@@ -412,8 +431,7 @@ MyBoard.prototype.computerPlayP1=function(play)
 	if(x != 100 && y != 100 && flowerCode != 100)
 	{
 		var flower = this.p1case.findFlowerAndNull(flowerCode);
-
-		flower.translate(x-1, y-1);
+		flower.animate(null, 2 ,flower.x +1, flower.y+1, x-1, y-1, -5.4,-0.05 ,this.currTime);
 		this.matrixBoard[y-1][x-1] = flower;
 	}
 };
@@ -877,9 +895,10 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 				var request = "[" + x + "-" + y + "-" + color + "]";
 				this.makeRequest(request);
 
-				//move flower
+				//move flower			
+				//firtsX, firstY, lastX, lastY, Xinc, Yinc
 				var flower = this.p1case.matrixBoard[yS][xS];
-				flower.translate(x-1, y-1);
+				flower.animate(null, 2 ,flower.x +1, flower.y+1, x-1, y-1, -5.4,-0.05 ,this.currTime);
 				this.matrixBoard[y-1][x-1] = flower;
 
 				//kill flower from case
@@ -890,16 +909,21 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 			}
 			else if(this.state == "p2")
 			{
+				//color and request
 				var color = this.p2case.matrixBoard[yS][xS].colorCode;
 				var request = "[" + x + "-" + y + "-" + color + "]";			
 				this.makeRequest(request);	
 
+				//move flower			
+				//firtsX, firstY, lastX, lastY, Xinc, Yinc
 				var flower = this.p2case.matrixBoard[yS][xS];
-				flower.translate(x-1, y-1);
+				flower.animate(null, 2 ,flower.x +1, flower.y+1, x-1, y-1, 10.4,-0.05 ,this.currTime);
 				this.matrixBoard[y-1][x-1] = flower;
 					
+				//kill flower from case
 				this.p2case.matrixBoard[yS][xS] = null;
-
+				
+				//update alien, state and list of Plays
 				this.prepareNextAndOrPlay();
 			}
 

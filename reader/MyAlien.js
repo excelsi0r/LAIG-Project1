@@ -16,6 +16,11 @@ function MyAlien(scene, color, div, mapLength)
 	this.color = this.createColor(color);
 	this.colorString = color;
 
+	this.animation = null;
+
+	this.x;
+	this.y;
+
 	this.transMatrix = mat4.create();
 }
 
@@ -188,15 +193,46 @@ MyAlien.prototype.createAppearence = function(scene, rr, gg, bb, a)
 
 MyAlien.prototype.translate = function(x,y)
 {
-	var xx = x*this.mapDiv;
-	var yy = y*this.mapDiv;
+	var xx = x * this.mapDiv;
+	var yy = y * this.mapDiv;
 	var temp = vec3.fromValues(xx,0,yy);
 
 	var matTemp = mat4.create();
 	mat4.translate(matTemp, matTemp, temp);
 
 	this.transMatrix = matTemp;
+
+	this.x = x;
+	this.y = y;
 }
 
+MyAlien.prototype.update=function(currTime) 
+{
+	if(this.animation != null)
+	{
+		this.transMatrix = this.animation.getTransformation(currTime);
+	}
+};
+
+MyAlien.prototype.animate=function(id, span, lastX, lastY, firstTime)
+{
+	this.animation = new KeyAnimation(id, span);
+	this.currTime = firstTime;
+	var incTime = span * 1000 / 2;
+
+	var x0 = this.x * this.mapDiv;
+	var y0 = this.y * this.mapDiv;
+
+	var x1 = lastX * this.mapDiv;
+	var y1 = lastY * this.mapDiv;
+
+	this.x = lastX;
+	this.y = lastY;
+	
+	//[time, transX, transY, transZ, rotX, rotY, rotZ, scaleX, scaleY, ScaleZ]
+	this.animation.addControlPoint(firstTime, x0 , 0, y0, 0,0,0, 1,1,1);
+	this.animation.addControlPoint(firstTime + incTime, (x0 + x1) / 2, 2, (y0 + y1) / 2, 0,0,0, 1,1,1);	
+	this.animation.addControlPoint(firstTime + 2*incTime, x1, 0, y1, 0,0,0, 1,1,1);
+};
 
 MyAlien.prototype.updateTextureCoords=function(s, t) {};

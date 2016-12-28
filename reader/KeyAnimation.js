@@ -17,29 +17,33 @@ KeyAnimation.prototype.addControlPoint=function(time, transX, transY, transZ, ro
 
 KeyAnimation.prototype.getCurrentKeyIndex=function(currTime)
 {
-    for(var i = 1; i <= this.controlPoints.length-1; i++)
+    var ret;
+    for(var i = 0; i < this.controlPoints.length; i++)
     {
         var time = this.controlPoints[i][0];
 
+        ret =  i; 
         if(currTime < time)
         {
-            return i;      
+           ret =  i-1;  
+           break;    
         }
     }
+    return ret;
 };
 
-KeyAnimation.prototype.interpolatePoints=function(x0, y0, x1, y1, x)
+KeyAnimation.prototype.interpolatePoints=function(time0, val0, time1, val1, time)
 {
-      var y;
-      if(x0 == x1)
+      var val;
+      if(time0 == time1)
       {
-          y = y0;
+          val = val0;
       }
       else
       {
-          y = y0 + (x - x0)*(y1-y0) / (x1 - x0);
+          val = val0 + (time - time0)*(val1-val0) / (time1 - time0);
       }
-      return y;
+      return val;
 };
 
 KeyAnimation.prototype.interpolateFrames=function(frame1, frame2, time)
@@ -51,10 +55,10 @@ KeyAnimation.prototype.interpolateFrames=function(frame1, frame2, time)
 
     for(var i = 1 ; i < frame1.length; i++)
     {
-        var y0 = frame1[i];
-        var y1 = frame2[i];
-        var y = this.interpolatePoints(time0, y0, time1, y1, time);
-        newFrame.push(y);
+        var val0 = frame1[i];
+        var val1 = frame2[i];
+        var val = this.interpolatePoints(time0, val0, time1, val1, time);
+        newFrame.push(val);
     }
 
     return newFrame;                       
@@ -64,20 +68,35 @@ KeyAnimation.prototype.interpolateFrames=function(frame1, frame2, time)
 
 KeyAnimation.prototype.getTransformation=function(currTime)
 {
+        //console.log(this);
         var firstKeyIndex = this.getCurrentKeyIndex(currTime);
 
         var nextKeyIndex = firstKeyIndex + 1;
+
+        var firstKey;
+        var nextKey;    
+        var newFrame = [];
+
         if(firstKeyIndex >= this.controlPoints.length - 1)
         {
-          nextKeyIndex = firstKeyIndex;
+            firstKey = this.controlPoints[firstKeyIndex];
+            for(var i = 1; i < firstKey.length; i++)
+            {
+                var val = firstKey[i];
+                newFrame.push(val);
+            }
+        }
+        else
+        {
+            firstKey = this.controlPoints[firstKeyIndex];
+            nextKey = this.controlPoints[nextKeyIndex];
+
+            newFrame = this.interpolateFrames(firstKey, nextKey, currTime);
         }
 
-        var firstKey = this.controlPoints[firstKeyIndex];
-        var nextKey = this.controlPoints[nextKeyIndex];
-
-        var newFrame = this.interpolateFrames(firstKey, nextKey, currTime);
-
         var transMatrix = mat4.create();
+
+
 
         //translate
         var transvec = vec3.fromValues(newFrame[0], newFrame[1], newFrame[2]);
@@ -95,7 +114,10 @@ KeyAnimation.prototype.getTransformation=function(currTime)
         var axisvec = vec3.fromValues(0,0,1);
         mat4.rotate(transMatrix, transMatrix, newFrame[5], axisvec);
 
-        //scaleX
+
+
+
+        //scale
         var scalevec = vec3.fromValues(newFrame[6], newFrame[7], newFrame[8]);
         mat4.scale(transMatrix, transMatrix, scalevec);
 

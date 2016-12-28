@@ -95,5 +95,9 @@ MyTree.prototype.translate = function(x,y)
 	this.transMatrix = matTemp;
 }
 
+MyTree.prototype.update=function(currTime) 
+{
+	
+};
 
 MyTree.prototype.updateTextureCoords=function(s, t) {};

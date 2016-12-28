@@ -14,7 +14,12 @@ function MyFlower(scene, color, div, mapLength)
 
 	this.colorCode;
 	this.color = this.createColor(color);
+	
+	this.currTime;
+	this.animation = null;
 
+	this.x;
+	this.y;
 
 	this.transMatrix = mat4.create();
 }
@@ -26,6 +31,7 @@ MyFlower.prototype.display = function(appearence)
 	this.scene.pushMatrix();
 
 		this.scene.multMatrix(this.transMatrix);
+
 
 		//middle of flower
 		this.scene.pushMatrix();
@@ -81,6 +87,7 @@ MyFlower.prototype.display = function(appearence)
 
 			this.scene.popMatrix();
 		}
+
 	this.scene.popMatrix();
 
 };
@@ -152,8 +159,13 @@ MyFlower.prototype.createAppearence = function(scene, rr, gg, bb, a)
 
 MyFlower.prototype.translate = function(x,y)
 {
+
 	var xx = x*this.mapDiv;
 	var yy = y*this.mapDiv;
+
+	this.x = xx;
+	this.y = yy;
+
 	var temp = vec3.fromValues(xx,0,yy);
 
 	var matTemp = mat4.create();
@@ -162,5 +174,32 @@ MyFlower.prototype.translate = function(x,y)
 	this.transMatrix = matTemp;
 }
 
+MyFlower.prototype.update=function(currTime) 
+{
+	this.currTime = currTime;
+	if(this.animation != null)
+	{
+		this.transMatrix = this.animation.getTransformation(currTime);
+	}
+};
+
+MyFlower.prototype.animate=function(id, span, firstX, firstY, lastX, lastY, Xinc, Yinc, firstTime)
+{
+	this.translate(500 , 500);
+	this.animation = new KeyAnimation(id, span);
+	this.currTime = firstTime;
+	var incTime = span * 1000 / 2;
+
+	var x0 = firstX + Xinc;
+	var y0 = firstY + Yinc;
+
+	var x1 = lastX * this.mapDiv;
+	var y1 = lastY * this.mapDiv;
+	
+	//[time, transX, transY, transZ, rotX, rotY, rotZ, scaleX, scaleY, ScaleZ]
+	this.animation.addControlPoint(firstTime, x0 , 0, y0, 0,0,0, 1,1,1);
+	this.animation.addControlPoint(firstTime + incTime, (x0 + x1) / 2, 5, (y0 + y1) / 2, 0,0,0, 1,1,1);	
+	this.animation.addControlPoint(firstTime + 2*incTime, x1, 0, y1, 0,0,0, 1,1,1);
+};
 
 MyFlower.prototype.updateTextureCoords=function(s, t) {};

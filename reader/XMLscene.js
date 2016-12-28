@@ -1122,7 +1122,7 @@ XMLscene.prototype.update=function(currTime)
 		}
 	} 
 
-	//update board shaders
+	//update board
 	if(this.primitives != null && this.graph.primitiveslist != null)
 	{
 		for(var j = 0; j < this.graph.primitiveslist.length; j++)
