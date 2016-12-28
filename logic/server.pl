@@ -115,6 +115,8 @@ parse_input(p2alien, [X-Y]):-	get_player2(X, Y,_).
 parse_input(greedy, [X-Y-F]):-	state(State), get_greedy_and_play(State,X,Y,F).
 parse_input(easy, [X-Y-F]):-	state(State), get_easy_and_play(State,X,Y,F).
 parse_input(playP1greedy, [X-Y-F]):-	state(State), get_greedy_and_play_c1(State,X,Y,F).
+parse_input(scoreP1, Score):-	score_p1(Score).
+parse_input(scoreP2, Score):-	score_p2(Score).
 parse_input(quit, goodbye).
 
 %====================================================

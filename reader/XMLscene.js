@@ -50,6 +50,7 @@ XMLscene.prototype.init = function (application)
 
 	//adding Animated option
 	this.Animated = true; 
+
 };
 
 /**
@@ -564,8 +565,9 @@ XMLscene.prototype.setPrimitivesGraph = function()
 			var sg = this.graph.primitiveslist[i]['sg'];
 			var sb = this.graph.primitiveslist[i]['sb'];
 			var sa = this.graph.primitiveslist[i]['sa'];
+			var timeout = this.graph.primitiveslist[i]['timeout'];
 
-			object = new MyBoard(this, div, texture, texture2, auxtexture, sr, sg, sb, sa, this.RPS);
+			object = new MyBoard(this, div, texture, texture2, auxtexture, sr, sg, sb, sa, this.RPS,timeout);
 		}
 		this.primitives[id] = object;
 	}

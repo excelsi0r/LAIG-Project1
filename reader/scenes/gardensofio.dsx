@@ -62,7 +62,7 @@
     <primitives>
         
          <primitive id="d">
-                <chessboard du="11" dv="11" textureref="gardensofio" su="4" sv="6">
+                <chessboard du="11" dv="11" textureref="gardensofio" su="4" sv="6" >
                         <c1 r="0.0" g="0.0" b="0.0" a="1.0" />
                         <c2 r="0.0" g="0.0" b="0.0" a="1.0" />
                         <c3 r="0.7" g="0.0" b="0.0" a="1.0" />
@@ -70,7 +70,7 @@
          </primitive>
 
          <primitive id="gardensofio">
-                <board div="11" textureref="gardensofio" auxtextureref="case" textureref2="wood" sr="1.0" sg="0.0" sb="0.0" sa="1.0"/>
+                <board div="11" textureref="gardensofio" auxtextureref="case" textureref2="wood" sr="1.0" sg="0.0" sb="0.0" sa="1.0" timeout="20"/>
          </primitive>
 
          	

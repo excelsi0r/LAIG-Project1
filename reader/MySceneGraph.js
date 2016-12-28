@@ -1516,7 +1516,8 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				var sr =  parseFloat(primitive[i].children[0].getAttribute('sr'));
 				var sb =  parseFloat(primitive[i].children[0].getAttribute('sg'));
 				var sg =  parseFloat(primitive[i].children[0].getAttribute('sb'));
-				var sa =  parseFloat(primitive[i].children[0].getAttribute('sa'));
+				var sa =  parseFloat(primitive[i].children[0].getAttribute('sa'));			
+				var timeout = parseInt(primitive[i].children[0].getAttribute('timeout'));
 
 				if(du == null || dv == null || sr == null || sg == null || sb == null || sa == null || textureref == null || auxtexture == null || textureref2 == null || isNaN(du) || isNaN(dv) || isNaN(sr) || isNaN(sg) || isNaN(sb) || isNaN(sa))
 				{
@@ -1532,7 +1533,8 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				primitiveitem['sb'] = sb;
 				primitiveitem['sg'] = sg;
 				primitiveitem['sa'] = sa;
-
+				primitiveitem['timeout'] = timeout;
+				
 				//check if texture exists
 				var n_repeated = 0;
 				for(var ik = 0; ik < this.texturelist.length; ik++)

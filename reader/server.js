@@ -65,4 +65,12 @@ MyBoard.prototype.handleReply=function(response, requestString)
     {
         this.computerPlayP1(response);
     }
+    else if(requestString == "scoreP1")
+    {
+        this.newConsole(response, this.P2, this.Log);
+    }
+    else if(requestString == "scoreP2")
+    {
+        this.newConsole(this.P1, response, this.Log);
+    }
 };

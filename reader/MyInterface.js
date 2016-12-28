@@ -17,7 +17,7 @@ MyInterface.prototype.init = function(application)
     this.lightsgroup.open();
 
 	//adding animated cameras
-	this.cameraAnimated = this.gui.addFolder("Animated Cameras")
+	this.cameraAnimated = this.gui.addFolder("Animated Cameras");
 	this.cameraAnimated.open();
 	this.cameraAnimated.add(this.scene, 'Animated');
 	
@@ -30,6 +30,11 @@ MyInterface.prototype.init = function(application)
     this.gamemode = this.gui.addFolder("Game Mode");
     this.gamemode.open();
     this.gamemode.add(this.scene, "GameMode", this.scene.GameModelist);
+	
+
+    this.console = this.gui.addFolder("Console");
+    this.console.open();
+
 
 };
 /**
