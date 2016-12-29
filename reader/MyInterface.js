@@ -34,6 +34,8 @@ MyInterface.prototype.init = function(application)
 
     this.console = this.gui.addFolder("Console");
     this.console.open();
+    
+   
 
 
 };

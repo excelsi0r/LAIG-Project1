@@ -73,4 +73,33 @@ MyBoard.prototype.handleReply=function(response, requestString)
     {
         this.newConsole(this.P1, response, this.Time, this.Log);
     }
+
+    else if(requestString == "newhistoric")
+    {
+        this.createBoardHistoric(response);
+    }
+    else if(requestString == "p1historic")
+    {
+        this.createHistoricP1(response);
+    }
+    else if(requestString == "p2historic")
+    {
+        this.createHistoricP2(response);
+    }
+    else if(requestString == "statehistoric")
+    {
+        this.changeStateHistoric(response);
+    }
+    else if(requestString == "scorep1historic")
+    {
+        this.scorep1historic(response);
+    }
+    else if(requestString == "scorep2historic")
+    {
+        this.scorep2historic(response);
+    }
+    else if(requestString == "listofplayshistoric")
+    {
+        this.listofplayshistoric(response);
+    }
 };

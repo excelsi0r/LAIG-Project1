@@ -1185,4 +1185,3 @@ XMLscene.prototype.update=function(currTime)
 	
 };
 
-
