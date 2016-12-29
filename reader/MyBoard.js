@@ -78,8 +78,11 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
 	this.scene.interface.setActiveCamera(this.defaultCamera);
 
 
-	//create button
+	//create button Undo
 	this.scene.interface.gui.add(this, 'Undo');
+
+	//create Button Replay
+	this.scene.interface.gui.add(this, 'Replay');
 
 
 };
@@ -302,6 +305,8 @@ MyBoard.prototype.updateBoard=function(currTime)
 		}
 		else
 		{
+			this.createNewHistoricSpace();
+
 			this.makeRequest("new");
 			this.makeRequest("p1");
 			this.makeRequest("p2");
@@ -309,8 +314,6 @@ MyBoard.prototype.updateBoard=function(currTime)
 			this.makeRequest("listPlays");
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
-
-			this.createNewHistoricSpace();
 
 			this.makeRequest("newhistoric");
 			this.makeRequest("p1historic");
@@ -491,6 +494,12 @@ MyBoard.prototype.computerPlayP2=function(play)
 		flower.animate(null, 2 ,flower.x +1, flower.y+1, x-1, y-1, 10.4,-0.05 ,this.currTime);
 		this.matrixBoard[y-1][x-1] = flower;
 	}
+
+	var l = this.playsHistoric.length - 1;
+	if(l >= 0)
+	{
+		this.playsHistoric[l]['caseP2matrix'] = this.p2case.getMatrix();
+	}	
 };
 
 MyBoard.prototype.computerPlayP1=function(play)
@@ -528,77 +537,78 @@ MyBoard.prototype.createBoardElems=function(board)
 		list.push(m[0]);
 	}
 	
+	var r = /\d+/g;
+	var list = [];
+	var m;
+
+	while ((m = r.exec(board)) != null) 
+	{
+		list.push(m[0]);
+	}
+	
 	this.matrixBoard = [];
 
-	for(var i = 0; i < this.div; i++)
+	for(var j = 0; j < this.div; j++)
 	{
-		this.matrixBoard[i] = [];
+		this.matrixBoard[j] = [];
 
-		for(var j = 0; j < this.div; j++)
+		for(var i = 0; i < this.div; i++)
 		{
-			var index = i * this.div + j;
+			var index = j * this.div + i;
 			var elem = list[index];
+			var obj;
 
 			if(elem == 0 || (elem >= 10 && elem <= 49)) //empty
 			{
-				this.matrixBoard[i][j] = null;			
+				 obj = null;			
 			}
-			else if(elem == 7) //Tree
+			else
 			{
-				 var tree = new MyTree(this.scene, this.div, this.MapInc);
-				 tree.translate(j, i);
-				 this.matrixBoard[i][j] = tree;
+				if(elem == 7) //Tree
+				{
+					 obj = new MyTree(this.scene, this.div, this.MapInc);
+				}
+				else if(elem == 1) //White Flower
+				{
+					obj = new MyFlower(this.scene, "white",this.div, this.MapInc);
+				}
+				else if(elem == 2) //Yellow Flower
+				{
+					obj = new MyFlower(this.scene, "yellow",this.div, this.MapInc);
+				}
+				else if(elem == 3) //Green Flower
+				{
+					obj = new MyFlower(this.scene, "green",this.div, this.MapInc);
+				}
+				else if(elem == 4) //Blue Flower
+				{
+					obj = new MyFlower(this.scene, "blue",this.div, this.MapInc);
+				}
+				else if(elem == 5) //Purple Flower
+				{
+					obj = new MyFlower(this.scene, "purple",this.div, this.MapInc);
+				}
+				else if(elem == 6) //Red Flower
+				{
+					obj = new MyFlower(this.scene, "red",this.div, this.MapInc);
+				}
+				else if(elem >= 110 && elem <= 149) //Alien Black P1
+				{
+					obj = new MyAlien(this.scene, "black", this.div, this.MapInc);  
+				}
+				else if(elem >= 210 && elem <= 249) //Alien White P2
+				{
+					obj = new MyAlien(this.scene, "white", this.div, this.MapInc); 
+				}
+	
+
+				obj.translate(i, j);
 			}
-			else if(elem == 1) //White Flower
-			{
-				var flower = new MyFlower(this.scene, "white",this.div, this.MapInc);
-				flower.translate(j, i);
-				this.matrixBoard[i][j] = flower;
-			}
-			else if(elem == 2) //Yellow Flower
-			{
-				var flower = new MyFlower(this.scene, "yellow",this.div, this.MapInc);
-				flower.translate(j, i);
-				this.matrixBoard[i][j] = flower;
-			}
-			else if(elem == 3) //Green Flower
-			{
-				var flower = new MyFlower(this.scene, "green",this.div, this.MapInc);
-				flower.translate(j, i);
-				this.matrixBoard[i][j] = flower;
-			}
-			else if(elem == 4) //Blue Flower
-			{
-				var flower = new MyFlower(this.scene, "blue",this.div, this.MapInc);
-				flower.translate(j, i);
-				this.matrixBoard[i][j] = flower;
-			}
-			else if(elem == 5) //Purple Flower
-			{
-				var flower = new MyFlower(this.scene, "purple",this.div, this.MapInc);
-				flower.translate(j, i);
-				this.matrixBoard[i][j] = flower;
-			}
-			else if(elem == 6) //Red Flower
-			{
-				var flower = new MyFlower(this.scene, "red",this.div, this.MapInc);
-				flower.translate(j, i);
-				this.matrixBoard[i][j] = flower;
-			}
-			else if(elem >= 110 && elem <= 149) //Alien Black P1
-			{
-				var alien = new MyAlien(this.scene, "black", this.div, this.MapInc);  
-				alien.translate(j, i);
-				this.matrixBoard[i][j] = alien;
-			}
-			else if(elem >= 210 && elem <= 249) //Alien White P2
-			{
-				var alien = new MyAlien(this.scene, "white", this.div, this.MapInc);  
-				alien.translate(j, i);
-				this.matrixBoard[i][j] = alien;
-			}
+
+			this.matrixBoard[j][i] = obj;
 		}
 	}
+
 };
 
 MyBoard.prototype.displayInternalBoard=function(material)
@@ -975,16 +985,26 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 				var request = "[" + x + "-" + y + "-" + color + "]";
 				this.makeRequest(request);
 
+
 				//move flower			
 				//firtsX, firstY, lastX, lastY, Xinc, Yinc
-				var flower = this.p1case.matrixBoard[yS][xS];
+				var flower = this.p1case.matrixBoard[yS][xS];				
 				flower.animate(null, 2 ,flower.x +1, flower.y+1, x-1, y-1, -5.4,-0.05 ,this.currTime);
 				this.matrixBoard[y-1][x-1] = flower;
 
 				//kill flower from case
 				this.p1case.matrixBoard[yS][xS] = null;
 
-				//update alien, state and list of Plays
+				//historic case push
+				this.createNewHistoricSpace();	
+				var l = this.playsHistoric.length - 1;
+				if(l >= 0)
+				{
+					this.playsHistoric[l]['caseP1matrix'] = this.p1case.getMatrix();
+				}		
+
+
+				//update alien, state and list of Play		
 				this.prepareNextAndOrPlay();
 			}
 			else if(this.state == "p2")
@@ -994,6 +1014,7 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 				var request = "[" + x + "-" + y + "-" + color + "]";			
 				this.makeRequest(request);	
 
+
 				//move flower			
 				//firtsX, firstY, lastX, lastY, Xinc, Yinc
 				var flower = this.p2case.matrixBoard[yS][xS];
@@ -1002,7 +1023,15 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 					
 				//kill flower from case
 				this.p2case.matrixBoard[yS][xS] = null;
-				
+
+				//historic case push
+				this.createNewHistoricSpace();	
+				var l = this.playsHistoric.length - 1;
+				if(l >= 0)
+				{
+					this.playsHistoric[l]['caseP2matrix'] = this.p2case.getMatrix();
+				}	
+
 				//update alien, state and list of Plays
 				this.prepareNextAndOrPlay();
 			}
@@ -1022,6 +1051,11 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 	{
 		if(this.scene.GameMode == 1)
 		{
+			var l = this.playsHistoric.length - 1;
+			if(l >= 0)
+			{
+				this.playsHistoric[l]['caseP2matrix'] = this.p2case.getMatrix();
+			}	
 			
 			this.makeRequest("state");
 			this.makeRequest("listPlays");
@@ -1029,7 +1063,7 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
 
-			this.createNewHistoricSpace();
+			
 			this.makeRequest("newhistoric");
 			this.makeRequest("p1historic");
 			this.makeRequest("p2historic");
@@ -1056,7 +1090,6 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
 
-			this.createNewHistoricSpace();
 			this.makeRequest("newhistoric");
 			this.makeRequest("p1historic");
 			this.makeRequest("p2historic");
@@ -1082,7 +1115,6 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
 
-			this.createNewHistoricSpace();
 			this.makeRequest("newhistoric");
 			this.makeRequest("p1historic");
 			this.makeRequest("p2historic");
@@ -1098,13 +1130,18 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 	}
 	else if(this.state == "p2")
 	{
+			var l = this.playsHistoric.length - 1;
+			if(l >= 0)
+			{
+				this.playsHistoric[l]['caseP1matrix'] = this.p1case.getMatrix();
+			}	
+
 			this.makeRequest("listPlays");
 			this.makeRequest("state");
 			this.makeRequest("p2alien");
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
 
-			this.createNewHistoricSpace();
 			this.makeRequest("newhistoric");
 			this.makeRequest("p1historic");
 			this.makeRequest("p2historic");
@@ -1258,8 +1295,84 @@ MyBoard.prototype.checkEndOfGame=function()
 
 
 MyBoard.prototype.Undo=function()
-{
+{	
 	console.log(this.playsHistoric);
+	if(this.playsHistoric.length > 1 && (this.scene.GameMode == 1 || this.scene.GameMode == 2 || this.scene.GameMode == 3))
+	{
+		var l = this.playsHistoric.length - 1;
+
+		if(this.canUndo(l))
+		{
+
+			this.playsHistoric.pop();
+
+			console.log(this.playsHistoric);
+
+			var l = this.playsHistoric.length - 1;
+
+			//Score P1
+			this.P1 = this.playsHistoric[l]['scoreP1'];
+			this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), this.Log);
+			var request = "[" + "scoreP1" + "-" + this.P1 + "]";
+			this.makeRequest(request);
+
+			//Score P2
+			this.P2 = this.playsHistoric[l]['scoreP2'];
+			this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), this.Log);
+			var request = "[" + "scoreP2" + "-" + this.P2 + "]";
+			this.makeRequest(request);
+
+			//state 
+			this.state = this.playsHistoric[l]['state'];
+			var request = "[" + "state" + "-" + this.state + "]";
+			this.makeRequest(request);
+
+			//case p1case
+			this.p1case.setNewMatrix(this.playsHistoric[l]['caseP1matrix']);
+			var request = "[" + "casep1" + "-" + this.playsHistoric[l]['caseP1'] + "]";
+			this.makeRequest(request);
+
+			//case p2case
+			this.p2case.setNewMatrix(this.playsHistoric[l]['caseP2matrix']);
+			var request = "[" + "casep2" + "-" + this.playsHistoric[l]['caseP2'] + "]";
+			this.makeRequest(request);
+
+			//board
+			this.createBoardElems(this.playsHistoric[l]['board']);
+			var request = "[" + "board" + "-" + this.playsHistoric[l]['board'] + "]";
+			this.makeRequest(request);
+
+
+			//listPlays
+			this.listOfNextPlays = this.playsHistoric[l]['listofplays'];
+
+			this.secondsElapsed = 0;
+			this.onesec = 0;
+			this.selectedFlower = null;
+			this.resetBlink();
+			this.p1case.selectFlowerShader(-1, -1);
+			this.p2case.selectFlowerShader(-1, -1);
+
+			if(this.scene.GameMode == 1)
+			{
+				if(this.state == "p1")
+				{
+					this.transitionView = new MyViewTransition(this.scene, "p1", this.currTime, 4);
+				}
+				else if(this.state == "p2")
+				{
+					this.transitionView = new MyViewTransition(this.scene, "p2", this.currTime, 4);
+				}
+			}
+			else
+			{
+				this.transitionView = new MyViewTransition(this.scene, "default", this.currTime, 4);
+			}
+		}
+
+	}
+	
+	
 };
 
 MyBoard.prototype.createNewHistoricSpace=function()
@@ -1274,7 +1387,6 @@ MyBoard.prototype.createNewHistoricSpace=function()
 	this.playsHistoric[l]['caseP2'] = null;
 	this.playsHistoric[l]['caseP1matrix'] = null;
 	this.playsHistoric[l]['caseP2matrix'] = null;
-	this.playsHistoric[l]['boardmatrix'] = null;
 	this.playsHistoric[l]['board'] = null;
 	this.playsHistoric[l]['listofplays'] = null;
 
@@ -1282,92 +1394,10 @@ MyBoard.prototype.createNewHistoricSpace=function()
 
 MyBoard.prototype.createBoardHistoric=function(board)
 {
-	var r = /\d+/g;
-	var list = [];
-	var m;
-
-	while ((m = r.exec(board)) != null) 
-	{
-		list.push(m[0]);
-	}
-	
-	var matrixBoard = [];
-
-	for(var i = 0; i < this.div; i++)
-	{
-		matrixBoard[i] = [];
-
-		for(var j = 0; j < this.div; j++)
-		{
-			var index = i * this.div + j;
-			var elem = list[index];
-
-			if(elem == 0 || (elem >= 10 && elem <= 49)) //empty
-			{
-				 matrixBoard[i][j] = null;			
-			}
-			else if(elem == 7) //Tree
-			{
-				 var tree = new MyTree(this.scene, this.div, this.MapInc);
-				 tree.translate(j, i);
-				 matrixBoard[i][j] = tree;
-			}
-			else if(elem == 1) //White Flower
-			{
-				var flower = new MyFlower(this.scene, "white",this.div, this.MapInc);
-				flower.translate(j, i);
-				matrixBoard[i][j] = flower;
-			}
-			else if(elem == 2) //Yellow Flower
-			{
-				var flower = new MyFlower(this.scene, "yellow",this.div, this.MapInc);
-				flower.translate(j, i);
-				matrixBoard[i][j] = flower;
-			}
-			else if(elem == 3) //Green Flower
-			{
-				var flower = new MyFlower(this.scene, "green",this.div, this.MapInc);
-				flower.translate(j, i);
-				matrixBoard[i][j] = flower;
-			}
-			else if(elem == 4) //Blue Flower
-			{
-				var flower = new MyFlower(this.scene, "blue",this.div, this.MapInc);
-				flower.translate(j, i);
-				matrixBoard[i][j] = flower;
-			}
-			else if(elem == 5) //Purple Flower
-			{
-				var flower = new MyFlower(this.scene, "purple",this.div, this.MapInc);
-				flower.translate(j, i);
-				matrixBoard[i][j] = flower;
-			}
-			else if(elem == 6) //Red Flower
-			{
-				var flower = new MyFlower(this.scene, "red",this.div, this.MapInc);
-				flower.translate(j, i);
-				matrixBoard[i][j] = flower;
-			}
-			else if(elem >= 110 && elem <= 149) //Alien Black P1
-			{
-				var alien = new MyAlien(this.scene, "black", this.div, this.MapInc);  
-				alien.translate(j, i);
-				matrixBoard[i][j] = alien;
-			}
-			else if(elem >= 210 && elem <= 249) //Alien White P2
-			{
-				var alien = new MyAlien(this.scene, "white", this.div, this.MapInc);  
-				alien.translate(j, i);
-				matrixBoard[i][j] = alien;
-			}
-		}
-	}
-
 	var l =  this.playsHistoric.length - 1;
 	if(l >= 0)
 	{
 		this.playsHistoric[l]['board'] = board;
-		this.playsHistoric[l]['boardmatrix'] = matrixBoard;
 	}
 };
 
@@ -1378,59 +1408,7 @@ MyBoard.prototype.createHistoricP1=function(casep1)
 
 	if(l >= 0)
 	{
-		var r = /\d+/g;
-		var list = [];
-		var m;
-
-		while ((m = r.exec(casep1)) != null) 
-		{
-			list.push(m[0]);
-		}
-		
-		var matrixBoard = [];
-
-		for(var i = 0; i < this.p1case.divY; i++)
-		{
-			matrixBoard[i] = [];
-
-			for(var j = 0; j < this.p1case.divX; j++)
-			{
-				var index = i * this.p1case.divX + j;
-				var elem = list[index];
-				var flower;
-
-				if(elem == 1) //White Flower
-				{
-					flower = new MyFlower(this.scene, "white", this.NumdiV, this.mapInc);			
-				}
-				else if(elem == 2) //Yellow Flower
-				{
-					flower = new MyFlower(this.scene, "yellow", this.NumdiV, this.mapInc);	
-				}
-				else if(elem == 3) //Green Flower
-				{
-					flower = new MyFlower(this.scene, "green", this.NumdiV, this.mapInc);	
-				}
-				else if(elem == 4) //Blue Flower
-				{
-					flower = new MyFlower(this.scene, "blue", this.NumdiV, this.mapInc);	
-				}
-				else if(elem == 5) //Purple Flower
-				{
-					flower = new MyFlower(this.scene, "purple", this.NumdiV, this.mapInc);	
-				}
-				else if(elem == 6) //Red Flower
-				{
-					flower = new MyFlower(this.scene, "red", this.NumdiV, this.mapInc);	
-				}
-
-				flower.translate(j, i);
-				matrixBoard[i][j] = flower;
-			}
-		}
-
 		this.playsHistoric[l]['caseP1'] = casep1;
-		this.playsHistoric[l]['caseP1matrix'] = matrixBoard;
 	}
 };
 
@@ -1440,59 +1418,7 @@ MyBoard.prototype.createHistoricP2=function(casep2)
 
 	if(l >= 0)
 	{
-		var r = /\d+/g;
-		var list = [];
-		var m;
-
-		while ((m = r.exec(casep2)) != null) 
-		{
-			list.push(m[0]);
-		}
-		
-		var matrixBoard = [];
-
-		for(var i = 0; i < this.p1case.divY; i++)
-		{
-			matrixBoard[i] = [];
-
-			for(var j = 0; j < this.p1case.divX; j++)
-			{
-				var index = i * this.p1case.divX + j;
-				var elem = list[index];
-				var flower;
-
-				if(elem == 1) //White Flower
-				{
-					flower = new MyFlower(this.scene, "white", this.NumdiV, this.mapInc);			
-				}
-				else if(elem == 2) //Yellow Flower
-				{
-					flower = new MyFlower(this.scene, "yellow", this.NumdiV, this.mapInc);	
-				}
-				else if(elem == 3) //Green Flower
-				{
-					flower = new MyFlower(this.scene, "green", this.NumdiV, this.mapInc);	
-				}
-				else if(elem == 4) //Blue Flower
-				{
-					flower = new MyFlower(this.scene, "blue", this.NumdiV, this.mapInc);	
-				}
-				else if(elem == 5) //Purple Flower
-				{
-					flower = new MyFlower(this.scene, "purple", this.NumdiV, this.mapInc);	
-				}
-				else if(elem == 6) //Red Flower
-				{
-					flower = new MyFlower(this.scene, "red", this.NumdiV, this.mapInc);	
-				}
-
-				flower.translate(j, i);
-				matrixBoard[i][j] = flower;
-			}
-		}
-
 		this.playsHistoric[l]['caseP2'] = casep2;
-		this.playsHistoric[l]['caseP2matrix'] = matrixBoard;
 	}	
 };
 
@@ -1549,5 +1475,43 @@ MyBoard.prototype.listofplayshistoric=function(response)
 	if(l >= 0)
 	{
 		this.playsHistoric[l]['listofplays'] = templist;
+	}
+};
+
+MyBoard.prototype.canUndo=function(l)
+{/*
+		this.playsHistoric[l]['scoreP1'] = null;
+	this.playsHistoric[l]['scoreP2'] = null;
+	this.playsHistoric[l]['state'] = null;
+	this.playsHistoric[l]['caseP1'] = null;
+	this.playsHistoric[l]['caseP2'] = null;
+	this.playsHistoric[l]['caseP1matrix'] = null;
+	this.playsHistoric[l]['caseP2matrix'] = null;
+	this.playsHistoric[l]['boardmatrix'] = null;
+	this.playsHistoric[l]['board'] = null;
+	this.playsHistoric[l]['listofplays'] = null;
+	*/
+
+	if(this.playsHistoric[l]['scoreP1'] != null
+		&& this.playsHistoric[l]['scoreP2'] != null 
+		&& this.playsHistoric[l]['state'] != null
+		&& this.playsHistoric[l]['caseP1'] != null
+		&& this.playsHistoric[l]['caseP1'] != null
+		&& this.playsHistoric[l]['caseP1matrix'] != null
+		&& this.playsHistoric[l]['caseP2matrix'] != null
+		&& this.playsHistoric[l]['board'] != null
+		&& this.playsHistoric[l]['listofplays'] != null)
+
+			return true;
+		else 
+			return false;
+};
+
+MyBoard.prototype.Replay=function()
+{
+	if(this.state == "end" && this.playsHistoric >= 1 &&(this.scene.GameMode == 1 || this.scene.GameMode == 2 || this.scene.GameMode == 3))
+	{
+		
+
 	}
 };

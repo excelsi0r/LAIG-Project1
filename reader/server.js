@@ -32,10 +32,20 @@ MyBoard.prototype.handleReply=function(response, requestString)
     else if(requestString == "p1")
     {
         this.p1case.createCaseElems(response);
+        var l =  this.playsHistoric.length - 1;
+        if(l >= 0)
+        {
+            this.playsHistoric[l]['caseP1matrix'] = this.p1case.getMatrix();
+        }
     }
     else if(requestString == "p2")
     {
         this.p2case.createCaseElems(response);
+        var l =  this.playsHistoric.length - 1;
+        if(l >= 0)
+        {
+            this.playsHistoric[l]['caseP2matrix'] = this.p2case.getMatrix();
+        }
     }
     else if(requestString == "state")
     {
@@ -73,7 +83,6 @@ MyBoard.prototype.handleReply=function(response, requestString)
     {
         this.newConsole(this.P1, response, this.Time, this.Log);
     }
-
     else if(requestString == "newhistoric")
     {
         this.createBoardHistoric(response);

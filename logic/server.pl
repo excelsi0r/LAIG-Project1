@@ -118,6 +118,7 @@ parse_input(playP1greedy, [X-Y-F]):-	state(State), get_greedy_and_play_c1(State,
 parse_input(scoreP1, Score):-	score_p1(Score).
 parse_input(scoreP2, Score):-	score_p2(Score).
 
+%Historic
 parse_input(newhistoric, Board):-	board(Board).
 parse_input(p1historic, P1):-	case_p1(P1).
 parse_input(p2historic, P2):-	case_p2(P2).
@@ -125,6 +126,14 @@ parse_input(statehistoric, State):-	state(State).
 parse_input(scorep1historic, Score):-	score_p1(Score).
 parse_input(scorep2historic, Score):-	score_p2(Score).
 parse_input(listofplayshistoric, List):-	get_list_of_next_plays(List).
+
+%Undos
+parse_input([String-Val], NewVal):-	String == 'scoreP1', asserta(score_p1(Val)), score_p1(NewVal).
+parse_input([String-Val], NewVal):-	String == 'scoreP2', asserta(score_p2(Val)), score_p2(NewVal).
+parse_input([String-Val], NewVal):-	String == 'state', asserta(state(Val)), state(NewVal).
+parse_input([String-Val], NewVal):-	String == 'casep1', asserta(case_p1(Val)), case_p1(NewVal).
+parse_input([String-Val], NewVal):-	String == 'casep2', asserta(case_p2(Val)), case_p2(NewVal).
+parse_input([String-Val], NewVal):-	String == 'board', asserta(board(Val)), board(NewVal).
 
 parse_input(quit, goodbye).
 

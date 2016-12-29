@@ -56,6 +56,35 @@ MyCase.prototype.shaderInit=function()
 
 MyCase.prototype.constructor=MyCase;
 
+MyCase.prototype.getMatrix=function()
+{
+	var array = [];
+
+	for(var j = 0; j < this.divY; j++)
+	{
+		array[j] = [];
+
+
+		for(var i = 0; i < this.divX; i++)
+		{
+			if(this.matrixBoard[j][i] != null)
+			{
+				var color = this.getColorString(this.matrixBoard[j][i].colorCode);
+				var flower = new MyFlower(this.scene, color, this.NumdiV, this.mapInc);
+				flower.translate(i, j);
+				array[j][i] = flower;
+
+			}
+			else
+				array[j][i] = null;
+
+		}
+
+	}
+
+	return array;
+};
+
 MyCase.prototype.display = function(appearence)
 {	
 	this.displayCaseElems(appearence);
@@ -250,6 +279,63 @@ MyCase.prototype.findFlowerAndNull=function(color)
 				}
 		}		
 	}
-}
+};
 
 MyCase.prototype.updateTextureCoords=function(s, t) {};
+
+MyCase.prototype.getColorString=function(color)
+{
+	if(color == 1)
+	{
+		return "white";
+	}
+	else if(color == 2)
+	{
+		return "yellow";	
+	}
+ 	else if(color == 3)
+	{
+		return "green";
+	}
+	else if(color == 4)
+	{	
+		return "blue";
+	}
+	else if(color == 5)
+	{
+		return "purple";
+	}
+	else if(color == 6)
+	{
+		return "red";
+	}
+};
+
+
+MyCase.prototype.setNewMatrix=function(array)
+{
+	this.matrixBoard = []; 
+
+	for(var j = 0; j < this.divY; j++)
+	{
+		this.matrixBoard[j] = [];
+
+		for(var i = 0; i < this.divX; i++)
+		{
+			if(array[j][i] != null)
+			{
+				var color = this.getColorString(array[j][i].colorCode);
+				var flower = new MyFlower(this.scene, color, this.NumdiV, this.mapInc);
+				flower.translate(i, j);
+				this.matrixBoard[j][i] = flower;
+
+			}
+			else
+				this.matrixBoard[j][i] = null;
+
+		}
+
+	}
+
+
+}

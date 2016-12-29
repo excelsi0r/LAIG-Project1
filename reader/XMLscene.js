@@ -1176,10 +1176,12 @@ XMLscene.prototype.update=function(currTime)
 		{
 			var idprim = this.graph.primitiveslist[j]['id'];
 
+
 			if(this.primitives[idprim] instanceof MyBoard)
 			{
 				this.primitives[idprim].updateBoard(currTime);
 			}
+			
 		}
 	}	
 	
