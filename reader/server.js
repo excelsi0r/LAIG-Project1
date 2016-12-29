@@ -67,10 +67,10 @@ MyBoard.prototype.handleReply=function(response, requestString)
     }
     else if(requestString == "scoreP1")
     {
-        this.newConsole(response, this.P2, this.Log);
+        this.newConsole(response, this.P2, this.Time, this.Log);
     }
     else if(requestString == "scoreP2")
     {
-        this.newConsole(this.P1, response, this.Log);
+        this.newConsole(this.P1, response, this.Time, this.Log);
     }
 };

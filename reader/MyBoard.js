@@ -20,7 +20,7 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
     this.matrixPic = [];
     this.matrixBoard = null;
     this.state = "menu";
-    this.timeoutPlay = timeoutPlay * 1000;
+    this.timeoutPlay = timeoutPlay;
 
     this.transitionView = null;
 
@@ -45,9 +45,12 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
    	//adding marquer stuff
 	this.P1 = "";
 	this.P2 = "";
+	this.Time = "";
 	this.Log = "Hello! Choose Game";
+	
 	this.P1Dom = this.scene.interface.console.add(this, 'P1');
 	this.P2Dom = this.scene.interface.console.add(this, 'P2');
+	this.TimeDom = this.scene.interface.console.add(this, 'Time');
 	this.LogDom = this.scene.interface.console.add(this, 'Log');
 
     //Board and shader
@@ -55,6 +58,11 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
     this.chess = new CGFshader(this.scene.gl, "../shaders/round2.vert", "../shaders/round2.frag");
     this.shaderInit();
     this.createBoardPicking();
+
+    //timeout and end
+    this.timeoutHappen = false;
+    this.onesec = 0;
+    this.secondsElapsed = 0;
 
     //create case1  
     this.p1case = new MyCase(this.scene, 3,9, this.div, this.MapInc,this.parts,this.auxtexture, this.texture2, this.tileidp1, -3, 5, this.animdur, this.sr, this.sg, this.sb, this.sa);    
@@ -223,10 +231,12 @@ MyBoard.prototype.updateBoard=function(currTime)
         this.p1case.updateCase(this.update);
         this.p2case.updateCase(this.update);
         this.update++; this.firstUpdate = 1;
+        this.timeoutFirstPlay = currTime;
     }
     else
     {
         var diff = currTime - this.currTime;
+        this.updateTimeoutPlay(diff, currTime);
         this.currTime = currTime;
 
         var n_part_asserts = (diff * this.RPS)  / 1000;
@@ -252,6 +262,7 @@ MyBoard.prototype.updateBoard=function(currTime)
     	if(this.firstPCcall <= 0)
     	{
     		this.firstPCcall = 1;
+    		this.timePcPlay = currTime;
     	}
     	else if(currTime - this.timePcPlay >= this.pcPlayDelay)
     	{
@@ -276,7 +287,8 @@ MyBoard.prototype.updateBoard=function(currTime)
 		{
 			this.resetBoard();
 			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
-			this.newConsole("", "", "Choose GameMode");
+			this.newConsole("", "","", "Choose GameMode");
+			this.resetTimes();
 		}
 		else
 		{
@@ -291,24 +303,27 @@ MyBoard.prototype.updateBoard=function(currTime)
 			if(this.scene.GameMode == 1)
 			{
 				this.transitionView = new MyViewTransition(this.scene, "p1",this.currTime, 4);
-				this.newConsole(this.P1, this.P2, "Player 1 turn");
+				this.resetTimes();
+				this.newConsole(this.P1, this.P2, this.Time,  "Player 1 turn");
 			}
 			else if(this.scene.GameMode == 2)
 			{
 				this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
-				this.newConsole(this.P1, this.P2, "Player 1 turn");
+				this.resetTimes();
+				this.newConsole(this.P1, this.P2, this.Time, "Player 1 turn");
 			}
 			else if(this.scene.GameMode == 3)
 			{
 				this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
-				this.newConsole(this.P1, this.P2, "Player 1 turn");
+				this.resetTimes();
+				this.newConsole(this.P1, this.P2, this.Time, "Player 1 turn");
 			}
 
 			if(this.scene.GameMode == 4)
 			{
 				this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
 				this.play_PCvPC_P1();
-				this.newConsole(this.P1, this.P2, "PC vs PC");
+				this.newConsole(this.P1, this.P2, this.Time,  "PC vs PC");
 			}
 		}
 	}
@@ -333,6 +348,8 @@ MyBoard.prototype.updateBoard=function(currTime)
 	//update View
 	this.updateView(currTime);
 
+	//
+	this.checkEndOfGame();
 };
 
 MyBoard.prototype.createBoardPicking=function()
@@ -989,8 +1006,8 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
 
-		
-			this.newConsole(this.P1, this.P2, "Player 2 turn");
+			this.resetTimes();
+			this.newConsole(this.P1, this.P2, this.Time, "Player 2 turn");
 			this.transitionView = new MyViewTransition(this.scene, "p2", this.currTime, 4);
 		}
 		else if(this.scene.GameMode == 2)
@@ -1005,6 +1022,8 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("p2alien");
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
+
+			this.resetTimes();
 			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
 	
 		}
@@ -1020,6 +1039,8 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("p2alien");
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
+
+			this.resetTimes();
 			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
 
 		}
@@ -1032,8 +1053,8 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			this.makeRequest("scoreP1");
 			this.makeRequest("scoreP2");
 			
-
-			this.newConsole(this.P1, this.P2, "Player 1 turn");
+			this.resetTimes();
+			this.newConsole(this.P1, this.P2,this.Time, "Player 1 turn");
 			this.transitionView = new MyViewTransition(this.scene, "p1", this.currTime, 4);
 	}
 };
@@ -1067,6 +1088,7 @@ MyBoard.prototype.play_PCvPC_P2=function()
 		this.makeRequest("state");
 		this.makeRequest("scoreP1");
 		this.makeRequest("scoreP2");
+
 		
 	}
 };
@@ -1089,22 +1111,90 @@ MyBoard.prototype.updateView=function(currTime)
 	}
 };
 
-MyBoard.prototype.newConsole=function(P1, P2, Log)
+MyBoard.prototype.newConsole=function(P1, P2, Time, Log)
 {
 	this.P1 = P1;
 	this.P2 = P2;
+	this.Time = Time;
 	this.Log = Log;	
 
 
 	this.scene.interface.console.remove(this.LogDom);
 	this.scene.interface.console.remove(this.P2Dom);
 	this.scene.interface.console.remove(this.P1Dom);
+	this.scene.interface.console.remove(this.TimeDom);
 	
 
 	this.P1Dom = this.scene.interface.console.add(this, 'P1');
 	this.P2Dom = this.scene.interface.console.add(this, 'P2');
+	this.TimeDom = this.scene.interface.console.add(this, 'Time');
 	this.LogDom = this.scene.interface.console.add(this, 'Log');
 };
+
+MyBoard.prototype.resetTimes=function()
+{
+	this.timeoutHappen = false;
+	this.secondsElapsed = 0;
+	this.onesec = 0;
+};
+
+MyBoard.prototype.updateTimeoutPlay=function(diff, currTime)
+{
+	if(this.state != "end")
+	{
+		if(this.scene.GameMode == 0)
+		{
+			this.onesec = 0;
+			this.secondsElapsed = 0;
+		}
+		else
+		{
+			this.onesec += diff;
+			if(this.onesec >= 1000)
+			{
+				this.secondsElapsed++;
+				this.onesec = 0;
+				this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), this.Log);
+			}
+
+			if((this.scene.GameMode == 1 || this.scene.GameMode == 2 || this.scene.GameMode == 3) && this.secondsElapsed >= this.timeoutPlay)
+			{
+				
+				if(this.state == "p1")
+					this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "P2 Wins! (P1 Timeout)");
+				else if(this.state == "p2")
+					this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "P1 Wins! (P2 Timeout)");
+
+				this.timeoutHappen = true;
+				this.state = "end";
+			}
+
+
+		}
+	}
+};
+
+MyBoard.prototype.checkEndOfGame=function()
+{
+	if(this.state == "end")
+	{
+		if(!this.timeoutHappen)
+		{
+			this.timeoutHappen = true;
+			var P1 = parseInt(this.P1);
+			var P2 = parseInt(this.P2);
+			
+			if(P1 > P2)
+			{
+				this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "P1 Wins!");
+			}
+			else
+			{
+				this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "P2 Wins!");
+			}
+		}
+	}
+}
 
 
 
