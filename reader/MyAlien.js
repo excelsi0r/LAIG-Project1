@@ -1,3 +1,7 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//alien constructor, color, divions number, and mapletngt
 function MyAlien(scene, color, div, mapLength)
 {
     this.scene = scene;
@@ -26,6 +30,7 @@ function MyAlien(scene, color, div, mapLength)
 
 MyAlien.prototype.constructor=MyAlien;
 
+//display function
 MyAlien.prototype.display = function(appearence)
 {	
 	this.scene.pushMatrix();
@@ -155,6 +160,7 @@ MyAlien.prototype.display = function(appearence)
 
 };
 
+//create color
 MyAlien.prototype.createColor = function(color)
 {	
 	if(color == "black")
@@ -169,6 +175,7 @@ MyAlien.prototype.createColor = function(color)
 
 };
 
+//create appearence function rgba 255,255,255,255
 MyAlien.prototype.createAppearence = function(scene, rr, gg, bb, a)
 {
 	var emission = 0.03;
@@ -191,6 +198,7 @@ MyAlien.prototype.createAppearence = function(scene, rr, gg, bb, a)
 
 };
 
+//translate function to x,y positions in board / case
 MyAlien.prototype.translate = function(x,y)
 {
 	var xx = x * this.mapDiv;
@@ -206,6 +214,7 @@ MyAlien.prototype.translate = function(x,y)
 	this.y = y;
 }
 
+//update function
 MyAlien.prototype.update=function(currTime) 
 {
 	if(this.animation != null)
@@ -214,6 +223,7 @@ MyAlien.prototype.update=function(currTime)
 	}
 };
 
+//animate function with keyAnimation, 
 MyAlien.prototype.animate=function(id, span, lastX, lastY, firstTime)
 {
 	this.animation = new KeyAnimation(id, span);

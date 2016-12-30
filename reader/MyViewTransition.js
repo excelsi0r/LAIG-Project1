@@ -1,3 +1,7 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//View Transition constructor, id, currTime, and span
 function MyViewTransition(scene, id, currTime, span)
 {
     this.id = id;
@@ -32,6 +36,7 @@ function MyViewTransition(scene, id, currTime, span)
  
 };
 
+//interpolate Points with  times
 MyViewTransition.prototype.interpolatePoints=function(time0, val0, time1, val1, time)
 {
       var val;
@@ -46,6 +51,7 @@ MyViewTransition.prototype.interpolatePoints=function(time0, val0, time1, val1, 
       return val;
 };
 
+//get the new View updated
 MyViewTransition.prototype.getCameraUpdated=function(currTime)
 {
 	
@@ -81,6 +87,7 @@ MyViewTransition.prototype.getCameraUpdated=function(currTime)
 	
 };
 
+//set default values
 MyViewTransition.prototype.setDefault=function()
 {
     this.near = 0.1;
@@ -96,6 +103,7 @@ MyViewTransition.prototype.setDefault=function()
     this.toz = 4.99;	
 };
 
+//set camera to player 1
 MyViewTransition.prototype.setP1camera=function()
 {
     this.near = 0.1;
@@ -111,7 +119,7 @@ MyViewTransition.prototype.setP1camera=function()
     this.toz = 4.99;	
 };
 
-
+//set camera to player 2
 MyViewTransition.prototype.setP2camera=function()
 {
     this.near = 0.1;

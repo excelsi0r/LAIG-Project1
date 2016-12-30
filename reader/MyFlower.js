@@ -1,10 +1,13 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//Flower constructor, color string, divisions, maplenght
 function MyFlower(scene, color, div, mapLength)
 {
     this.scene = scene;
 
-
-	this.mapDiv = mapLength / div;
-	this.mapInc = (mapLength / div) / 2;
+	this.mapDiv = mapLength / div; //length of each division
+	this.mapInc = (mapLength / div) / 2;//incremental for middle in division
 	this.div = div;
 	this.numpedals = 5;
 
@@ -18,9 +21,11 @@ function MyFlower(scene, color, div, mapLength)
 	this.currTime;
 	this.animation = null;
 
+	//board position
 	this.x;
 	this.y;
 
+	//indexes on case
 	this.i;
 	this.j;
 
@@ -29,6 +34,7 @@ function MyFlower(scene, color, div, mapLength)
 
 MyFlower.prototype.constructor=MyFlower;
 
+//display function
 MyFlower.prototype.display = function(appearence)
 {	
 	this.scene.pushMatrix();
@@ -95,16 +101,9 @@ MyFlower.prototype.display = function(appearence)
 
 };
 
+//create Appeaence with color
 MyFlower.prototype.createColor = function(color)
 {	
-	/*int_elem(Cell):- Cell == 1, print('w').
-	print_elem(Cell):- Cell == 2, print('y').
-	print_elem(Cell):- Cell == 3, print('g').
-	print_elem(Cell):- Cell == 4, print('b').
-	print_elem(Cell):- Cell == 5, print('p').
-	print_elem(Cell):- Cell == 6, print('r').
-	*/
-
 	if(color == "yellow")
 	{
 		this.colorCode = 2;
@@ -135,9 +134,9 @@ MyFlower.prototype.createColor = function(color)
 		this.colorCode = 3;
 		return this.createAppearence(this.scene, 0,50,0,1);
 	}
-
 };
 
+//create appearmce with rgba color, 255,255,255,255
 MyFlower.prototype.createAppearence = function(scene, rr, gg, bb, a)
 {
 	var emission = 0.03;
@@ -160,6 +159,7 @@ MyFlower.prototype.createAppearence = function(scene, rr, gg, bb, a)
 
 };
 
+//translate to the place in board / case
 MyFlower.prototype.translate = function(x,y)
 {
 
@@ -180,6 +180,7 @@ MyFlower.prototype.translate = function(x,y)
 	this.transMatrix = matTemp;
 }
 
+//update function
 MyFlower.prototype.update=function(currTime) 
 {
 	this.currTime = currTime;
@@ -189,6 +190,7 @@ MyFlower.prototype.update=function(currTime)
 	}
 };
 
+//animate flower to final position with key animation
 MyFlower.prototype.animate=function(id, span, firstX, firstY, lastX, lastY, Xinc, Yinc, firstTime)
 {
 	this.translate(500 , 500);

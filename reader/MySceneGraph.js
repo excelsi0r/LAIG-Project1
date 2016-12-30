@@ -1183,7 +1183,7 @@ MySceneGraph.prototype.parseTransformations = function(rootElement)
  * Documentation referencing only to the third part of the Project
  * BOARD: Board, has div number for x, y, texture for main board, second and auxiliary
  * selected color for shaders, timeout of play and replay for PCvPC and replay
- * checks if textures exist
+ * checks if textures exist.
  */
 MySceneGraph.prototype.parsePrimitives = function(rootElement)
 {
@@ -2241,6 +2241,10 @@ MySceneGraph.prototype.parseComponents = function(rootElement)
 
 };
 
+/**
+ * Documentation referencing only to the third part of the Project
+ * Added different ambients, creates skyboxes
+ */
 MySceneGraph.prototype.parseAmbients = function(rootElement)
 {
 	var elems = rootElement.getElementsByTagName('skyboxes');

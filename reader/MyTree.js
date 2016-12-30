@@ -1,3 +1,7 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//Tree constructor, divions in board, and mapLength
 function MyTree(scene, div, mapLength)
 {
     this.scene = scene;
@@ -18,6 +22,7 @@ function MyTree(scene, div, mapLength)
 
 MyTree.prototype.constructor=MyTree;
 
+//display function
 MyTree.prototype.display = function(appearence)
 {	
 	this.scene.pushMatrix();
@@ -60,6 +65,7 @@ MyTree.prototype.display = function(appearence)
 
 };
 
+//createAppearence with rbga color 255,255,255,255
 MyTree.prototype.createAppearence = function(scene, rr, gg, bb, a)
 {
 	var emission = 0.03;
@@ -82,6 +88,7 @@ MyTree.prototype.createAppearence = function(scene, rr, gg, bb, a)
 
 };
 
+//translate to x,y position in board / case
 MyTree.prototype.translate = function(x,y)
 {
 	var xx = x*this.mapDiv;
@@ -95,9 +102,6 @@ MyTree.prototype.translate = function(x,y)
 	this.transMatrix = matTemp;
 }
 
-MyTree.prototype.update=function(currTime) 
-{
-	
-};
+MyTree.prototype.update=function(currTime) {};
 
 MyTree.prototype.updateTextureCoords=function(s, t) {};

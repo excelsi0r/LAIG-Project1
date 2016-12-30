@@ -1,3 +1,8 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//case constructor, divions X, divisions y, number diviions, maplenth, texture divions,
+//texture, texture2, tileid, x, y positions, animation duration and selected colors
 function MyCase(scene, divX, divY, NumdiV, MapLength, textdiv, texture, texture2, tileid, x, y,animdur,sr,sg,sb,sa)
 {
     this.scene = scene;
@@ -37,6 +42,7 @@ function MyCase(scene, divX, divY, NumdiV, MapLength, textdiv, texture, texture2
 
 }
 
+//initialize shader
 MyCase.prototype.shaderInit=function()
 {
 	this.chess.setUniformsValues({divX: this.divX});
@@ -56,6 +62,7 @@ MyCase.prototype.shaderInit=function()
 
 MyCase.prototype.constructor=MyCase;
 
+//return a new complete matrix copied from the current one
 MyCase.prototype.getMatrix=function()
 {
 	var array = [];
@@ -85,11 +92,13 @@ MyCase.prototype.getMatrix=function()
 	return array;
 };
 
+//display function
 MyCase.prototype.display = function(appearence)
 {	
 	this.displayCaseElems(appearence);
 };
 
+//create acording elems objects in the matrixBoard from a string
 MyCase.prototype.createCaseElems = function(caseBoard)
 {
 	var r = /\d+/g;
@@ -145,6 +154,7 @@ MyCase.prototype.createCaseElems = function(caseBoard)
 	
 };
 
+//display elems
 MyCase.prototype.displayCaseElems=function(appearence)
 {
 	if(this.scene.pickMode == false)
@@ -217,6 +227,7 @@ MyCase.prototype.displayCaseElems=function(appearence)
  	}
 };
 
+//display tiles
 MyCase.prototype.displayBoardTiles=function()
 {  
     for(var i = 0; i < this.divY; i++)
@@ -228,6 +239,7 @@ MyCase.prototype.displayBoardTiles=function()
     }
 };
 
+//create tiles for picking
 MyCase.prototype.createBoardPicking=function()
 {
     for(var i = 0; i < this.divY; i++)
@@ -243,11 +255,13 @@ MyCase.prototype.createBoardPicking=function()
     }
 };
 
+//reset matrixBoard
 MyCase.prototype.resetMatrix=function()
 {
 	this.matrixBoard = null;
 };
 
+//set the shader positiono of the flower that was selected (picked)
 MyCase.prototype.selectFlowerShader=function(x,y)
 {
 	this.su = x;
@@ -256,12 +270,13 @@ MyCase.prototype.selectFlowerShader=function(x,y)
     this.chess.setUniformsValues({sv: this.sv});
 };
 
+//update shader
 MyCase.prototype.updateCase=function(update)
 {
 	this.chess.setUniformsValues({update: update});
 };
 
-
+//when PC plays needs to remove a flower from this case, finds the first with the color passed and returns
 MyCase.prototype.findFlowerAndNull=function(color)
 {
 	for(var i = 0; i < this.divY; i++)
@@ -283,6 +298,7 @@ MyCase.prototype.findFlowerAndNull=function(color)
 
 MyCase.prototype.updateTextureCoords=function(s, t) {};
 
+//convert color code to string
 MyCase.prototype.getColorString=function(color)
 {
 	if(color == 1)
@@ -311,7 +327,7 @@ MyCase.prototype.getColorString=function(color)
 	}
 };
 
-
+//set a new matrix with acording objects froma a array
 MyCase.prototype.setNewMatrix=function(array)
 {
 	this.matrixBoard = []; 

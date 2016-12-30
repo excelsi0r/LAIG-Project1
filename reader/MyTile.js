@@ -1,3 +1,7 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//pickable tile constructor, id, divions number, maplength, x,y positions, increment x, increment y
 function MyTile(scene, id, div, mapLength, x, y, incx, incy)
 {
     this.scene = scene;
@@ -20,6 +24,7 @@ function MyTile(scene, id, div, mapLength, x, y, incx, incy)
 
 MyTile.prototype.constructor=MyTile;
 
+//display function
 MyTile.prototype.display = function(appearence)
 {	
 	if(this.scene.pickMode)
@@ -34,7 +39,7 @@ MyTile.prototype.display = function(appearence)
 
 };
 
-
+//translate function
 MyTile.prototype.translate = function()
 {
 	var xx = this.x*this.mapDiv + this.incx;
@@ -47,6 +52,5 @@ MyTile.prototype.translate = function()
 
 	this.transMatrix = matTemp;
 }
-
 
 MyTile.prototype.updateTextureCoords=function(s, t) {};

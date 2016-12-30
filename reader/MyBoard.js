@@ -1,20 +1,29 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//MyBoard constructor, divions for square board, texture for main board, 
+//secondary tecture, case texture, selected colors, updates per second (r.p.s), timeout play, and replay time
 function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps, timeoutPlay, replayTimeOut) 
 {
     this.scene = scene;
 
+	//divisons
 	this.div = div;
     this.divX = div;
     this.divY = div;
  
+ 	//selected color
     this.sr = sr;
     this.sg = sg;
     this.sb = sb; 
     this.sa = sa;
 
+	//tile ids
     this.tileid = 1;
     this.tileidp1 = 101;
     this.tileidp2 = 201;
 
+	//arrays, state
 	this.selectedFlower = null;
 	this.listOfNextPlays = [];
     this.matrixPic = [];
@@ -58,7 +67,7 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
     this.shaderInit();
     this.createBoardPicking();
 
-    //timeout and end
+    //timeout end
     this.timeoutHappen = false;
     this.onesec = 0;
     this.secondsElapsed = 0;
@@ -80,13 +89,14 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
 	//create button Undo
 	this.scene.interface.gui.add(this, 'Undo');
 
-	//create Button Replay
+	//create Button Replay and elems
 	this.ReplayTime = replayTimeOut;
 	this.replayHappening = false;
 	this.replayTime;
 	this.replayIndex;
 	this.scene.interface.gui.add(this, 'Replay');
 
+	//add replay time slider
 	this.scene.interface.replay.add(this, 'ReplayTime', 2, 10);
 
 	//add reseet button
@@ -98,6 +108,7 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
 MyBoard.prototype = Object.create(CGFobject.prototype);
 MyBoard.prototype.constructor=MyBoard;
 
+//intialize shaders
 MyBoard.prototype.shaderInit=function()
 {
 	this.chess.setUniformsValues({divX: this.div});
@@ -118,6 +129,7 @@ MyBoard.prototype.shaderInit=function()
 
 };
 
+//display function
 MyBoard.prototype.display=function(material)
 {       
 
@@ -149,8 +161,10 @@ MyBoard.prototype.display=function(material)
 		this.p2case.displayBoardTiles();
 
 }
+
 MyBoard.prototype.updateTextureCoords=function(s,t){};
 
+//update Board function
 MyBoard.prototype.updateBoard=function(currTime)
 {
 	//time updating and shaders
@@ -250,6 +264,7 @@ MyBoard.prototype.updateBoard=function(currTime)
 	this.checkEndOfGame();
 };
 
+//creates the board with tiles for picking
 MyBoard.prototype.createBoardPicking=function()
 {
     for(var i = 0; i < this.div - 2; i++)
@@ -265,6 +280,7 @@ MyBoard.prototype.createBoardPicking=function()
     }
 };
 
+//New Button, when a new GameMode is invoked
 MyBoard.prototype.New=function()
 {
 	this.playsHistoric = [];
@@ -330,13 +346,13 @@ MyBoard.prototype.New=function()
 
 };
 
+//change the current state
 MyBoard.prototype.changeState=function(response)
 {
 	this.state = response;
 };
 
-
-
+//updates a new List of Plays from a string
 MyBoard.prototype.updatePlaysList=function(listPlays)
 {
 	var r = /\d+/g;
@@ -356,6 +372,7 @@ MyBoard.prototype.updatePlaysList=function(listPlays)
 	}
 };
 
+//updates Player 1	 Alien Position, with animation
 MyBoard.prototype.updateP1Alien=function(position)
 {
 	var r = /\d+/g;
@@ -385,6 +402,7 @@ MyBoard.prototype.updateP1Alien=function(position)
 	}	
 };
 
+//updates Player 2 Alien Position, with animation
 MyBoard.prototype.updateP2Alien=function(position)
 {
 	var r = /\d+/g;
@@ -413,6 +431,7 @@ MyBoard.prototype.updateP2Alien=function(position)
 	}
 };
 
+//when PC plays as player 2
 MyBoard.prototype.computerPlayP2=function(play)
 {
 	var r = /\d+/g;
@@ -448,6 +467,7 @@ MyBoard.prototype.computerPlayP2=function(play)
 
 };
 
+//GameMode 4, when player 1 plays (PC in this case)
 MyBoard.prototype.computerPlayP1=function(play)
 {
 	var r = /\d+/g;
@@ -471,7 +491,7 @@ MyBoard.prototype.computerPlayP1=function(play)
 	}
 };
 
-
+//create a matrixBoard with acording objects from string board, 
 MyBoard.prototype.createBoardElems=function(board)
 {
 	var r = /\d+/g;
@@ -557,6 +577,7 @@ MyBoard.prototype.createBoardElems=function(board)
 
 };
 
+//display the board object itself
 MyBoard.prototype.displayInternalBoard=function(material)
 { 
     //Board display
@@ -608,6 +629,7 @@ MyBoard.prototype.displayInternalBoard=function(material)
  	}
 };
 
+//dispay pickable tiles
 MyBoard.prototype.displayBoardTiles=function()
 {  
     var tileid = 0;
@@ -620,6 +642,7 @@ MyBoard.prototype.displayBoardTiles=function()
     }
 };
 
+//log picking, handles pick results
 MyBoard.prototype.logPicking = function()
 {
 	if (this.scene.pickMode == false) 
@@ -630,26 +653,26 @@ MyBoard.prototype.logPicking = function()
 			{
 				var obj = this.scene.pickResults[i][0];
 
-
 				if (obj)
 				{
 					var customId = this.scene.pickResults[i][1];				
 					//console.log("Picked object: " + obj + ", with pick id " + customId);
 
 					this.hadleObjectPicked(customId);
-				}
-				
+				}			
 			}
 			this.scene.pickResults.splice(0,this.scene.pickResults.length);
 		}		
 	}
 };
 
+//resets the matrixBoard
 MyBoard.prototype.resetMatrix=function()
 {
 	this.matrixBoard = null;
 };
 
+//reset Game
 MyBoard.prototype.resetBoard=function()
 {
 		this.resetMatrix();
@@ -661,9 +684,9 @@ MyBoard.prototype.resetBoard=function()
 		this.resetBlink();
 };
 
+//resets board shaders Blink
 MyBoard.prototype.resetBlink=function()
 {
-
     this.chess.setUniformsValues({s11: false});
     this.chess.setUniformsValues({s12: false});
     this.chess.setUniformsValues({s13: false});
@@ -755,6 +778,7 @@ MyBoard.prototype.resetBlink=function()
     this.chess.setUniformsValues({s99: false});		
 };
 
+//sets shaders positions to blink
 MyBoard.prototype.setBlink=function(listOfNextPlays)
 {
 	for(var i = 0; i < listOfNextPlays.length; i++)
@@ -854,6 +878,8 @@ MyBoard.prototype.setBlink=function(listOfNextPlays)
 	}
 };
 
+
+//checks if x,y is an available play
 MyBoard.prototype.playExists=function(x, y)
 {
 	var exists = false;
@@ -873,6 +899,7 @@ MyBoard.prototype.playExists=function(x, y)
 	return exists;
 };
 
+//invoked when a object is picked, board, p1case or p2case, handles acordingly
 MyBoard.prototype.hadleObjectPicked=function(id)
 {
 	if(id > 100 && id < 200 && this.state == "p1" && this.scene.GameMode != 4 && this.replayHappening == false)
@@ -997,6 +1024,8 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 	}
 };
 
+
+//evaluates state, player and Game Mode and Requests prolog acordingly
 MyBoard.prototype.prepareNextAndOrPlay=function()
 {
 	if(this.state == "p1")
@@ -1109,7 +1138,7 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 	}
 };
 
-
+//PC v PC player 1 play
 MyBoard.prototype.play_PCvPC_P1=function()
 {
 	if(this.state != "end")
@@ -1127,6 +1156,7 @@ MyBoard.prototype.play_PCvPC_P1=function()
 	}
 };
 
+//PC v PC player 2 play
 MyBoard.prototype.play_PCvPC_P2=function()
 {
 	if(this.state != "end")
@@ -1143,6 +1173,7 @@ MyBoard.prototype.play_PCvPC_P2=function()
 	}
 };
 
+//updates the current view
 MyBoard.prototype.updateView=function(currTime)
 {
 
@@ -1161,6 +1192,7 @@ MyBoard.prototype.updateView=function(currTime)
 	}
 };
 
+//sets a new Log in the console
 MyBoard.prototype.newConsole=function(P1, P2, Time, Log)
 {
 	this.P1 = P1;
@@ -1181,6 +1213,7 @@ MyBoard.prototype.newConsole=function(P1, P2, Time, Log)
 	this.LogDom = this.scene.interface.console.add(this, 'Log');
 };
 
+//resets Times of timeout 
 MyBoard.prototype.resetTimes=function()
 {
 	this.timeoutHappen = false;
@@ -1188,6 +1221,7 @@ MyBoard.prototype.resetTimes=function()
 	this.onesec = 0;
 };
 
+//checks if game ended with timeout
 MyBoard.prototype.updateTimeoutPlay=function(diff, currTime)
 {
 	if(this.state != "end")
@@ -1224,6 +1258,7 @@ MyBoard.prototype.updateTimeoutPlay=function(diff, currTime)
 	}
 };
 
+//checks if game is over, sets winers in console
 MyBoard.prototype.checkEndOfGame=function()
 {
 	if(this.state == "end")
@@ -1246,7 +1281,7 @@ MyBoard.prototype.checkEndOfGame=function()
 	}
 };
 
-
+//Undo function
 MyBoard.prototype.Undo=function()
 {	
 	if(this.playsHistoric.length > 1 && (this.scene.GameMode == 1 || this.scene.GameMode == 2 || this.scene.GameMode == 3) && this.replayHappening == false)
@@ -1323,6 +1358,7 @@ MyBoard.prototype.Undo=function()
 	}
 };
 
+//creates a new empty play to the history array
 MyBoard.prototype.createNewHistoricSpace=function()
 {
 	this.playsHistoric.push([]);
@@ -1344,6 +1380,7 @@ MyBoard.prototype.createNewHistoricSpace=function()
 
 };
 
+//pushes the board to the history array
 MyBoard.prototype.createBoardHistoric=function(board)
 {
 	var l =  this.playsHistoric.length - 1;
@@ -1353,7 +1390,7 @@ MyBoard.prototype.createBoardHistoric=function(board)
 	}
 };
 
-
+//pushes the case of player 1 to the history array
 MyBoard.prototype.createHistoricP1=function(casep1)
 {
 	var l =  this.playsHistoric.length - 1;
@@ -1364,6 +1401,7 @@ MyBoard.prototype.createHistoricP1=function(casep1)
 	}
 };
 
+//pushes the case of player 2 to the history array
 MyBoard.prototype.createHistoricP2=function(casep2)
 {
 	var l =  this.playsHistoric.length - 1;
@@ -1374,6 +1412,7 @@ MyBoard.prototype.createHistoricP2=function(casep2)
 	}	
 };
 
+//pushes state to the history array
 MyBoard.prototype.changeStateHistoric=function(response)
 {
 	var l =  this.playsHistoric.length - 1;
@@ -1384,6 +1423,7 @@ MyBoard.prototype.changeStateHistoric=function(response)
 	}
 };
 
+//pushes the score of player 1 to the history array
 MyBoard.prototype.scorep1historic=function(response)
 {
 	var l =  this.playsHistoric.length - 1;
@@ -1394,6 +1434,7 @@ MyBoard.prototype.scorep1historic=function(response)
 	}
 };
 
+//pushes the score of player 2 to the history array
 MyBoard.prototype.scorep2historic=function(response)
 {
 	var l =  this.playsHistoric.length - 1;
@@ -1404,6 +1445,7 @@ MyBoard.prototype.scorep2historic=function(response)
 	}
 };
 
+//push list of plays to the history array
 MyBoard.prototype.listofplayshistoric=function(response)
 {
 	var r = /\d+/g;
@@ -1430,6 +1472,7 @@ MyBoard.prototype.listofplayshistoric=function(response)
 	}
 };
 
+//pushes a player 1 play to the history array
 MyBoard.prototype.playp1historic=function(x, y, f, xS, yS)
 {
 	var l =  this.playsHistoric.length - 1;
@@ -1441,6 +1484,7 @@ MyBoard.prototype.playp1historic=function(x, y, f, xS, yS)
 	}
 };
 
+//pushes a player 2 play to the history array
 MyBoard.prototype.playp2historic=function(x, y, f, xS, yS)
 {
 	var l =  this.playsHistoric.length - 1;
@@ -1452,6 +1496,7 @@ MyBoard.prototype.playp2historic=function(x, y, f, xS, yS)
 	}
 };
 
+//Checks if is possible to undo to the last play
 MyBoard.prototype.canUndo=function(l)
 {
 	if(this.playsHistoric[l]['scoreP1'] != null
@@ -1467,6 +1512,7 @@ MyBoard.prototype.canUndo=function(l)
 			return false;
 };
 
+//When Replay Button is called
 MyBoard.prototype.Replay=function()
 {
 	
@@ -1486,7 +1532,7 @@ MyBoard.prototype.Replay=function()
 		this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "No historic yet");
 };
 
-
+//Replay Function, sets Game to the index passed in the playsHistoric
 MyBoard.prototype.ReplayPlay=function(index)
 {
 	var playsl = this.playsHistoric.length;	
@@ -1597,6 +1643,7 @@ MyBoard.prototype.ReplayPlay=function(index)
 	}
 };
 
+//Convert color code to string color
 MyBoard.prototype.getColorString=function(color)
 {
 	if(color == 1)
@@ -1623,10 +1670,5 @@ MyBoard.prototype.getColorString=function(color)
 	{
 		return "red";
 	}
-};
-
-MyBoard.prototype.Show=function()
-{
-	console.log(this.playsHistoric, this.replayHappening, this.replayIndex);
 };
 

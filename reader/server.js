@@ -1,3 +1,6 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
 MyBoard.prototype.getPrologRequest=function(requestString)
 {
     var requestPort = 8081
@@ -21,11 +24,13 @@ MyBoard.prototype.getPrologRequest=function(requestString)
     request.send();
 };
 
+//make Request
 MyBoard.prototype.makeRequest=function(requestString)
 {
     this.getPrologRequest(requestString);
 };
 
+//handle error
 MyBoard.prototype.handleError=function(response, requestString)
 {
     this.New();
@@ -33,6 +38,7 @@ MyBoard.prototype.handleError=function(response, requestString)
     this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "SICSTUS closed!");  
 };
 
+//handle Reply
 MyBoard.prototype.handleReply=function(response, requestString)
 {
     if(requestString == "new")

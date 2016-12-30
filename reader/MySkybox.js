@@ -1,3 +1,7 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//id to display and folder containing the 6 images
 function MySkybox(scene, id, folder)
 {
     this.id = id;
@@ -17,6 +21,7 @@ function MySkybox(scene, id, folder)
     this.appearence.setAmbient(1,1,1,1);
 };
 
+//display skybox
 MySkybox.prototype.display=function()
 {
     //down image

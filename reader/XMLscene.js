@@ -772,6 +772,10 @@ XMLscene.prototype.createGraph = function()
 	
 };
 
+/**
+ * Documentation referencing only to the third part of the Project
+ * Creates skyboxes
+ */
 XMLscene.prototype.createSkyboxes=function()
 {
 	console.info("Creating new Skyboxes");

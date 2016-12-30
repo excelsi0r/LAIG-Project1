@@ -1,3 +1,7 @@
+/**
+ * Documentation referencing only to the third part of the Project
+ */
+//Key animation function
 function KeyAnimation(id, span)
 {
     this.animation = new Animation(id, span, "key");
@@ -5,16 +9,19 @@ function KeyAnimation(id, span)
     this.controlPoints = [];
 };
 
+//return controlPoints
 KeyAnimation.prototype.getControlPoints = function()
 {
     return this.controlPoints;
 };
 
+//addcontrol points
 KeyAnimation.prototype.addControlPoint=function(time, transX, transY, transZ, rotX, rotY, rotZ, scaleX, scaleY, ScaleZ)
 {
     this.controlPoints.push([time, transX, transY, transZ, rotX, rotY, rotZ, scaleX, scaleY, ScaleZ]);
 };
 
+//get the current index with the given time
 KeyAnimation.prototype.getCurrentKeyIndex=function(currTime)
 {
     var ret;
@@ -32,6 +39,7 @@ KeyAnimation.prototype.getCurrentKeyIndex=function(currTime)
     return ret;
 };
 
+//interpolate values with times,
 KeyAnimation.prototype.interpolatePoints=function(time0, val0, time1, val1, time)
 {
       var val;
@@ -46,6 +54,7 @@ KeyAnimation.prototype.interpolatePoints=function(time0, val0, time1, val1, time
       return val;
 };
 
+//interpolate Frames
 KeyAnimation.prototype.interpolateFrames=function(frame1, frame2, time)
 {
     var newFrame = [];
@@ -62,10 +71,9 @@ KeyAnimation.prototype.interpolateFrames=function(frame1, frame2, time)
     }
 
     return newFrame;                       
-
-
 };
 
+//return the new Transformation
 KeyAnimation.prototype.getTransformation=function(currTime)
 {
         //console.log(this);
@@ -113,8 +121,6 @@ KeyAnimation.prototype.getTransformation=function(currTime)
         //rotation z
         var axisvec = vec3.fromValues(0,0,1);
         mat4.rotate(transMatrix, transMatrix, newFrame[5], axisvec);
-
-
 
 
         //scale
