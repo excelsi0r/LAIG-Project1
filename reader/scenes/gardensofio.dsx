@@ -70,7 +70,7 @@
          </primitive>
 
          <primitive id="gardensofio">
-                <board div="11" textureref="gardensofio" auxtextureref="case" textureref2="wood" sr="1.0" sg="0.0" sb="0.0" sa="1.0" timeout="20"/>
+                <board div="11" textureref="gardensofio" auxtextureref="case" textureref2="wood" sr="1.0" sg="0.0" sb="0.0" sa="1.0" timeout="20" replay="4"/>
          </primitive>
 
          	

@@ -1178,6 +1178,13 @@ MySceneGraph.prototype.parseTransformations = function(rootElement)
  * 
  * Finally checks for repeated ID's and retursn error if positive
  */
+
+/**
+ * Documentation referencing only to the third part of the Project
+ * BOARD: Board, has div number for x, y, texture for main board, second and auxiliary
+ * selected color for shaders, timeout of play and replay for PCvPC and replay
+ * checks if textures exist
+ */
 MySceneGraph.prototype.parsePrimitives = function(rootElement)
 {
     var elems = rootElement.getElementsByTagName('primitives');
@@ -1518,6 +1525,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				var sg =  parseFloat(primitive[i].children[0].getAttribute('sb'));
 				var sa =  parseFloat(primitive[i].children[0].getAttribute('sa'));			
 				var timeout = parseInt(primitive[i].children[0].getAttribute('timeout'));
+				var replay = parseInt(primitive[i].children[0].getAttribute('replay'));
 
 				if(du == null || dv == null || sr == null || sg == null || sb == null || sa == null || textureref == null || auxtexture == null || textureref2 == null || isNaN(du) || isNaN(dv) || isNaN(sr) || isNaN(sg) || isNaN(sb) || isNaN(sa))
 				{
@@ -1534,6 +1542,8 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement)
 				primitiveitem['sg'] = sg;
 				primitiveitem['sa'] = sa;
 				primitiveitem['timeout'] = timeout;
+				primitiveitem['replay'] = replay;
+
 				
 				//check if texture exists
 				var n_repeated = 0;

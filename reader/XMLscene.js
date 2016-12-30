@@ -132,11 +132,16 @@ XMLscene.prototype.setDefaultAppearance = function ()
  * As loading is asynchronous, 
  * this may be called already after the application has started the run loop
  */
- /**
+/**
  * Documentation refering to the second part of the project
  * 
  * Added animations to the graph
  */
+/**
+ * Documentation referencing only to the third part of the Project
+ * Added Board parsing
+ */
+
 XMLscene.prototype.onGraphLoaded = function () 
 {
 	//scene root
@@ -566,8 +571,9 @@ XMLscene.prototype.setPrimitivesGraph = function()
 			var sb = this.graph.primitiveslist[i]['sb'];
 			var sa = this.graph.primitiveslist[i]['sa'];
 			var timeout = this.graph.primitiveslist[i]['timeout'];
+			var replay = this.graph.primitiveslist[i]['replay'];
 
-			object = new MyBoard(this, div, texture, texture2, auxtexture, sr, sg, sb, sa, this.RPS,timeout);
+			object = new MyBoard(this, div, texture, texture2, auxtexture, sr, sg, sb, sa, this.RPS,timeout, replay);
 		}
 		this.primitives[id] = object;
 	}

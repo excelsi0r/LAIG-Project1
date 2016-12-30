@@ -31,11 +31,11 @@ MyInterface.prototype.init = function(application)
     this.gamemode.open();
     this.gamemode.add(this.scene, "GameMode", this.scene.GameModelist);
 	
+	this.replay = this.gui.addFolder("Replay Speed");
+    this.replay.open();
 
     this.console = this.gui.addFolder("Console");
     this.console.open();
-    
-   
 
 
 };

@@ -21,6 +21,9 @@ function MyFlower(scene, color, div, mapLength)
 	this.x;
 	this.y;
 
+	this.i;
+	this.j;
+
 	this.transMatrix = mat4.create();
 }
 
@@ -165,6 +168,9 @@ MyFlower.prototype.translate = function(x,y)
 
 	this.x = xx;
 	this.y = yy;
+
+	this.i = x;
+	this.j = y;
 
 	var temp = vec3.fromValues(xx,0,yy);
 

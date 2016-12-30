@@ -1,4 +1,4 @@
-function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps, timeoutPlay) 
+function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps, timeoutPlay, replayTimeOut) 
 {
     this.scene = scene;
 
@@ -31,7 +31,6 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
     this.currTime;     //tempo atual da chamada updateshader
     this.timePcPlay;	//tempo para o PC vs PC
     this.firstPCcall = 0;	//primeira execuçao do PC vs PC
-    this.pcPlayDelay = 2000 //tempo entre jogadas do PC
     this.firstUpdate = 0; //se o primeira chamada ao updateshader ja esta 
     this.animdur = 60.0; // duraçao da animaçao de piscar
     this.MapInc = 10; //comprimento do board
@@ -45,7 +44,7 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
    	//adding marquer stuff
 	this.P1 = "";
 	this.P2 = "";
-	this.Time = "";
+	this.Time = "0";
 	this.Log = "Hello! Choose Game";
 	
 	this.P1Dom = this.scene.interface.console.add(this, 'P1');
@@ -82,7 +81,16 @@ function MyBoard(scene, div, texture, texture2, auxtexture, sr, sg, sb, sa, rps,
 	this.scene.interface.gui.add(this, 'Undo');
 
 	//create Button Replay
+	this.ReplayTime = replayTimeOut;
+	this.replayHappening = false;
+	this.replayTime;
+	this.replayIndex;
 	this.scene.interface.gui.add(this, 'Replay');
+
+	this.scene.interface.replay.add(this, 'ReplayTime', 2, 10);
+
+	//add reseet button
+	this.scene.interface.gamemode.add(this, 'New');
 
 
 };
@@ -106,96 +114,7 @@ MyBoard.prototype.shaderInit=function()
     this.chess.setUniformsValues({sb: this.sb});
     this.chess.setUniformsValues({sa: this.sa});
 
-    this.chess.setUniformsValues({s11: false});
-    this.chess.setUniformsValues({s12: false});
-    this.chess.setUniformsValues({s13: false});
-    this.chess.setUniformsValues({s14: false});
-    this.chess.setUniformsValues({s15: false});
-    this.chess.setUniformsValues({s16: false});
-    this.chess.setUniformsValues({s17: false});
-    this.chess.setUniformsValues({s18: false});
-    this.chess.setUniformsValues({s19: false});
-
-    this.chess.setUniformsValues({s21: false});
-    this.chess.setUniformsValues({s22: false});
-    this.chess.setUniformsValues({s23: false});
-    this.chess.setUniformsValues({s24: false});
-    this.chess.setUniformsValues({s25: false});
-    this.chess.setUniformsValues({s26: false});
-    this.chess.setUniformsValues({s27: false});
-    this.chess.setUniformsValues({s28: false});
-    this.chess.setUniformsValues({s29: false});
-  
-    this.chess.setUniformsValues({s31: false});
-    this.chess.setUniformsValues({s32: false});
-    this.chess.setUniformsValues({s33: false});
-    this.chess.setUniformsValues({s34: false});
-    this.chess.setUniformsValues({s35: false});
-    this.chess.setUniformsValues({s36: false});
-    this.chess.setUniformsValues({s37: false});
-    this.chess.setUniformsValues({s38: false});
-    this.chess.setUniformsValues({s39: false});
-
-    this.chess.setUniformsValues({s41: false});
-    this.chess.setUniformsValues({s42: false});
-    this.chess.setUniformsValues({s43: false});
-    this.chess.setUniformsValues({s44: false});
-    this.chess.setUniformsValues({s45: false});
-    this.chess.setUniformsValues({s46: false});
-    this.chess.setUniformsValues({s47: false});
-    this.chess.setUniformsValues({s48: false});
-    this.chess.setUniformsValues({s49: false});
-
-    this.chess.setUniformsValues({s51: false});
-    this.chess.setUniformsValues({s52: false});
-    this.chess.setUniformsValues({s53: false});
-    this.chess.setUniformsValues({s54: false});
-    this.chess.setUniformsValues({s55: false});
-    this.chess.setUniformsValues({s56: false});
-    this.chess.setUniformsValues({s57: false});
-    this.chess.setUniformsValues({s58: false});
-    this.chess.setUniformsValues({s59: false});
-
-    this.chess.setUniformsValues({s61: false});
-    this.chess.setUniformsValues({s62: false});
-    this.chess.setUniformsValues({s63: false});
-    this.chess.setUniformsValues({s64: false});
-    this.chess.setUniformsValues({s65: false});
-    this.chess.setUniformsValues({s66: false});
-    this.chess.setUniformsValues({s67: false});
-    this.chess.setUniformsValues({s68: false});
-    this.chess.setUniformsValues({s69: false});
-
-    this.chess.setUniformsValues({s71: false});
-    this.chess.setUniformsValues({s72: false});
-    this.chess.setUniformsValues({s73: false});
-    this.chess.setUniformsValues({s74: false});
-    this.chess.setUniformsValues({s75: false});
-    this.chess.setUniformsValues({s76: false});
-    this.chess.setUniformsValues({s77: false});
-    this.chess.setUniformsValues({s78: false});
-    this.chess.setUniformsValues({s79: false});
-
-    this.chess.setUniformsValues({s81: false});
-    this.chess.setUniformsValues({s82: false});
-    this.chess.setUniformsValues({s83: false});
-    this.chess.setUniformsValues({s84: false});
-    this.chess.setUniformsValues({s85: false});
-    this.chess.setUniformsValues({s86: false});
-    this.chess.setUniformsValues({s87: false});
-    this.chess.setUniformsValues({s88: false});
-    this.chess.setUniformsValues({s89: false});
-
-    this.chess.setUniformsValues({s91: false});
-    this.chess.setUniformsValues({s92: false});
-    this.chess.setUniformsValues({s93: false});
-    this.chess.setUniformsValues({s94: false});
-    this.chess.setUniformsValues({s95: false});
-    this.chess.setUniformsValues({s96: false});
-    this.chess.setUniformsValues({s97: false});
-    this.chess.setUniformsValues({s98: false});
-    this.chess.setUniformsValues({s99: false});
-    
+   	this.resetBlink();  
 
 };
 
@@ -275,7 +194,7 @@ MyBoard.prototype.updateBoard=function(currTime)
     		this.firstPCcall = 1;
     		this.timePcPlay = currTime;
     	}
-    	else if(currTime - this.timePcPlay >= this.pcPlayDelay)
+    	else if(currTime - this.timePcPlay >= this.ReplayTime * 1000)
     	{
 			this.timePcPlay = currTime;
 
@@ -294,61 +213,7 @@ MyBoard.prototype.updateBoard=function(currTime)
 
     if(this.scene.GameMode != this.scene.previousGameMode)
 	{
-		this.playsHistoric = [];
-
-		if(this.scene.GameMode == 0)
-		{
-			this.resetBoard();
-			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
-			this.newConsole("", "","", "Choose GameMode");
-			this.resetTimes();
-		}
-		else
-		{
-			this.createNewHistoricSpace();
-
-			this.makeRequest("new");
-			this.makeRequest("p1");
-			this.makeRequest("p2");
-			this.makeRequest("state");
-			this.makeRequest("listPlays");
-			this.makeRequest("scoreP1");
-			this.makeRequest("scoreP2");
-
-			this.makeRequest("newhistoric");
-			this.makeRequest("p1historic");
-			this.makeRequest("p2historic");
-			this.makeRequest("statehistoric");
-			this.makeRequest("scorep1historic");
-			this.makeRequest("scorep2historic");
-			this.makeRequest("listofplayshistoric");
-
-			if(this.scene.GameMode == 1)
-			{
-				this.transitionView = new MyViewTransition(this.scene, "p1",this.currTime, 4);
-				this.resetTimes();
-				this.newConsole(this.P1, this.P2, this.Time,  "Player 1 turn");
-			}
-			else if(this.scene.GameMode == 2)
-			{
-				this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
-				this.resetTimes();
-				this.newConsole(this.P1, this.P2, this.Time, "Player 1 turn");
-			}
-			else if(this.scene.GameMode == 3)
-			{
-				this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
-				this.resetTimes();
-				this.newConsole(this.P1, this.P2, this.Time, "Player 1 turn");
-			}
-
-			if(this.scene.GameMode == 4)
-			{
-				this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
-				this.play_PCvPC_P1();
-				this.newConsole(this.P1, this.P2, this.Time,  "PC vs PC");
-			}
-		}
+		this.New();
 	}
 
 	this.scene.previousGameMode = this.scene.GameMode;
@@ -371,7 +236,17 @@ MyBoard.prototype.updateBoard=function(currTime)
 	//update View
 	this.updateView(currTime);
 
-	//
+	//update replay
+	if(this.replayHappening)
+	{
+		if(this.currTime - this.replayTime >= this.ReplayTime * 1000)
+		{
+			this.ReplayPlay(this.replayIndex);
+			this.replayTime = this.currTime;
+		}
+	}
+
+	//check end
 	this.checkEndOfGame();
 };
 
@@ -388,6 +263,71 @@ MyBoard.prototype.createBoardPicking=function()
             this.tileid++;
         }
     }
+};
+
+MyBoard.prototype.New=function()
+{
+	this.playsHistoric = [];
+
+	this.resetBlink();
+	this.p1case.selectFlowerShader(-1,-1);
+	this.p2case.selectFlowerShader(-1,-1);
+	this.selectedFlower = null;
+
+	if(this.scene.GameMode == 0)
+	{
+		this.resetBoard();
+		this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
+		this.newConsole("", "","", "Choose GameMode");
+		this.resetTimes();
+	}
+	else
+	{
+		this.createNewHistoricSpace();
+
+		this.makeRequest("new");
+		this.makeRequest("p1");
+		this.makeRequest("p2");
+		this.makeRequest("state");
+		this.makeRequest("listPlays");
+		this.makeRequest("scoreP1");
+		this.makeRequest("scoreP2");
+
+		this.makeRequest("newhistoric");
+		this.makeRequest("p1historic");
+		this.makeRequest("p2historic");
+		this.makeRequest("statehistoric");
+		this.makeRequest("scorep1historic");
+		this.makeRequest("scorep2historic");
+		this.makeRequest("listofplayshistoric");
+
+		if(this.scene.GameMode == 1)
+		{
+			this.transitionView = new MyViewTransition(this.scene, "p1",this.currTime, 4);
+			this.resetTimes();
+			this.newConsole(this.P1, this.P2, this.Time,  "Player 1 turn");
+		}
+		else if(this.scene.GameMode == 2)
+		{
+			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
+			this.resetTimes();
+			this.newConsole(this.P1, this.P2, this.Time, "Player 1 turn");
+		}
+		else if(this.scene.GameMode == 3)
+		{
+			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
+			this.resetTimes();
+			this.newConsole(this.P1, this.P2, this.Time, "Player 1 turn");
+		}
+
+		if(this.scene.GameMode == 4)
+		{
+			this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
+			this.play_PCvPC_P1();
+			this.newConsole(this.P1, this.P2, this.Time,  "PC vs PC");
+		}
+	}
+
 };
 
 MyBoard.prototype.changeState=function(response)
@@ -487,19 +427,25 @@ MyBoard.prototype.computerPlayP2=function(play)
 	var x = list[0];	
 	var y = list[1];
 	var flowerCode = list[2];
+	var xS;
+	var yS;
 	
 	if(x != 100 && y != 100 && flowerCode != 100)
 	{
-		var flower = this.p2case.findFlowerAndNull(flowerCode);
+		var flower = this.p2case.findFlowerAndNull(flowerCode); xS = flower.i + 0; yS = flower.j + 0;
 		flower.animate(null, 2 ,flower.x +1, flower.y+1, x-1, y-1, 10.4,-0.05 ,this.currTime);
 		this.matrixBoard[y-1][x-1] = flower;
+	
+
+		var l = this.playsHistoric.length - 1;
+		if(l > 0)
+		{
+			this.playsHistoric[l]['caseP2matrix'] = this.p2case.getMatrix();
+			this.playsHistoric[l-1]['playp2'] = [x, y, flowerCode];
+			this.playsHistoric[l-1]['pickedp2'] = [xS, yS];
+		}	
 	}
 
-	var l = this.playsHistoric.length - 1;
-	if(l >= 0)
-	{
-		this.playsHistoric[l]['caseP2matrix'] = this.p2case.getMatrix();
-	}	
 };
 
 MyBoard.prototype.computerPlayP1=function(play)
@@ -717,6 +663,7 @@ MyBoard.prototype.resetBoard=function()
 
 MyBoard.prototype.resetBlink=function()
 {
+
     this.chess.setUniformsValues({s11: false});
     this.chess.setUniformsValues({s12: false});
     this.chess.setUniformsValues({s13: false});
@@ -928,7 +875,7 @@ MyBoard.prototype.playExists=function(x, y)
 
 MyBoard.prototype.hadleObjectPicked=function(id)
 {
-	if(id > 100 && id < 200 && this.state == "p1" && this.scene.GameMode != 4)
+	if(id > 100 && id < 200 && this.state == "p1" && this.scene.GameMode != 4 && this.replayHappening == false)
 	{	
 		var x = (id - 100 - 1) % (this.p1case.divX);
 		var y = Math.floor((id - 100 - 1) / (this.p1case.divX));
@@ -992,18 +939,20 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 				flower.animate(null, 2 ,flower.x +1, flower.y+1, x-1, y-1, -5.4,-0.05 ,this.currTime);
 				this.matrixBoard[y-1][x-1] = flower;
 
+
 				//kill flower from case
 				this.p1case.matrixBoard[yS][xS] = null;
 
 				//historic case push
+				this.playp1historic(x,y,color, xS, yS);
+
 				this.createNewHistoricSpace();	
 				var l = this.playsHistoric.length - 1;
 				if(l >= 0)
 				{
 					this.playsHistoric[l]['caseP1matrix'] = this.p1case.getMatrix();
-				}		
-
-
+				}
+				
 				//update alien, state and list of Play		
 				this.prepareNextAndOrPlay();
 			}
@@ -1025,12 +974,15 @@ MyBoard.prototype.hadleObjectPicked=function(id)
 				this.p2case.matrixBoard[yS][xS] = null;
 
 				//historic case push
+				this.playp2historic(x,y,color,xS,yS);	
 				this.createNewHistoricSpace();	
+
 				var l = this.playsHistoric.length - 1;
 				if(l >= 0)
 				{
 					this.playsHistoric[l]['caseP2matrix'] = this.p2case.getMatrix();
 				}	
+					
 
 				//update alien, state and list of Plays
 				this.prepareNextAndOrPlay();
@@ -1055,7 +1007,7 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 			if(l >= 0)
 			{
 				this.playsHistoric[l]['caseP2matrix'] = this.p2case.getMatrix();
-			}	
+			}		
 			
 			this.makeRequest("state");
 			this.makeRequest("listPlays");
@@ -1080,6 +1032,7 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 		else if(this.scene.GameMode == 2)
 		{
 			
+			this.newConsole(this.P1, this.P2, this.Time, "Player 1 turn");
 			this.makeRequest("p1alien");
 		
 			this.makeRequest("greedy");
@@ -1104,7 +1057,7 @@ MyBoard.prototype.prepareNextAndOrPlay=function()
 		}
 		else if(this.scene.GameMode == 3)
 		{
-			
+			this.newConsole(this.P1, this.P2, this.Time, "Player 1 turn");
 			this.makeRequest("p1alien");
 					
 			this.makeRequest("easy");
@@ -1296,17 +1249,13 @@ MyBoard.prototype.checkEndOfGame=function()
 
 MyBoard.prototype.Undo=function()
 {	
-	console.log(this.playsHistoric);
-	if(this.playsHistoric.length > 1 && (this.scene.GameMode == 1 || this.scene.GameMode == 2 || this.scene.GameMode == 3))
+	if(this.playsHistoric.length > 1 && (this.scene.GameMode == 1 || this.scene.GameMode == 2 || this.scene.GameMode == 3) && this.replayHappening == false)
 	{
 		var l = this.playsHistoric.length - 1;
 
 		if(this.canUndo(l))
 		{
-
 			this.playsHistoric.pop();
-
-			console.log(this.playsHistoric);
 
 			var l = this.playsHistoric.length - 1;
 
@@ -1346,8 +1295,7 @@ MyBoard.prototype.Undo=function()
 			//listPlays
 			this.listOfNextPlays = this.playsHistoric[l]['listofplays'];
 
-			this.secondsElapsed = 0;
-			this.onesec = 0;
+			this.resetTimes();
 			this.selectedFlower = null;
 			this.resetBlink();
 			this.p1case.selectFlowerShader(-1, -1);
@@ -1358,21 +1306,21 @@ MyBoard.prototype.Undo=function()
 				if(this.state == "p1")
 				{
 					this.transitionView = new MyViewTransition(this.scene, "p1", this.currTime, 4);
+					this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "Player 1 turn");
 				}
 				else if(this.state == "p2")
 				{
 					this.transitionView = new MyViewTransition(this.scene, "p2", this.currTime, 4);
+					this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "Player 2 turn");
 				}
 			}
 			else
 			{
 				this.transitionView = new MyViewTransition(this.scene, "default", this.currTime, 4);
+				this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "Player 1 turn");
 			}
 		}
-
 	}
-	
-	
 };
 
 MyBoard.prototype.createNewHistoricSpace=function()
@@ -1389,6 +1337,10 @@ MyBoard.prototype.createNewHistoricSpace=function()
 	this.playsHistoric[l]['caseP2matrix'] = null;
 	this.playsHistoric[l]['board'] = null;
 	this.playsHistoric[l]['listofplays'] = null;
+	this.playsHistoric[l]['pickedp1'] = null;
+	this.playsHistoric[l]['pickedp2'] = null;
+	this.playsHistoric[l]['playp1'] = null;
+	this.playsHistoric[l]['playp2'] = null;
 
 };
 
@@ -1478,27 +1430,35 @@ MyBoard.prototype.listofplayshistoric=function(response)
 	}
 };
 
-MyBoard.prototype.canUndo=function(l)
-{/*
-		this.playsHistoric[l]['scoreP1'] = null;
-	this.playsHistoric[l]['scoreP2'] = null;
-	this.playsHistoric[l]['state'] = null;
-	this.playsHistoric[l]['caseP1'] = null;
-	this.playsHistoric[l]['caseP2'] = null;
-	this.playsHistoric[l]['caseP1matrix'] = null;
-	this.playsHistoric[l]['caseP2matrix'] = null;
-	this.playsHistoric[l]['boardmatrix'] = null;
-	this.playsHistoric[l]['board'] = null;
-	this.playsHistoric[l]['listofplays'] = null;
-	*/
+MyBoard.prototype.playp1historic=function(x, y, f, xS, yS)
+{
+	var l =  this.playsHistoric.length - 1;
 
+	if(l >= 0)
+	{
+		this.playsHistoric[l]['playp1'] = [x,y,f];
+		this.playsHistoric[l]['pickedp1'] = [xS, yS];
+	}
+};
+
+MyBoard.prototype.playp2historic=function(x, y, f, xS, yS)
+{
+	var l =  this.playsHistoric.length - 1;
+
+	if(l >= 0)
+	{
+		this.playsHistoric[l]['playp2'] = [x,y,f];
+		this.playsHistoric[l]['pickedp2'] = [xS, yS];
+	}
+};
+
+MyBoard.prototype.canUndo=function(l)
+{
 	if(this.playsHistoric[l]['scoreP1'] != null
 		&& this.playsHistoric[l]['scoreP2'] != null 
 		&& this.playsHistoric[l]['state'] != null
 		&& this.playsHistoric[l]['caseP1'] != null
 		&& this.playsHistoric[l]['caseP1'] != null
-		&& this.playsHistoric[l]['caseP1matrix'] != null
-		&& this.playsHistoric[l]['caseP2matrix'] != null
 		&& this.playsHistoric[l]['board'] != null
 		&& this.playsHistoric[l]['listofplays'] != null)
 
@@ -1509,9 +1469,164 @@ MyBoard.prototype.canUndo=function(l)
 
 MyBoard.prototype.Replay=function()
 {
-	if(this.state == "end" && this.playsHistoric >= 1 &&(this.scene.GameMode == 1 || this.scene.GameMode == 2 || this.scene.GameMode == 3))
+	
+	if(this.playsHistoric.length >= 1 &&(this.scene.GameMode == 1 || this.scene.GameMode == 2 || this.scene.GameMode == 3))
 	{
-		
+		this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "Replaying");
+		this.replayTime = this.currTime;
+		this.replayHappening = true;
+		this.replayIndex = 0;
+		this.ReplayPlay(this.replayIndex);
+	}
+	else if(this.scene.GameMode == 4)
+	{
+		this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "Not available in PCvPC");
+	}
+	else
+		this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "No historic yet");
+};
 
+
+MyBoard.prototype.ReplayPlay=function(index)
+{
+	var playsl = this.playsHistoric.length;	
+	this.resetTimes();
+	this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4); 
+
+	if(index < playsl && this.replayHappening == true)
+	{
+		//Score P1
+		this.P1 = this.playsHistoric[index]['scoreP1'];
+		this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), this.Log);
+		var request = "[" + "scoreP1" + "-" + this.P1 + "]";
+		this.makeRequest(request);
+
+		//Score P2
+		this.P2 = this.playsHistoric[index]['scoreP2'];
+		this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), this.Log);
+		var request = "[" + "scoreP2" + "-" + this.P2 + "]";
+		this.makeRequest(request);
+
+		//state 
+		this.state = this.playsHistoric[index]['state'];
+		var request = "[" + "state" + "-" + this.state + "]";
+		this.makeRequest(request);
+
+		//case p1case
+		if(this.playsHistoric[index]['caseP1matrix'] != null)
+		{	
+			this.p1case.setNewMatrix(this.playsHistoric[index]['caseP1matrix']);
+			var request = "[" + "casep1" + "-" + this.playsHistoric[index]['caseP1'] + "]";
+			this.makeRequest(request);
+		}
+		//case p2case
+		if(this.playsHistoric[index]['caseP2matrix'] != null)
+		{
+			this.p2case.setNewMatrix(this.playsHistoric[index]['caseP2matrix']);
+			var request = "[" + "casep2" + "-" + this.playsHistoric[index]['caseP2'] + "]";
+			this.makeRequest(request);
+		}
+
+		//board
+		this.createBoardElems(this.playsHistoric[index]['board']);
+		var request = "[" + "board" + "-" + this.playsHistoric[index]['board'] + "]";
+		this.makeRequest(request);
+
+
+		//listPlays
+		this.listOfNextPlays = this.playsHistoric[index]['listofplays'];
+
+		//playp1
+		if(this.playsHistoric[index]['playp1'] != null && this.playsHistoric[index]['pickedp1'] != null)
+		{
+			var x1 = this.playsHistoric[index]['playp1'][0];
+			var y1 = this.playsHistoric[index]['playp1'][1];
+			var f1 = this.playsHistoric[index]['playp1'][2];
+
+			var xS = this.playsHistoric[index]['pickedp1'][0];
+			var yS = this.playsHistoric[index]['pickedp1'][1];
+
+			if(x1 != 100 && y1 != 100 && f1 != 100)
+			{
+				var flower = this.p1case.matrixBoard[yS][xS];
+				flower.animate(null, 2 ,flower.x + 1,flower.y + 1, x1-1, y1-1, -5.4,-0.05 ,this.currTime);
+				this.matrixBoard[y1-1][x1-1] = flower;
+				this.p1case.matrixBoard[yS][xS] = null;
+
+				var request = "[" + x1 + "-" + y1 + "-" + f1 + "]";
+				this.makeRequest(request);
+				this.makeRequest("p1alien");		
+			}
+		}
+
+		//playp2
+		if(this.playsHistoric[index]['playp2'] != null && this.playsHistoric[index]['pickedp2'] != null)
+		{
+			var x2 = this.playsHistoric[index]['playp2'][0];
+			var y2 = this.playsHistoric[index]['playp2'][1];
+			var f2 = this.playsHistoric[index]['playp2'][2];
+
+			var xS = this.playsHistoric[index]['pickedp2'][0];
+			var yS = this.playsHistoric[index]['pickedp2'][1];
+
+			if(x2 != 100 && y2 != 100 && f2 != 100)
+			{
+				var flower = this.p2case.matrixBoard[yS][xS];
+				flower.animate(null, 2 ,flower.x +1, flower.y+1, x2-1, y2-1, 10.4,-0.05 ,this.currTime);
+				this.matrixBoard[y2-1][x2-1] = flower;
+				this.p2case.matrixBoard[yS][xS] = null;
+				
+				var request = "[" + x2 + "-" + y2 + "-" + f2 + "]";		
+				this.makeRequest(request);
+				this.makeRequest("p2alien");
+
+	
+			}
+		}
+		this.replayIndex++;
+	}
+	else
+	{
+		this.replayHappening = false;
+		this.replayIndex=0;
+
+		if(this.state = "p1")
+			this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "Player 1 turn");
+		else if(this.state = "p2")
+			this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "Player 2 turn");
 	}
 };
+
+MyBoard.prototype.getColorString=function(color)
+{
+	if(color == 1)
+	{
+		return "white";
+	}
+	else if(color == 2)
+	{
+		return "yellow";	
+	}
+ 	else if(color == 3)
+	{
+		return "green";
+	}
+	else if(color == 4)
+	{	
+		return "blue";
+	}
+	else if(color == 5)
+	{
+		return "purple";
+	}
+	else if(color == 6)
+	{
+		return "red";
+	}
+};
+
+MyBoard.prototype.Show=function()
+{
+	console.log(this.playsHistoric, this.replayHappening, this.replayIndex);
+};
+

@@ -12,7 +12,10 @@ MyBoard.prototype.getPrologRequest=function(requestString)
         request.board.handleReply(data.target.response, request.requestString);
     };
     
-    request.onerror = function(){console.log("Error waiting for response");};
+    request.onerror = function(data)
+    {
+        request.board.handleError(data.target.response, request.requestString);
+    };
 
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     request.send();
@@ -21,6 +24,13 @@ MyBoard.prototype.getPrologRequest=function(requestString)
 MyBoard.prototype.makeRequest=function(requestString)
 {
     this.getPrologRequest(requestString);
+};
+
+MyBoard.prototype.handleError=function(response, requestString)
+{
+    this.New();
+    this.transitionView = new MyViewTransition(this.scene, "default",this.currTime, 4);
+    this.newConsole(this.P1, this.P2, this.secondsElapsed.toString(), "SICSTUS closed!");  
 };
 
 MyBoard.prototype.handleReply=function(response, requestString)
